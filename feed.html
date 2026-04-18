@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NajaVoice – Live Voting Feed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;color:var(--green);text-decoration:none;}
+    .logo span{color:var(--gold);}
+    .nav-links{display:flex;gap:1.5rem;list-style:none;align-items:center;}
+    .nav-links a{font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;}
+    .nav-links a:hover{color:var(--green);}
+    .nav-cta{background:var(--green);color:#fff!important;padding:0.5rem 1.2rem;border-radius:50px;}
+    .nav-user{font-size:0.85rem;color:var(--green);font-weight:600;text-decoration:none;}
+    .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.8rem;padding:0.4rem 0.9rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .feed-header{background:var(--dark);padding:3rem 5% 2.5rem;position:relative;overflow:hidden;}
+    .feed-header::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
+    .header-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.4);color:var(--green-light);font-size:0.73rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.35rem 0.9rem;border-radius:50px;margin-bottom:0.8rem;}
+    .feed-header h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;color:#fff;line-height:1.15;margin-bottom:0.5rem;}
+    .feed-header h1 em{font-style:normal;color:var(--gold);}
+    .feed-header p{color:rgba(255,255,255,0.5);font-size:0.92rem;line-height:1.6;max-width:480px;}
+    .live-counter{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.2rem 1.8rem;text-align:center;flex-shrink:0;}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:6px;animation:pulse 1.4s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
+    .live-label{font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;}
+    .live-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;}
+    .filters-bar{background:var(--card);border-bottom:1px solid var(--border);padding:0.9rem 5%;position:sticky;top:63px;z-index:100;}
+    .filters-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;}
+    .filter-btn{padding:0.45rem 1rem;border-radius:50px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .filter-btn:hover{border-color:var(--green);color:var(--green);}
+    .filter-btn.active{background:var(--green);color:#fff;border-color:var(--green);}
+    .search-wrap{position:relative;margin-left:auto;}
+    .search-wrap input{padding:0.45rem 0.9rem 0.45rem 2.2rem;border-radius:50px;border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--text);outline:none;width:200px;background:#fff;transition:border-color 0.2s;}
+    .search-wrap input:focus{border-color:var(--green);}
+    .search-icon{position:absolute;left:0.7rem;top:50%;transform:translateY(-50%);font-size:0.85rem;pointer-events:none;}
+    .main-layout{max-width:1100px;margin:2rem auto;padding:0 5%;display:grid;grid-template-columns:1fr 300px;gap:2rem;}
+    .feed-list{display:flex;flex-direction:column;gap:1.2rem;}
+    .problem-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:1.6rem;transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;animation:fadeUp 0.4s ease both;}
+    .problem-card:hover{transform:translateY(-3px);box-shadow:0 10px 35px rgba(0,0,0,0.07);}
+    .problem-card.rank-1{border-color:var(--gold);}
+    .problem-card.rank-2{border-color:#c0c0c0;}
+    .problem-card.rank-3{border-color:#cd7f32;}
+    .problem-card.user-voted{border-color:var(--green);}
+    .rank-ribbon{position:absolute;top:0;left:0;background:var(--gold);color:var(--dark);font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:800;padding:0.25rem 0.8rem 0.25rem 0.6rem;border-bottom-right-radius:10px;}
+    .rank-ribbon.r2{background:#c0c0c0;}
+    .rank-ribbon.r3{background:#cd7f32;color:#fff;}
+    .card-top{display:flex;align-items:flex-start;gap:1rem;}
+    .vote-col{display:flex;flex-direction:column;align-items:center;gap:0.4rem;flex-shrink:0;min-width:56px;}
+    .vote-btn-main{width:52px;height:52px;border-radius:14px;border:2px solid var(--border);background:var(--cream);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+    .vote-btn-main:hover{border-color:var(--green);background:rgba(0,135,81,0.06);transform:scale(1.08);}
+    .vote-btn-main.voted{background:var(--green);border-color:var(--green);box-shadow:0 4px 14px rgba(0,135,81,0.35);}
+    .vote-number{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--dark);line-height:1;transition:transform 0.3s,color 0.3s;}
+    .vote-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;}
+    .card-body{flex:1;min-width:0;}
+    .card-meta{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;}
+    .meta-cat{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.2);color:var(--green);font-size:0.7rem;font-weight:600;padding:0.18rem 0.6rem;border-radius:50px;}
+    .meta-loc{font-size:0.72rem;color:var(--muted);}
+    .meta-time{font-size:0.7rem;color:var(--muted);margin-left:auto;}
+    .urgency-badge{font-size:0.68rem;font-weight:600;padding:0.15rem 0.55rem;border-radius:50px;}
+    .ub-low{background:rgba(56,161,105,0.1);color:#276749;}
+    .ub-medium{background:rgba(245,166,35,0.15);color:#975a16;}
+    .ub-high{background:rgba(229,62,62,0.1);color:#c53030;}
+    .card-body h3{font-family:'Syne',sans-serif;font-size:1.02rem;font-weight:800;color:var(--dark);line-height:1.35;margin-bottom:0.3rem;cursor:pointer;}
+    .card-body h3:hover{color:var(--green);}
+    .card-body .poster{font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;}
+    .card-body p{font-size:0.85rem;color:var(--muted);line-height:1.55;margin-bottom:0.9rem;}
+    .progress-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:0.8rem;}
+    .progress-fill{height:100%;border-radius:3px;background:var(--green-light);transition:width 0.6s ease;}
+    .problem-card.rank-1 .progress-fill{background:var(--gold);}
+    .card-footer{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;}
+    .footer-stat{font-size:0.75rem;color:var(--muted);}
+    .view-btn-small{font-size:0.78rem;color:var(--green);text-decoration:none;font-weight:600;background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.2);padding:0.3rem 0.8rem;border-radius:50px;}
+    .share-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.35rem 0.8rem;border-radius:50px;cursor:pointer;transition:all 0.2s;}
+    .share-btn:hover{border-color:var(--green);color:var(--green);}
+    .delete-btn{background:transparent;border:1px solid rgba(229,62,62,0.3);color:#e53e3e;font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.35rem 0.8rem;border-radius:50px;cursor:pointer;transition:all 0.2s;}
+    .delete-btn:hover{background:rgba(229,62,62,0.08);}
+    .sidebar{display:flex;flex-direction:column;gap:1.2rem;}
+    .side-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;}
+    .side-title{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;color:var(--dark);margin-bottom:1rem;}
+    .state-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;}
+    .state-rank{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:800;color:var(--muted);width:18px;}
+    .state-bar-wrap{flex:1;}
+    .state-name{font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:0.25rem;}
+    .state-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+    .state-fill{height:100%;background:var(--green-light);border-radius:2px;}
+    .state-count{font-size:0.72rem;color:var(--muted);flex-shrink:0;}
+    .side-cta{background:var(--dark);border-radius:16px;padding:1.4rem;text-align:center;}
+    .side-cta h4{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:0.5rem;}
+    .side-cta p{font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:1rem;}
+    .side-btn{display:block;width:100%;padding:0.7rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;text-decoration:none;transition:background 0.2s;}
+    .side-btn:hover{background:var(--green-dark);}
+    .empty-state{text-align:center;padding:4rem 2rem;background:var(--card);border-radius:18px;border:1px solid var(--border);}
+    .empty-state .ei{font-size:3.5rem;margin-bottom:1rem;}
+    .empty-state h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--dark);margin-bottom:0.5rem;}
+    .empty-state p{font-size:0.88rem;color:var(--muted);}
+    .loading{text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:768px){.main-layout{grid-template-columns:1fr;}.sidebar{display:none;}.nav-links{display:none;}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Naja<span>Voice</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="feed.html" style="color:var(--green);font-weight:600;">Problems</a></li>
+    <li id="nav-auth-area"><a href="auth.html" class="nav-cta">+ Post a Problem</a></li>
+  </ul>
+</nav>
+<div class="feed-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-badge"><span class="live-dot"></span> Live Feed</div>
+      <h1>Nigeria's <em>Most Voted</em><br/>Problems Right Now</h1>
+      <p>Vote on what matters. Highest voted problems rise to the top.</p>
+    </div>
+    <div class="live-counter">
+      <div class="live-label"><span class="live-dot"></span> Total Votes</div>
+      <div class="live-num" id="total-votes">—</div>
+      <div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:0.2rem;">across all problems</div>
+    </div>
+  </div>
+</div>
+<div class="filters-bar">
+  <div class="filters-inner">
+    <button class="filter-btn active" onclick="filterCat('all',this)">🇳🇬 All</button>
+    <button class="filter-btn" onclick="filterCat('Water Supply',this)">🚰 Water</button>
+    <button class="filter-btn" onclick="filterCat('Roads & Transport',this)">🛣️ Roads</button>
+    <button class="filter-btn" onclick="filterCat('Healthcare',this)">🏥 Health</button>
+    <button class="filter-btn" onclick="filterCat('Education',this)">📚 Education</button>
+    <button class="filter-btn" onclick="filterCat('Electricity',this)">💡 Electricity</button>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search problems..." oninput="searchFeed(this.value)"/>
+    </div>
+  </div>
+</div>
+<div class="main-layout">
+  <div>
+    <div class="feed-list" id="feed-list"><div class="loading">Loading problems... 🇳🇬</div></div>
+  </div>
+  <aside class="sidebar">
+    <div class="side-card"><div class="side-title">📍 Top States</div><div id="state-list"><div style="font-size:0.8rem;color:var(--muted);">Loading...</div></div></div>
+    <div class="side-cta"><h4>Have a Community Problem?</h4><p>Post it. Let Nigerians vote. Make government act.</p><a href="post-problem.html" class="side-btn">✍️ Post a Problem</a></div>
+  </aside>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+let allProblems=[],myVotedIds=[],activeFilter='all',searchTerm='',currentUser=null,votingInProgress=new Set();
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+function urgencyClass(u){return u==='high'?'ub-high':u==='medium'?'ub-medium':'ub-low';}
+function urgencyLabel(u){return u==='high'?'🔴 Critical':u==='medium'?'🟠 Medium':'🟡 Low';}
+function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'Just now';if(d<3600)return`${Math.floor(d/60)}m ago`;if(d<86400)return`${Math.floor(d/3600)}h ago`;return`${Math.floor(d/86400)}d ago`;}
+async function init(){
+  const {data:{user}}=await sb.auth.getUser();
+  currentUser=user;
+  if(user){
+    const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+    const name=profile?.full_name?.split(' ')[0]||'User';
+    document.getElementById('nav-auth-area').innerHTML=`<a href="profile.html" class="nav-user">👤 ${name}</a><button class="nav-logout" onclick="logout()">Logout</button>`;
+    const {data:votes}=await sb.from('votes').select('problem_id').eq('user_id',user.id);
+    myVotedIds=votes?votes.map(v=>v.problem_id):[];
+  }
+  await loadProblems();
+}
+async function loadProblems(){
+  const {data,error}=await sb.from('problems').select('*, profiles(full_name)').order('votes',{ascending:false});
+  if(error){document.getElementById('feed-list').innerHTML='<div class="loading">Error loading. Please refresh. ❌</div>';return;}
+  allProblems=(data||[]).map(p=>({...p,poster_name:p.profiles?.full_name||'Anonymous'}));
+  const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
+  document.getElementById('total-votes').textContent=total.toLocaleString();
+  renderFeed();renderSidebar();
+}
+function getFiltered(){
+  let list=[...allProblems];
+  if(activeFilter!=='all')list=list.filter(p=>p.category===activeFilter);
+  if(searchTerm)list=list.filter(p=>p.title?.toLowerCase().includes(searchTerm)||p.description?.toLowerCase().includes(searchTerm)||p.state?.toLowerCase().includes(searchTerm));
+  return list;
+}
+function renderFeed(){
+  const list=getFiltered();
+  const container=document.getElementById('feed-list');
+  if(!list.length){container.innerHTML=`<div class="empty-state"><div class="ei">📭</div><h3>No problems found</h3><p>Try a different filter or be the first to post!</p></div>`;return;}
+  const max=Math.max(...list.map(p=>p.votes||0),1);
+  container.innerHTML=list.map((p,i)=>{
+    const rank=i+1;const voted=myVotedIds.includes(p.id);const pct=Math.round(((p.votes||0)/max)*100);
+    const rankRibbon=rank<=3?`<div class="rank-ribbon r${rank}">${rank===1?'🥇 #1':rank===2?'🥈 #2':'🥉 #3'}</div>`:'';
+    return`<div class="problem-card ${rank<=3?'rank-'+rank:''} ${voted?'user-voted':''}" id="card-${p.id}" style="animation-delay:${i*0.05}s">
+      ${rankRibbon}
+      <div class="card-top">
+        <div class="vote-col">
+          <button class="vote-btn-main ${voted?'voted':''}" onclick="castVote('${p.id}')">${voted?'✅':'👍'}</button>
+          <div class="vote-number" id="vcount-${p.id}">${(p.votes||0).toLocaleString()}</div>
+          <div class="vote-label">votes</div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="meta-cat">${p.category_icon||'📋'} ${p.category}</span>
+            <span class="meta-loc">📍 ${p.state} · ${p.lga}</span>
+            <span class="urgency-badge ${urgencyClass(p.urgency)}">${urgencyLabel(p.urgency)}</span>
+            <span class="meta-time">${timeAgo(p.created_at)}</span>
+          </div>
+          <h3 onclick="window.location.href='problem.html?id=${p.id}'">${p.title}</h3>
+          <div class="poster">✍️ Posted by <strong>${p.poster_name}</strong></div>
+          <p>${(p.description||'').slice(0,140)}${(p.description||'').length>140?'…':''}</p>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="card-footer">
+            <span class="footer-stat">👥 ${p.affected||''}</span>
+            <a href="problem.html?id=${p.id}" class="view-btn-small">👁️ View & Comment</a>
+            <button class="share-btn" onclick="shareProblem('${p.id}','${(p.title||'').replace(/'/g,"\\'")}')">🔗 Share</button>
+            ${currentUser&&p.user_id===currentUser.id?`<button class="delete-btn" onclick="deleteProblem('${p.id}')">🗑️ Delete</button>`:''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function castVote(id){
+  if(myVotedIds.includes(id)){showToast('⚠️ You already voted on this!');return;}
+  if(votingInProgress.has(id))return;
+  votingInProgress.add(id);
+  if(!currentUser){showToast('👋 Please login to vote!');setTimeout(()=>window.location.href='auth.html',1500);votingInProgress.delete(id);return;}
+  const btn=document.getElementById(`vbtn-${id}`)||document.querySelector(`#card-${id} .vote-btn-main`);
+  const count=document.getElementById(`vcount-${id}`);
+  const card=document.getElementById(`card-${id}`);
+  const problem=allProblems.find(p=>p.id==id);
+  if(problem){problem.votes=(problem.votes||0)+1;if(count){count.textContent=problem.votes.toLocaleString();count.style.transform='scale(1.4)';count.style.color='var(--green)';setTimeout(()=>{count.style.transform='scale(1)';count.style.color='';},300);}}
+  if(btn){btn.classList.add('voted');btn.textContent='✅';}
+  if(card)card.classList.add('user-voted');
+  myVotedIds.push(id);
+  const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
+  document.getElementById('total-votes').textContent=total.toLocaleString();
+  const {error}=await sb.from('votes').insert({user_id:currentUser.id,problem_id:id});
+  if(!error)await sb.rpc('increment_vote',{problem_id:id});
+  showToast('✅ Vote cast! Thank you 🇳🇬');
+  setTimeout(()=>{allProblems.sort((a,b)=>(b.votes||0)-(a.votes||0));renderFeed();},800);
+  votingInProgress.delete(id);
+}
+async function deleteProblem(id){
+  const overlay=document.createElement('div');
+  overlay.id='del-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;';
+  overlay.innerHTML='<div style="background:#fff;border-radius:20px;padding:2rem;max-width:300px;width:100%;text-align:center;"><div style="font-size:2.5rem;margin-bottom:0.8rem;">🗑️</div><h3 style="font-family:Syne,sans-serif;font-size:1.1rem;font-weight:800;color:#0d1f0f;margin-bottom:0.5rem;">Delete Problem?</h3><p style="font-size:0.85rem;color:#5a7a5e;margin-bottom:1.5rem;line-height:1.5;">This will be permanently removed.</p><div style="display:flex;gap:0.8rem;"><button id="del-cancel" style="flex:1;padding:0.8rem;border:2px solid #d4e8d6;border-radius:10px;background:transparent;font-size:0.9rem;cursor:pointer;color:#5a7a5e;">Cancel</button><button id="del-confirm" style="flex:1;padding:0.8rem;border:none;border-radius:10px;background:#e53e3e;color:#fff;font-family:Syne,sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;">Yes, Delete</button></div></div>';
+  document.body.appendChild(overlay);
+  document.getElementById('del-cancel').onclick=()=>overlay.remove();
+  document.getElementById('del-confirm').onclick=async()=>{
+    overlay.remove();showToast('⏳ Deleting...');
+    const {error}=await sb.from('problems').delete().eq('id',id);
+    if(error){showToast('❌ '+error.message);return;}
+    allProblems=allProblems.filter(p=>p.id!==id);
+    showToast('✅ Problem deleted!');renderFeed();
+    const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
+    document.getElementById('total-votes').textContent=total.toLocaleString();
+  };
+}
+function filterCat(cat,btn){activeFilter=cat;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderFeed();}
+function searchFeed(val){searchTerm=val.toLowerCase().trim();renderFeed();}
+function renderSidebar(){
+  const counts={};allProblems.forEach(p=>{if(p.state)counts[p.state]=(counts[p.state]||0)+1;});
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);const max=top[0]?.[1]||1;
+  document.getElementById('state-list').innerHTML=top.map(([state,count],i)=>`<div class="state-row"><div class="state-rank">${i+1}</div><div class="state-bar-wrap"><div class="state-name">${state}</div><div class="state-track"><div class="state-fill" style="width:${Math.round(count/max*100)}%"></div></div></div><div class="state-count">${count}</div></div>`).join('')||'<div style="font-size:0.8rem;color:var(--muted);">No data yet.</div>';
+}
+function shareProblem(id,title){const text=`🇳🇬 "${title}" — Vote on NajaVoice! ${window.location.origin}/problem.html?id=${id}`;if(navigator.share)navigator.share({title:'NajaVoice',text,url:window.location.href});else navigator.clipboard.writeText(text).then(()=>showToast('🔗 Link copied!'));}
+async function logout(){await sb.auth.signOut();window.location.reload();}
+init();
+</script>
+</body>
+</html>

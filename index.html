@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NajaVoice – The People's Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5%;background:rgba(253,246,236,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:var(--green);text-decoration:none;}
+    .logo span{color:var(--gold);}
+    .nav-links{display:flex;gap:1.5rem;list-style:none;align-items:center;}
+    .nav-links a{font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+    .nav-links a:hover{color:var(--green);}
+    .nav-cta{background:var(--green);color:#fff!important;padding:0.5rem 1.2rem;border-radius:50px;}
+    .nav-user{font-size:0.85rem;color:var(--green);font-weight:600;text-decoration:none;}
+    .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.8rem;padding:0.4rem 0.9rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 5% 5rem;position:relative;}
+    .hero-circle{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.08) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:-1;}
+    .hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,135,81,0.1);border:1px solid rgba(0,135,81,0.25);color:var(--green);font-size:0.78rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:0.4rem 1rem;border-radius:50px;margin-bottom:2rem;animation:fadeUp 0.6s ease both;}
+    .hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;color:var(--dark);max-width:800px;animation:fadeUp 0.7s 0.1s ease both;}
+    .hero h1 em{font-style:normal;color:var(--green);}
+    .hero p{margin-top:1.5rem;font-size:clamp(1rem,2vw,1.2rem);color:var(--muted);max-width:560px;line-height:1.7;font-weight:300;animation:fadeUp 0.7s 0.2s ease both;}
+    .hero-actions{margin-top:2.5rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.7s 0.3s ease both;}
+    .btn-primary{background:var(--green);color:#fff;padding:0.9rem 2rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(0,135,81,0.3);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,135,81,0.4);}
+    .btn-secondary{background:transparent;color:var(--green);padding:0.9rem 2rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;border:2px solid var(--border);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;transition:border-color 0.2s;}
+    .btn-secondary:hover{border-color:var(--green);}
+    .hero-stats{margin-top:4rem;display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.7s 0.4s ease both;}
+    .stat{text-align:center;}
+    .stat-number{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--green);}
+    .stat-label{font-size:0.82rem;color:var(--muted);margin-top:0.2rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .section{padding:6rem 5%;max-width:1100px;margin:0 auto;}
+    .section-label{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:0.8rem;}
+    .section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--dark);line-height:1.15;max-width:500px;}
+    .steps{margin-top:3.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;}
+    .step-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;transition:transform 0.25s,box-shadow 0.25s;}
+    .step-card:hover{transform:translateY(-5px);box-shadow:0 12px 40px rgba(0,135,81,0.1);}
+    .step-number{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:rgba(0,135,81,0.1);line-height:1;margin-bottom:1rem;}
+    .step-icon{font-size:2rem;margin-bottom:1rem;}
+    .step-card h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--dark);margin-bottom:0.6rem;}
+    .step-card p{font-size:0.9rem;color:var(--muted);line-height:1.6;}
+    .feed-section{background:var(--dark);padding:6rem 5%;position:relative;overflow:hidden;}
+    .feed-inner{max-width:1100px;margin:0 auto;}
+    .feed-section .section-label{color:var(--gold);}
+    .feed-section .section-title{color:#fff;}
+    .problem-cards{margin-top:3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;}
+    .problem-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.5rem;transition:background 0.2s;}
+    .problem-card:hover{background:rgba(255,255,255,0.08);}
+    .problem-card.top{border-color:var(--gold);background:rgba(245,166,35,0.08);}
+    .problem-top-badge{display:inline-flex;align-items:center;gap:0.3rem;background:var(--gold);color:var(--dark);font-size:0.7rem;font-weight:700;text-transform:uppercase;padding:0.25rem 0.7rem;border-radius:50px;margin-bottom:0.8rem;}
+    .problem-state{font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.5rem;}
+    .problem-card h4{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.4;margin-bottom:0.6rem;}
+    .problem-card p{font-size:0.85rem;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:1.2rem;}
+    .vote-bar-track{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-top:0.4rem;}
+    .vote-bar-fill{height:100%;background:var(--green-light);border-radius:3px;}
+    .problem-card.top .vote-bar-fill{background:var(--gold);}
+    .vote-count{display:flex;align-items:center;justify-content:space-between;font-size:0.78rem;color:rgba(255,255,255,0.4);}
+    .view-btn{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.4);color:var(--green-light);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;padding:0.5rem 1.1rem;border-radius:50px;cursor:pointer;text-decoration:none;transition:background 0.2s;}
+    .view-btn:hover{background:rgba(0,135,81,0.35);}
+    .cta-section{margin:0 5% 6rem;background:var(--green);border-radius:28px;padding:4rem 5%;text-align:center;position:relative;overflow:hidden;}
+    .cta-section h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:#fff;line-height:1.2;margin-bottom:1rem;}
+    .cta-section p{color:rgba(255,255,255,0.75);font-size:1rem;max-width:480px;margin:0 auto 2rem;line-height:1.6;}
+    .btn-white{background:#fff;color:var(--green);padding:0.9rem 2rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;transition:transform 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.15);}
+    .btn-white:hover{transform:translateY(-2px);}
+    footer{border-top:1px solid var(--border);padding:2.5rem 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;max-width:1200px;margin:0 auto;}
+    .footer-logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--green);text-decoration:none;}
+    .footer-logo span{color:var(--gold);}
+    footer p{font-size:0.82rem;color:var(--muted);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:600px){.nav-links{display:none;}.hero h1{font-size:2.4rem;}.hero-stats{gap:2rem;}footer{flex-direction:column;text-align:center;}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Naja<span>Voice</span></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="feed.html">Problems</a></li>
+    <li><a href="post-problem.html">Post a Problem</a></li>
+    <li id="nav-auth-area"><a href="auth.html" class="nav-cta">Get Started</a></li>
+  </ul>
+</nav>
+<section class="hero">
+  <div class="hero-circle"></div>
+  <div class="hero-badge">🇳🇬 The People's Voice Platform</div>
+  <h1>Your Problem Deserves to be <em>Heard</em></h1>
+  <p>Post grassroot problems from your community. Vote on what matters most. Together, we push issues to the top — where government must respond.</p>
+  <div class="hero-actions">
+    <a href="feed.html" class="btn-primary">🗳️ See Top Problems</a>
+    <a href="auth.html" class="btn-secondary" id="hero-cta">Create Free Account →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-number" id="stat-problems">—</div><div class="stat-label">Problems Posted</div></div>
+    <div class="stat"><div class="stat-number" id="stat-votes">—</div><div class="stat-label">Votes Cast</div></div>
+    <div class="stat"><div class="stat-number" id="stat-users">—</div><div class="stat-label">Nigerians Joined</div></div>
+    <div class="stat"><div class="stat-number">Free</div><div class="stat-label">Always</div></div>
+  </div>
+</section>
+<div id="how"><div class="section">
+  <div class="section-label">Simple Process</div>
+  <h2 class="section-title">How NajaVoice Works</h2>
+  <div class="steps">
+    <div class="step-card"><div class="step-number">01</div><div class="step-icon">✍️</div><h3>Post a Problem</h3><p>Create a free account and describe a real issue affecting your community.</p></div>
+    <div class="step-card"><div class="step-number">02</div><div class="step-icon">🗳️</div><h3>People Vote</h3><p>Anyone can vote on problems that affect them too.</p></div>
+    <div class="step-card"><div class="step-number">03</div><div class="step-icon">📈</div><h3>Problems Rise</h3><p>The more votes, the higher it climbs — impossible to ignore.</p></div>
+    <div class="step-card"><div class="step-number">04</div><div class="step-icon">🏛️</div><h3>Government Acts</h3><p>Top problems become visible to officials, NGOs and journalists.</p></div>
+  </div>
+</div></div>
+<section class="feed-section">
+  <div class="feed-inner">
+    <div class="section-label">Live Feed</div>
+    <h2 class="section-title">Top Problems Right Now</h2>
+    <div class="problem-cards" id="top-problems"><div style="color:rgba(255,255,255,0.4);font-size:0.9rem;padding:2rem 0;">Loading top problems...</div></div>
+    <div style="margin-top:2rem;"><a href="feed.html" class="view-btn">View All Problems →</a></div>
+  </div>
+</section>
+<section class="cta-section">
+  <h2>Your Community's Problem<br/>Needs Your Voice</h2>
+  <p>Join Nigerians making their voices heard. Post a problem. Vote. Change your community.</p>
+  <a href="auth.html" class="btn-white" id="cta-bottom">🚀 Get Started — It's Free</a>
+</section>
+<footer>
+  <a href="index.html" class="footer-logo">Naja<span>Voice</span></a>
+  <p>Built for the people of Nigeria 🇳🇬</p>
+  <p>© 2025 NajaVoice. Free forever.</p>
+</footer>
+<script>
+async function init(){
+  const {data:{user}}=await sb.auth.getUser();
+  if(user){
+    const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+    const name=profile?.full_name?.split(' ')[0]||'User';
+    document.getElementById('nav-auth-area').innerHTML=`<a href="profile.html" class="nav-user">👤 ${name}</a><button class="nav-logout" onclick="logout()">Logout</button>`;
+    document.getElementById('hero-cta').textContent='✍️ Post a Problem';
+    document.getElementById('hero-cta').href='post-problem.html';
+    document.getElementById('cta-bottom').textContent='✍️ Post a Problem';
+    document.getElementById('cta-bottom').href='post-problem.html';
+  }
+  const [{count:pCount},{count:uCount}]=await Promise.all([
+    sb.from('problems').select('*',{count:'exact',head:true}),
+    sb.from('profiles').select('*',{count:'exact',head:true})
+  ]);
+  const {data:voteData}=await sb.from('problems').select('votes');
+  const totalVotes=voteData?.reduce((a,p)=>a+(p.votes||0),0)||0;
+  document.getElementById('stat-problems').textContent=(pCount||0).toLocaleString();
+  document.getElementById('stat-votes').textContent=totalVotes.toLocaleString();
+  document.getElementById('stat-users').textContent=(uCount||0).toLocaleString();
+  const {data:problems}=await sb.from('problems').select('*').order('votes',{ascending:false}).limit(3);
+  const container=document.getElementById('top-problems');
+  if(!problems||problems.length===0){container.innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;padding:2rem 0;">No problems posted yet. Be the first! 🇳🇬</div>';return;}
+  const max=problems[0].votes||1;
+  container.innerHTML=problems.map((p,i)=>`
+    <div class="problem-card ${i===0?'top':''}">
+      ${i===0?'<div class="problem-top-badge">🔥 #1 Most Voted</div>':''}
+      <div class="problem-state">${p.state} · ${p.lga}</div>
+      <h4>${p.title}</h4>
+      <p>${(p.description||'').slice(0,100)}...</p>
+      <div class="vote-count"><span>${(p.votes||0).toLocaleString()} votes</span></div>
+      <div class="vote-bar-track"><div class="vote-bar-fill" style="width:${Math.round(((p.votes||0)/max)*100)}%"></div></div>
+      <br/><a href="problem.html?id=${p.id}" class="view-btn">🗳️ View & Vote</a>
+    </div>`).join('');
+}
+async function logout(){await sb.auth.signOut();window.location.reload();}
+init();
+</script>
+</body>
+</html>

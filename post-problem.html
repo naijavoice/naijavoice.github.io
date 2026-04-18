@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NajaVoice – Post a Problem</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--error:#e53e3e;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:var(--green);text-decoration:none;}
+    .logo span{color:var(--gold);}
+    .back-link{font-size:0.88rem;color:var(--muted);text-decoration:none;}
+    .back-link:hover{color:var(--green);}
+    .auth-wall{max-width:500px;margin:5rem auto;padding:0 5%;text-align:center;}
+    .auth-wall .aw-icon{font-size:4rem;margin-bottom:1.5rem;}
+    .auth-wall h2{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
+    .auth-wall p{color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:2rem;}
+    .btn-go{display:inline-flex;align-items:center;gap:0.5rem;background:var(--green);color:#fff;padding:0.9rem 2rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 20px rgba(0,135,81,0.3);}
+    .btn-go:hover{transform:translateY(-2px);}
+    .page-header{background:var(--dark);padding:3.5rem 5% 3rem;position:relative;overflow:hidden;}
+    .page-header::before{content:'';position:absolute;top:-100px;right:-100px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
+    .header-inner{max-width:800px;margin:0 auto;}
+    .header-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.35);color:var(--gold);font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.4rem 1rem;border-radius:50px;margin-bottom:1rem;}
+    .page-header h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:#fff;line-height:1.15;margin-bottom:0.8rem;}
+    .page-header h1 em{font-style:normal;color:var(--gold);}
+    .page-header p{color:rgba(255,255,255,0.55);font-size:0.95rem;line-height:1.7;max-width:520px;}
+    .progress-wrap{background:var(--card);border-bottom:1px solid var(--border);padding:1.2rem 5%;}
+    .progress-inner{max-width:800px;margin:0 auto;display:flex;align-items:center;gap:0;}
+    .prog-step{display:flex;align-items:center;gap:0.6rem;flex:1;}
+    .prog-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;background:var(--border);color:var(--muted);transition:background 0.3s,color 0.3s;}
+    .prog-step.active .prog-dot{background:var(--green);color:#fff;box-shadow:0 0 0 4px rgba(0,135,81,0.15);}
+    .prog-step.done .prog-dot{background:var(--green-dark);color:#fff;}
+    .prog-label{font-size:0.78rem;font-weight:500;color:var(--muted);transition:color 0.3s;}
+    .prog-step.active .prog-label{color:var(--green);font-weight:600;}
+    .prog-line{flex:1;height:2px;background:var(--border);margin:0 0.5rem;border-radius:2px;max-width:60px;transition:background 0.3s;}
+    .prog-line.done{background:var(--green-dark);}
+    .form-wrapper{max-width:800px;margin:2.5rem auto 4rem;padding:0 5%;}
+    .step-panel{display:none;}
+    .step-panel.active{display:block;animation:fadeUp 0.4s ease both;}
+    .form-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.5rem;margin-bottom:1.2rem;}
+    .card-title{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--dark);margin-bottom:0.4rem;}
+    .card-sub{font-size:0.85rem;color:var(--muted);margin-bottom:1.8rem;line-height:1.5;}
+    .field{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.2rem;}
+    label{font-size:0.82rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:0.4rem;}
+    .required{color:var(--error);}
+    .input-wrap{position:relative;}
+    .input-icon{position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+    input[type="text"],select,textarea{width:100%;padding:0.78rem 0.9rem 0.78rem 2.5rem;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--text);transition:border-color 0.2s;outline:none;appearance:none;}
+    textarea{padding:0.78rem 0.9rem;resize:vertical;min-height:130px;line-height:1.6;}
+    input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,135,81,0.1);}
+    .char-count{font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.3rem;}
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.8rem;margin-top:0.5rem;}
+    .cat-option{border:1.5px solid var(--border);border-radius:12px;padding:1rem 0.8rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;user-select:none;}
+    .cat-option:hover{border-color:var(--green);background:rgba(0,135,81,0.04);}
+    .cat-option.selected{border-color:var(--green);background:rgba(0,135,81,0.08);box-shadow:0 0 0 3px rgba(0,135,81,0.12);}
+    .cat-option .ci{font-size:1.8rem;margin-bottom:0.4rem;}
+    .cat-option .cn{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--dark);}
+    .urgency-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-top:0.5rem;}
+    .urgency-opt{border:1.5px solid var(--border);border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s;}
+    .urgency-opt .ui{font-size:1.5rem;margin-bottom:0.3rem;}
+    .urgency-opt .un{font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;color:var(--dark);}
+    .urgency-opt .ud{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;}
+    .urgency-opt.selected-low{border-color:#38a169;background:rgba(56,161,105,0.07);}
+    .urgency-opt.selected-medium{border-color:var(--gold);background:rgba(245,166,35,0.07);}
+    .urgency-opt.selected-high{border-color:var(--error);background:rgba(229,62,62,0.07);}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .btn-row{display:flex;align-items:center;justify-content:space-between;margin-top:1.5rem;gap:1rem;}
+    .btn-back{background:transparent;color:var(--muted);padding:0.85rem 1.6rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;border:1.5px solid var(--border);cursor:pointer;transition:border-color 0.2s,color 0.2s;}
+    .btn-back:hover{border-color:var(--green);color:var(--green);}
+    .btn-next{background:var(--green);color:#fff;padding:0.85rem 2rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;border:none;cursor:pointer;transition:background 0.2s;box-shadow:0 4px 16px rgba(0,135,81,0.28);}
+    .btn-next:hover{background:var(--green-dark);}
+    .btn-next:disabled{opacity:0.6;cursor:not-allowed;}
+    .btn-submit{background:var(--gold);color:var(--dark);padding:0.85rem 2rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(245,166,35,0.3);}
+    .btn-submit:disabled{opacity:0.6;cursor:not-allowed;}
+    .preview-card{background:var(--dark);border-radius:16px;padding:1.5rem;border:1px solid rgba(255,255,255,0.08);}
+    .preview-card .pc-state{font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;}
+    .preview-card .pc-cat{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.35);color:var(--green-light);font-size:0.72rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:50px;margin-bottom:0.7rem;}
+    .preview-card h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;margin-bottom:0.6rem;line-height:1.4;}
+    .preview-card p{font-size:0.85rem;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:1rem;}
+    .pc-footer{display:flex;align-items:center;justify-content:space-between;}
+    .pc-votes{font-size:0.78rem;color:rgba(255,255,255,0.35);}
+    .pc-urgency{font-size:0.72rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:50px;}
+    .urg-low{background:rgba(56,161,105,0.2);color:#68d391;}
+    .urg-medium{background:rgba(245,166,35,0.2);color:var(--gold);}
+    .urg-high{background:rgba(229,62,62,0.2);color:#fc8181;}
+    .success-screen{display:none;text-align:center;padding:4rem 2rem;animation:fadeUp 0.5s ease both;}
+    .success-screen.show{display:block;}
+    .success-icon{font-size:5rem;margin-bottom:1.5rem;}
+    .success-screen h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
+    .success-screen p{color:var(--muted);font-size:0.95rem;line-height:1.7;max-width:440px;margin:0 auto 2rem;}
+    .success-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}.urgency-grid{grid-template-columns:1fr;}.form-card{padding:1.5rem;}.prog-label{display:none;}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Naja<span>Voice</span></a>
+  <a href="index.html" class="back-link">← Back to Home</a>
+</nav>
+<div class="auth-wall" id="auth-wall" style="display:none;">
+  <div class="aw-icon">🔐</div>
+  <h2>Login Required to Post</h2>
+  <p>You need a free NajaVoice account to post a problem. Voting is open to everyone — but posting requires an account.</p>
+  <a href="auth.html" class="btn-go">👤 Create Free Account →</a>
+</div>
+<div id="main-form" style="display:none;">
+  <div class="page-header">
+    <div class="header-inner">
+      <div class="header-badge">✍️ Share Your Community's Problem</div>
+      <h1>Post a <em>Real Problem</em><br/>That Affects People</h1>
+      <p>Describe the issue clearly. The more detail you give, the more people will relate and vote.</p>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-inner">
+      <div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div class="prog-label">The Problem</div></div>
+      <div class="prog-line" id="pl1"></div>
+      <div class="prog-step" id="ps2"><div class="prog-dot">2</div><div class="prog-label">Location</div></div>
+      <div class="prog-line" id="pl2"></div>
+      <div class="prog-step" id="ps3"><div class="prog-dot">3</div><div class="prog-label">Details</div></div>
+      <div class="prog-line" id="pl3"></div>
+      <div class="prog-step" id="ps4"><div class="prog-dot">4</div><div class="prog-label">Preview</div></div>
+    </div>
+  </div>
+  <div class="form-wrapper">
+    <div class="step-panel active" id="step1">
+      <div class="form-card">
+        <div class="card-title">What is the Problem? 🔍</div>
+        <div class="card-sub">Give a clear title and description so others can understand and relate.</div>
+        <div class="field">
+          <label>Problem Title <span class="required">*</span></label>
+          <div class="input-wrap"><span class="input-icon">📢</span><input type="text" id="p-title" placeholder="e.g. No clean water supply for 2 years" maxlength="100" oninput="countChars('p-title','title-count',100)"/></div>
+          <div class="char-count" id="title-count">0 / 100</div>
+        </div>
+        <div class="field">
+          <label>Full Description <span class="required">*</span></label>
+          <textarea id="p-desc" placeholder="Describe the problem in detail..." maxlength="800" oninput="countChars('p-desc','desc-count',800)"></textarea>
+          <div class="char-count" id="desc-count">0 / 800</div>
+        </div>
+        <div class="field">
+          <label>Category <span class="required">*</span></label>
+          <div class="cat-grid">
+            <div class="cat-option" onclick="selectCat(this,'Water Supply','🚰')"><div class="ci">🚰</div><div class="cn">Water Supply</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Roads & Transport','🛣️')"><div class="ci">🛣️</div><div class="cn">Roads</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Healthcare','🏥')"><div class="ci">🏥</div><div class="cn">Healthcare</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Education','📚')"><div class="ci">📚</div><div class="cn">Education</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Electricity','💡')"><div class="ci">💡</div><div class="cn">Electricity</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Housing','🏠')"><div class="ci">🏠</div><div class="cn">Housing</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Environment','🌿')"><div class="ci">🌿</div><div class="cn">Environment</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Security','👮')"><div class="ci">👮</div><div class="cn">Security</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Economy','💰')"><div class="ci">💰</div><div class="cn">Economy</div></div>
+            <div class="cat-option" onclick="selectCat(this,'Other','📋')"><div class="ci">📋</div><div class="cn">Other</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><div></div><button class="btn-next" onclick="goStep(2)">Next: Location →</button></div>
+    </div>
+    <div class="step-panel" id="step2">
+      <div class="form-card">
+        <div class="card-title">Where is this Problem? 📍</div>
+        <div class="card-sub">Tell us the location so people in the same area can find and vote.</div>
+        <div class="two-col">
+          <div class="field">
+            <label>State <span class="required">*</span></label>
+            <div class="input-wrap"><span class="input-icon">🗺️</span>
+              <select id="p-state">
+                <option value="">-- Select State --</option>
+                <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>FCT – Abuja</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>LGA <span class="required">*</span></label>
+            <div class="input-wrap"><span class="input-icon">📌</span><input type="text" id="p-lga" placeholder="e.g. Mushin, Ikeja"/></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Community / Street</label>
+          <div class="input-wrap"><span class="input-icon">🏘️</span><input type="text" id="p-community" placeholder="e.g. Ajegunle Street"/></div>
+        </div>
+        <div class="field">
+          <label>How many people affected? <span class="required">*</span></label>
+          <div class="input-wrap"><span class="input-icon">👥</span>
+            <select id="p-affected">
+              <option value="">-- Select range --</option>
+              <option>A few households (under 50 people)</option>
+              <option>A street or block (50–500 people)</option>
+              <option>A whole community (500–5,000 people)</option>
+              <option>An entire LGA or more (5,000+ people)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Next: More Details →</button></div>
+    </div>
+    <div class="step-panel" id="step3">
+      <div class="form-card">
+        <div class="card-title">More Details 📋</div>
+        <div class="card-sub">Help others understand the seriousness of this problem.</div>
+        <div class="field">
+          <label>Urgency Level <span class="required">*</span></label>
+          <div class="urgency-grid">
+            <div class="urgency-opt" id="urg-low" onclick="selectUrgency('low')"><div class="ui">🟡</div><div class="un">Low</div><div class="ud">Ongoing issue</div></div>
+            <div class="urgency-opt" id="urg-medium" onclick="selectUrgency('medium')"><div class="ui">🟠</div><div class="un">Medium</div><div class="ud">Affecting daily life</div></div>
+            <div class="urgency-opt" id="urg-high" onclick="selectUrgency('high')"><div class="ui">🔴</div><div class="un">Critical</div><div class="ud">Lives at risk</div></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:1.2rem">
+          <label>How long has this existed?</label>
+          <div class="input-wrap"><span class="input-icon">📅</span>
+            <select id="p-duration">
+              <option value="">-- Select --</option>
+              <option>Less than 1 month</option><option>1–6 months</option><option>6 months – 1 year</option><option>1–3 years</option><option>More than 3 years</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Reported to government before?</label>
+          <div class="input-wrap"><span class="input-icon">🏛️</span>
+            <select id="p-govt">
+              <option value="">-- Select --</option>
+              <option>Yes – but no action was taken</option>
+              <option>Yes – they promised but nothing happened</option>
+              <option>No – first time being raised</option>
+              <option>Not sure</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="goStep(4)">Preview My Post →</button></div>
+    </div>
+    <div class="step-panel" id="step4">
+      <div class="form-card">
+        <div class="card-title">Preview Your Post 👀</div>
+        <div class="card-sub">This is how your problem will appear on NajaVoice.</div>
+        <div class="preview-card">
+          <div class="pc-state" id="prev-location">State · LGA</div>
+          <div class="pc-cat" id="prev-cat">🏷️ Category</div>
+          <h3 id="prev-title">Your title here</h3>
+          <p id="prev-desc">Your description here...</p>
+          <div class="pc-footer"><div class="pc-votes">0 votes · Just posted</div><div class="pc-urgency" id="prev-urgency">Urgency</div></div>
+        </div>
+      </div>
+      <div class="form-card" style="background:rgba(0,135,81,0.04);border-color:rgba(0,135,81,0.2);">
+        <div style="display:flex;align-items:flex-start;gap:0.8rem;">
+          <div style="font-size:1.5rem;flex-shrink:0;">✅</div>
+          <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--dark);margin-bottom:0.3rem;">Ready to submit?</div><div style="font-size:0.85rem;color:var(--muted);line-height:1.6;">Once posted, your problem will be visible to all Nigerians. Anyone can vote — the more votes, the higher it rises.</div></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(3)">← Go Back & Edit</button>
+        <button class="btn-submit" id="submit-btn" onclick="submitProblem()">🚀 Submit Problem Now</button>
+      </div>
+    </div>
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">🎉</div>
+      <h2>Problem Posted Successfully!</h2>
+      <p>Your problem is now live on NajaVoice! Share it so people can vote.</p>
+      <div class="success-btns">
+        <a href="feed.html" style="text-decoration:none;"><button class="btn-next">🗳️ See Live Feed</button></a>
+        <a href="index.html" style="text-decoration:none;"><button class="btn-back">🏠 Home</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+  let selectedCat='',selectedCatIcon='',selectedUrgency='',currentUser=null,currentStep=1;
+  function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+  function countChars(inputId,countId,max){const v=document.getElementById(inputId).value.length;const el=document.getElementById(countId);el.textContent=`${v} / ${max}`;el.style.color=v>=max?'var(--error)':'' ;}
+  function selectCat(el,name,icon){document.querySelectorAll('.cat-option').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedCat=name;selectedCatIcon=icon;}
+  function selectUrgency(level){['low','medium','high'].forEach(l=>{document.getElementById('urg-'+l).className='urgency-opt';});document.getElementById('urg-'+level).classList.add('selected-'+level);selectedUrgency=level;}
+  function validateStep(step){
+    if(step===1){
+      if(!document.getElementById('p-title').value.trim()){showToast('⚠️ Please enter a problem title.');return false;}
+      if(document.getElementById('p-desc').value.trim().length<30){showToast('⚠️ Please write a description (at least 30 characters).');return false;}
+      if(!selectedCat){showToast('⚠️ Please select a category.');return false;}
+    }
+    if(step===2){
+      if(!document.getElementById('p-state').value){showToast('⚠️ Please select your state.');return false;}
+      if(!document.getElementById('p-lga').value.trim()){showToast('⚠️ Please enter your LGA.');return false;}
+      if(!document.getElementById('p-affected').value){showToast('⚠️ Please select how many people are affected.');return false;}
+    }
+    if(step===3){if(!selectedUrgency){showToast('⚠️ Please select an urgency level.');return false;}}
+    return true;
+  }
+  function goStep(n){
+    if(n>currentStep&&!validateStep(currentStep))return;
+    if(n===4)buildPreview();
+    document.getElementById('step'+currentStep).classList.remove('active');
+    document.getElementById('step'+n).classList.add('active');
+    for(let i=1;i<=4;i++){const ps=document.getElementById('ps'+i);ps.classList.remove('active','done');if(i<n)ps.classList.add('done');else if(i===n)ps.classList.add('active');}
+    for(let i=1;i<=3;i++){const pl=document.getElementById('pl'+i);if(pl)pl.classList.toggle('done',i<n);}
+    currentStep=n;window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function buildPreview(){
+    document.getElementById('prev-title').textContent=document.getElementById('p-title').value;
+    const desc=document.getElementById('p-desc').value;
+    document.getElementById('prev-desc').textContent=desc.length>160?desc.slice(0,160)+'…':desc;
+    document.getElementById('prev-location').textContent=`${document.getElementById('p-state').value} · ${document.getElementById('p-lga').value} LGA`;
+    document.getElementById('prev-cat').textContent=`${selectedCatIcon} ${selectedCat}`;
+    const urgLabels={low:'Low Urgency',medium:'Medium Urgency',high:'🔴 Critical'};
+    const urgClasses={low:'urg-low',medium:'urg-medium',high:'urg-high'};
+    const urgEl=document.getElementById('prev-urgency');
+    urgEl.textContent=urgLabels[selectedUrgency]||'—';
+    urgEl.className='pc-urgency '+(urgClasses[selectedUrgency]||'urg-low');
+  }
+  async function submitProblem(){
+    const btn=document.getElementById('submit-btn');
+    btn.disabled=true;btn.textContent='Posting...';
+    const problem={
+      user_id:currentUser.id,
+      title:document.getElementById('p-title').value.trim(),
+      description:document.getElementById('p-desc').value.trim(),
+      category:selectedCat,category_icon:selectedCatIcon,
+      state:document.getElementById('p-state').value,
+      lga:document.getElementById('p-lga').value.trim(),
+      community:document.getElementById('p-community').value.trim(),
+      affected:document.getElementById('p-affected').value,
+      urgency:selectedUrgency,
+      duration:document.getElementById('p-duration').value,
+      govt_reported:document.getElementById('p-govt').value,
+      votes:0
+    };
+    const {error}=await sb.from('problems').insert([problem]);
+    if(error){showToast('❌ Error posting. Please try again.');btn.disabled=false;btn.textContent='🚀 Submit Problem Now';return;}
+    document.getElementById('step4').classList.remove('active');
+    document.getElementById('success-screen').classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  async function init(){
+    const {data:{user}}=await sb.auth.getUser();
+    currentUser=user;
+    if(!user){document.getElementById('auth-wall').style.display='block';}
+    else{document.getElementById('main-form').style.display='block';}
+  }
+  init();
+</script>
+</body>
+</html>
