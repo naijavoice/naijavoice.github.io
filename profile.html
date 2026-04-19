@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NajaVoice – My Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--error:#e53e3e;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;color:var(--green);text-decoration:none;}
+    .logo span{color:var(--gold);}
+    .nav-links{display:flex;gap:1.2rem;list-style:none;align-items:center;}
+    .nav-links a{font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;}
+    .nav-links a:hover{color:var(--green);}
+    .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.8rem;padding:0.4rem 0.9rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .auth-wall{min-height:70vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;text-align:center;padding:2rem;}
+    .auth-wall .aw-icon{font-size:4rem;}
+    .auth-wall h2{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--dark);}
+    .auth-wall p{color:var(--muted);font-size:0.9rem;line-height:1.7;max-width:400px;}
+    .btn-green{display:inline-flex;align-items:center;gap:0.5rem;background:var(--green);color:#fff;padding:0.85rem 1.8rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 16px rgba(0,135,81,0.3);margin-top:0.5rem;}
+    .btn-green:hover{background:var(--green-dark);transform:translateY(-2px);}
+    .loading-screen{min-height:60vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
+    .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .main-wrap{max-width:900px;margin:0 auto;padding:2rem 5%;}
+    .profile-hero{background:var(--dark);border-radius:24px;padding:2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;}
+    .profile-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
+    .avatar-big{width:90px;height:90px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;flex-shrink:0;border:3px solid rgba(255,255,255,0.1);}
+    .profile-info{flex:1;min-width:200px;}
+    .profile-name{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:0.3rem;}
+    .profile-state{font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:0.8rem;}
+    .profile-badge{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.35);color:var(--green-light);font-size:0.72rem;font-weight:600;padding:0.25rem 0.7rem;border-radius:50px;}
+    .profile-stats{display:flex;gap:2rem;margin-top:1.2rem;flex-wrap:wrap;}
+    .pstat{text-align:center;}
+    .pstat-num{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;}
+    .pstat-label{font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.05em;margin-top:0.2rem;}
+    .edit-btn{margin-left:auto;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:0.55rem 1.1rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;transition:background 0.2s;align-self:flex-start;}
+    .edit-btn:hover{background:rgba(255,255,255,0.15);}
+    .edit-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;display:none;}
+    .edit-form.show{display:block;animation:fadeUp 0.3s ease both;}
+    .edit-form h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--dark);margin-bottom:1.2rem;}
+    .edit-field{margin-bottom:1rem;}
+    .edit-field label{font-size:0.8rem;font-weight:600;color:var(--text);display:block;margin-bottom:0.4rem;}
+    .edit-field input,.edit-field select{width:100%;padding:0.7rem 0.9rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--text);outline:none;appearance:none;transition:border-color 0.2s;}
+    .edit-field input:focus,.edit-field select:focus{border-color:var(--green);}
+    .edit-actions{display:flex;gap:0.8rem;margin-top:1.2rem;}
+    .save-btn{background:var(--green);color:#fff;border:none;padding:0.7rem 1.4rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:background 0.2s;}
+    .save-btn:hover{background:var(--green-dark);}
+    .cancel-btn{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:0.7rem 1.2rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;}
+    .profile-tabs{display:flex;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:1.5rem;}
+    .ptab{flex:1;padding:0.65rem;border:none;background:transparent;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--muted);border-radius:10px;cursor:pointer;transition:all 0.2s;}
+    .ptab.active{background:var(--green);color:#fff;box-shadow:0 2px 10px rgba(0,135,81,0.25);}
+    .problems-grid{display:flex;flex-direction:column;gap:1rem;}
+    .mini-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:1.3rem;transition:transform 0.2s;animation:fadeUp 0.4s ease both;}
+    .mini-card:hover{transform:translateY(-2px);}
+    .mini-card-top{display:flex;align-items:flex-start;gap:0.8rem;}
+    .mini-vote{display:flex;flex-direction:column;align-items:center;gap:0.2rem;flex-shrink:0;min-width:52px;background:rgba(0,135,81,0.06);border:1px solid rgba(0,135,81,0.15);border-radius:10px;padding:0.6rem 0.4rem;}
+    .mini-vote-num{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--green);}
+    .mini-vote-label{font-size:0.62rem;color:var(--muted);text-transform:uppercase;}
+    .mini-body{flex:1;min-width:0;}
+    .mini-meta{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.4rem;}
+    .mini-cat{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.2);color:var(--green);font-size:0.68rem;font-weight:600;padding:0.15rem 0.55rem;border-radius:50px;}
+    .mini-time{font-size:0.7rem;color:var(--muted);margin-left:auto;}
+    .mini-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:var(--dark);line-height:1.3;margin-bottom:0.3rem;cursor:pointer;}
+    .mini-title:hover{color:var(--green);}
+    .mini-desc{font-size:0.82rem;color:var(--muted);line-height:1.5;}
+    .mini-footer{display:flex;align-items:center;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;}
+    .mini-tag{font-size:0.72rem;color:var(--muted);background:#f0f7f0;padding:0.2rem 0.6rem;border-radius:50px;}
+    .view-link{font-size:0.78rem;color:var(--green);text-decoration:none;font-weight:600;}
+    .view-link:hover{text-decoration:underline;}
+    .delete-mini{background:none;border:1px solid rgba(229,62,62,0.2);color:#e53e3e;font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-left:auto;}
+    .delete-mini:hover{background:rgba(229,62,62,0.08);}
+    .empty-state{text-align:center;padding:3rem 2rem;background:var(--card);border-radius:16px;border:1px solid var(--border);}
+    .empty-state .ei{font-size:3rem;margin-bottom:1rem;}
+    .empty-state h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--dark);margin-bottom:0.5rem;}
+    .empty-state p{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem;}
+    .voted-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.2rem;display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem;transition:transform 0.2s;cursor:pointer;}
+    .voted-item:hover{transform:translateY(-2px);}
+    .voted-icon{font-size:1.3rem;flex-shrink:0;}
+    .voted-title{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;color:var(--dark);flex:1;}
+    .voted-votes{font-size:0.78rem;color:var(--green);font-weight:600;flex-shrink:0;}
+    .comment-history-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:0.8rem;}
+    .chi-problem{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem;}
+    .chi-problem a{color:var(--green);text-decoration:none;font-weight:600;}
+    .chi-text{font-size:0.88rem;color:var(--text);line-height:1.5;}
+    .chi-footer{display:flex;align-items:center;gap:0.6rem;margin-top:0.6rem;}
+    .chi-time{font-size:0.72rem;color:var(--muted);}
+    .chi-delete{background:none;border:1px solid rgba(229,62,62,0.2);color:#e53e3e;font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:auto;}
+    .chi-delete:hover{background:rgba(229,62,62,0.08);}
+    .achievements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;}
+    .achievement{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem;text-align:center;transition:transform 0.2s;}
+    .achievement:hover{transform:translateY(-3px);}
+    .achievement.unlocked{border-color:var(--gold);background:rgba(245,166,35,0.04);}
+    .achievement.locked{opacity:0.4;filter:grayscale(1);}
+    .ach-icon{font-size:2rem;margin-bottom:0.5rem;}
+    .ach-name{font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:800;color:var(--dark);margin-bottom:0.2rem;}
+    .ach-desc{font-size:0.7rem;color:var(--muted);}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:600px){.profile-hero{flex-direction:column;}.profile-stats{gap:1.5rem;}.edit-btn{margin-left:0;}.nav-links{display:none;}}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Naja<span>Voice</span></a>
+  <ul class="nav-links">
+    <li><a href="feed.html">Problems</a></li>
+    <li><a href="post-problem.html">Post a Problem</a></li>
+    <li id="nav-auth-area"></li>
+  </ul>
+</nav>
+<div class="auth-wall" id="auth-wall" style="display:none;">
+  <div class="aw-icon">👤</div>
+  <h2>Login to View Your Profile</h2>
+  <p>Your profile shows all problems you posted, votes and achievements.</p>
+  <a href="auth.html" class="btn-green">🔐 Login / Create Account</a>
+</div>
+<div class="loading-screen" id="loading-screen">
+  <div class="spinner"></div>
+  <p style="color:var(--muted);font-size:0.9rem;">Loading your profile...</p>
+</div>
+<div id="profile-main" style="display:none;">
+  <div class="main-wrap">
+    <div class="profile-hero">
+      <div class="avatar-big" id="avatar">??</div>
+      <div class="profile-info">
+        <div class="profile-name" id="profile-name">Loading...</div>
+        <div class="profile-state" id="profile-state">📍 Nigeria</div>
+        <div class="profile-badge">🇳🇬 NajaVoice Citizen</div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-num" id="ps-problems">0</div><div class="pstat-label">Problems</div></div>
+          <div class="pstat"><div class="pstat-num" id="ps-votes">0</div><div class="pstat-label">Votes Cast</div></div>
+          <div class="pstat"><div class="pstat-num" id="ps-received">0</div><div class="pstat-label">Votes Received</div></div>
+          <div class="pstat"><div class="pstat-num" id="ps-comments">0</div><div class="pstat-label">Comments</div></div>
+        </div>
+      </div>
+      <button class="edit-btn" onclick="toggleEdit()">✏️ Edit Profile</button>
+    </div>
+    <div class="edit-form" id="edit-form">
+      <h3>✏️ Edit Your Profile</h3>
+      <div class="edit-field"><label>Full Name</label><input type="text" id="edit-name" placeholder="Your full name"/></div>
+      <div class="edit-field"><label>Your State</label>
+        <select id="edit-state">
+          <option value="">-- Select State --</option>
+          <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>FCT – Abuja</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
+        </select>
+      </div>
+      <div class="edit-actions">
+        <button class="save-btn" onclick="saveProfile()">💾 Save Changes</button>
+        <button class="cancel-btn" onclick="toggleEdit()">Cancel</button>
+      </div>
+    </div>
+    <div class="profile-tabs">
+      <button class="ptab active" onclick="switchTab('problems',this)">📋 My Problems</button>
+      <button class="ptab" onclick="switchTab('voted',this)">🗳️ Voted On</button>
+      <button class="ptab" onclick="switchTab('comments',this)">💬 My Comments</button>
+      <button class="ptab" onclick="switchTab('achievements',this)">🏅 Achievements</button>
+    </div>
+    <div id="tab-problems"><div class="problems-grid" id="my-problems-list"><div class="loading-screen" style="min-height:20vh;"><div class="spinner"></div></div></div></div>
+    <div id="tab-voted" style="display:none;"><div id="voted-list"></div></div>
+    <div id="tab-comments" style="display:none;"><div id="comments-history"></div></div>
+    <div id="tab-achievements" style="display:none;"><div class="achievements-grid" id="achievements-grid"></div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+  let currentUser=null,userProfile=null,myProblems=[],myVotes=[],myComments=[];
+  function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+  function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'Just now';if(d<3600)return`${Math.floor(d/60)}m ago`;if(d<86400)return`${Math.floor(d/3600)}h ago`;return`${Math.floor(d/86400)}d ago`;}
+  async function init(){
+    const {data:{user}}=await sb.auth.getUser();
+    if(!user){document.getElementById('loading-screen').style.display='none';document.getElementById('auth-wall').style.display='flex';return;}
+    currentUser=user;
+    document.getElementById('nav-auth-area').innerHTML=`<a href="profile.html" style="font-size:0.85rem;color:var(--green);font-weight:600;text-decoration:none;">👤 My Profile</a><button class="nav-logout" onclick="logout()">Logout</button>`;
+    const {data:profile}=await sb.from('profiles').select('*').eq('id',user.id).single();
+    userProfile=profile;
+    const {data:problems}=await sb.from('problems').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
+    myProblems=problems||[];
+    const {data:votes}=await sb.from('votes').select('problem_id, problems(id,title,votes,category_icon,category)').eq('user_id',user.id);
+    myVotes=votes||[];
+    const {data:comments}=await sb.from('comments').select('*, problems(id,title)').eq('user_id',user.id).order('created_at',{ascending:false});
+    myComments=comments||[];
+    renderProfile();
+    renderMyProblems();
+    renderAchievements();
+    document.getElementById('loading-screen').style.display='none';
+    document.getElementById('profile-main').style.display='block';
+  }
+  function renderProfile(){
+    const name=userProfile?.full_name||currentUser?.email?.split('@')[0]||'Nigerian Citizen';
+    const state=userProfile?.state||'Nigeria';
+    const initials=name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const totalVotesReceived=myProblems.reduce((a,p)=>a+(p.votes||0),0);
+    document.getElementById('avatar').textContent=initials;
+    document.getElementById('profile-name').textContent=name;
+    document.getElementById('profile-state').innerHTML=`📍 ${state}`;
+    document.getElementById('ps-problems').textContent=myProblems.length;
+    document.getElementById('ps-votes').textContent=myVotes.length;
+    document.getElementById('ps-received').textContent=totalVotesReceived.toLocaleString();
+    document.getElementById('ps-comments').textContent=myComments.length;
+    document.getElementById('edit-name').value=userProfile?.full_name||'';
+    document.getElementById('edit-state').value=userProfile?.state||'';
+  }
+  function toggleEdit(){document.getElementById('edit-form').classList.toggle('show');}
+  async function saveProfile(){
+    const name=document.getElementById('edit-name').value.trim();
+    const state=document.getElementById('edit-state').value;
+    if(!name){showToast('⚠️ Please enter your name.');return;}
+    const {error}=await sb.from('profiles').update({full_name:name,state}).eq('id',currentUser.id);
+    if(error){showToast('❌ Failed to save.');return;}
+    userProfile={...userProfile,full_name:name,state};
+    renderProfile();toggleEdit();showToast('✅ Profile updated!');
+  }
+  function renderMyProblems(){
+    const container=document.getElementById('my-problems-list');
+    if(!myProblems.length){container.innerHTML=`<div class="empty-state"><div class="ei">📝</div><h3>No Problems Posted Yet</h3><p>Be the first to raise an issue in your area!</p><a href="post-problem.html" class="btn-green" style="font-size:0.88rem;padding:0.7rem 1.4rem;">✍️ Post Your First Problem</a></div>`;return;}
+    container.innerHTML=myProblems.map((p,i)=>`
+      <div class="mini-card" style="animation-delay:${i*0.05}s" id="pcard-${p.id}">
+        <div class="mini-card-top">
+          <div class="mini-vote"><div class="mini-vote-num">${(p.votes||0).toLocaleString()}</div><div class="mini-vote-label">votes</div></div>
+          <div class="mini-body">
+            <div class="mini-meta">
+              <span class="mini-cat">${p.category_icon||'📋'} ${p.category||'General'}</span>
+              <span class="mini-tag">📍 ${p.state||'Nigeria'}</span>
+              <span class="mini-time">${timeAgo(p.created_at)}</span>
+            </div>
+            <div class="mini-title" onclick="window.location.href='problem.html?id=${p.id}'">${p.title}</div>
+            <div class="mini-desc">${(p.description||'').slice(0,100)}${(p.description||'').length>100?'…':''}</div>
+            <div class="mini-footer">
+              <span class="mini-tag">${p.urgency==='high'?'🔴 Critical':p.urgency==='medium'?'🟠 Medium':'🟡 Low'}</span>
+              <a href="problem.html?id=${p.id}" class="view-link">View →</a>
+              <button class="delete-mini" onclick="deleteProblem('${p.id}')">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+  async function deleteProblem(id){
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;';
+    overlay.innerHTML='<div style="background:#fff;border-radius:20px;padding:2rem;max-width:300px;width:100%;text-align:center;"><div style="font-size:2.5rem;margin-bottom:0.8rem;">🗑️</div><h3 style="font-family:Syne,sans-serif;font-size:1.1rem;font-weight:800;color:#0d1f0f;margin-bottom:0.5rem;">Delete Problem?</h3><p style="font-size:0.85rem;color:#5a7a5e;margin-bottom:1.5rem;line-height:1.5;">This will be permanently removed.</p><div style="display:flex;gap:0.8rem;"><button id="del-cancel" style="flex:1;padding:0.8rem;border:2px solid #d4e8d6;border-radius:10px;background:transparent;font-size:0.9rem;cursor:pointer;color:#5a7a5e;">Cancel</button><button id="del-confirm" style="flex:1;padding:0.8rem;border:none;border-radius:10px;background:#e53e3e;color:#fff;font-family:Syne,sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;">Yes, Delete</button></div></div>';
+    document.body.appendChild(overlay);
+    document.getElementById('del-cancel').onclick=()=>overlay.remove();
+    document.getElementById('del-confirm').onclick=async()=>{
+      overlay.remove();
+      const {error}=await sb.from('problems').delete().eq('id',id);
+      if(error){showToast('❌ Delete failed: '+error.message);return;}
+      myProblems=myProblems.filter(p=>p.id!==id);
+      document.getElementById('ps-problems').textContent=myProblems.length;
+      renderMyProblems();showToast('✅ Problem deleted!');
+    };
+  }
+  function renderVoted(){
+    const container=document.getElementById('voted-list');
+    if(!myVotes.length){container.innerHTML=`<div class="empty-state"><div class="ei">🗳️</div><h3>No Votes Yet</h3><p>Vote on problems that affect you!</p><a href="feed.html" class="btn-green" style="font-size:0.88rem;padding:0.7rem 1.4rem;">🗳️ Go Vote Now</a></div>`;return;}
+    container.innerHTML=myVotes.map((v,i)=>{
+      const p=v.problems;if(!p)return'';
+      return`<div class="voted-item" style="animation-delay:${i*0.05}s" onclick="window.location.href='problem.html?id=${p.id}'">
+        <div class="voted-icon">${p.category_icon||'📋'}</div>
+        <div class="voted-title">${p.title}</div>
+        <div class="voted-votes">▲ ${(p.votes||0).toLocaleString()} votes</div>
+      </div>`;
+    }).join('');
+  }
+  function renderCommentHistory(){
+    const container=document.getElementById('comments-history');
+    if(!myComments.length){container.innerHTML=`<div class="empty-state"><div class="ei">💬</div><h3>No Comments Yet</h3><p>Start commenting on problems that affect you!</p><a href="feed.html" class="btn-green" style="font-size:0.88rem;padding:0.7rem 1.4rem;">📋 Browse Problems</a></div>`;return;}
+    container.innerHTML=myComments.map((c,i)=>`
+      <div class="comment-history-item" style="animation-delay:${i*0.05}s" id="chi-${c.id}">
+        <div class="chi-problem">On: <a href="problem.html?id=${c.problems?.id}">${c.problems?.title||'Unknown problem'}</a></div>
+        <div class="chi-text">${c.content}</div>
+        <div class="chi-footer">
+          <span class="chi-time">${timeAgo(c.created_at)}</span>
+          <button class="chi-delete" onclick="deleteComment('${c.id}')">🗑️ Delete</button>
+        </div>
+      </div>`).join('');
+  }
+  async function deleteComment(id){
+    const el=document.getElementById('chi-'+id);
+    if(el)el.style.opacity='0.4';
+    const {error}=await sb.from('comments').delete().eq('id',id).eq('user_id',currentUser.id);
+    if(error){showToast('❌ Could not delete.');if(el)el.style.opacity='1';return;}
+    myComments=myComments.filter(c=>c.id!==id);
+    document.getElementById('ps-comments').textContent=myComments.length;
+    renderCommentHistory();showToast('✅ Comment deleted!');
+  }
+  function renderAchievements(){
+    const problems=myProblems.length,votes=myVotes.length;
+    const totalVotes=myProblems.reduce((a,p)=>a+(p.votes||0),0);
+    const achievements=[
+      {icon:'✍️',name:'First Voice',desc:'Posted your first problem',unlocked:problems>=1},
+      {icon:'🗳️',name:'Active Voter',desc:'Voted on 5+ problems',unlocked:votes>=5},
+      {icon:'🔥',name:'Problem Raiser',desc:'Posted 5+ problems',unlocked:problems>=5},
+      {icon:'⭐',name:'Community Star',desc:'Got 10+ votes on a problem',unlocked:myProblems.some(p=>(p.votes||0)>=10)},
+      {icon:'🏆',name:'Top Advocate',desc:'Got 50+ total votes',unlocked:totalVotes>=50},
+      {icon:'💯',name:'Voice of Nigeria',desc:'Got 100+ total votes',unlocked:totalVotes>=100},
+      {icon:'🌍',name:'Change Maker',desc:'Posted 10+ problems',unlocked:problems>=10},
+      {icon:'👑',name:'NajaVoice Legend',desc:'Got 500+ total votes',unlocked:totalVotes>=500},
+    ];
+    document.getElementById('achievements-grid').innerHTML=achievements.map(a=>`
+      <div class="achievement ${a.unlocked?'unlocked':'locked'}">
+        <div class="ach-icon">${a.icon}</div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>`).join('');
+  }
+  function switchTab(tab,btn){
+    document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-problems').style.display=tab==='problems'?'block':'none';
+    document.getElementById('tab-voted').style.display=tab==='voted'?'block':'none';
+    document.getElementById('tab-comments').style.display=tab==='comments'?'block':'none';
+    document.getElementById('tab-achievements').style.display=tab==='achievements'?'block':'none';
+    if(tab==='voted')renderVoted();
+    if(tab==='comments')renderCommentHistory();
+  }
+  async function logout(){await sb.auth.signOut();window.location.href='index.html';}
+  init();
+</script>
+</body>
+</html>
