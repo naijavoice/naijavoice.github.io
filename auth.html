@@ -111,9 +111,27 @@
             <button class="pwd-toggle" onclick="togglePwd('login-pwd',this)">👁️</button>
           </div>
         </div>
-        <br/>
+        <div style="text-align:right;margin-bottom:1rem;"><a onclick="switchTab('reset')" style="font-size:0.8rem;color:var(--muted);cursor:pointer;text-decoration:none;">Forgot password?</a></div>
         <button class="submit-btn" id="login-btn" onclick="handleLogin()">Login to NajaVoice →</button>
         <div class="switch-prompt">Don't have an account? <a onclick="switchTab('register')">Create one free</a></div>
+      </div>
+
+      <!-- RESET PASSWORD -->
+      <div class="form-panel" id="panel-reset">
+        <div class="form-title">Reset Password 🔑</div>
+        <div class="form-subtitle">Enter your email and we will send you a reset link.</div>
+        <div class="msg-box msg-error" id="reset-err"></div>
+        <div class="msg-box msg-success" id="reset-ok"></div>
+        <div class="field">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <span class="input-icon">📧</span>
+            <input type="email" id="reset-email" placeholder="you@example.com"/>
+          </div>
+        </div>
+        <br/>
+        <button class="submit-btn" id="reset-btn" onclick="handleReset()">📧 Send Reset Link</button>
+        <div class="switch-prompt"><a onclick="switchTab('login')">← Back to Login</a></div>
       </div>
 
       <!-- REGISTER -->
@@ -198,8 +216,10 @@
   });
 
   function switchTab(tab){
-    document.getElementById('panel-login').classList.toggle('active',tab==='login');
-    document.getElementById('panel-register').classList.toggle('active',tab==='register');
+    ['login','register','reset'].forEach(t=>{
+      const panel=document.getElementById('panel-'+t);
+      if(panel) panel.classList.toggle('active',t===tab);
+    });
     document.getElementById('tab-login').classList.toggle('active',tab==='login');
     document.getElementById('tab-register').classList.toggle('active',tab==='register');
   }
@@ -298,6 +318,21 @@
       showMsg('reg-err','❌ Connection error. Check internet and try again.');
       btn.disabled=false;btn.textContent='🚀 Create My Free Account';
     }
+  }
+
+  // ── PASSWORD RESET ──
+  async function handleReset(){
+    hideMsg('reset-err');hideMsg('reset-ok');
+    const email=document.getElementById('reset-email').value.trim();
+    if(!email||!/\S+@\S+\.\S+/.test(email)){showMsg('reset-err','Please enter a valid email address.');return;}
+    const btn=document.getElementById('reset-btn');
+    btn.disabled=true;btn.textContent='Sending...';
+    try{
+      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/auth.html'});
+      if(error){showMsg('reset-err','❌ '+error.message);btn.disabled=false;btn.textContent='📧 Send Reset Link';return;}
+      showMsg('reset-ok','✅ Reset link sent! Check your email inbox and spam folder.');
+      btn.disabled=false;btn.textContent='📧 Send Reset Link';
+    }catch(e){showMsg('reset-err','❌ Network error. Try again.');btn.disabled=false;btn.textContent='📧 Send Reset Link';}
   }
 
   // ── Redirect if already logged in ──
