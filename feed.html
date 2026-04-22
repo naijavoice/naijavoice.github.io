@@ -103,7 +103,33 @@
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-    @media(max-width:768px){.main-layout{grid-template-columns:1fr;}.sidebar{display:none;}.nav-links{display:none;}}
+    @media(max-width:768px){
+      .main-layout{grid-template-columns:1fr;}
+      .sidebar{display:none;}
+      .nav-links{display:none;}
+      .problem-card{padding:1.2rem;}
+      .vote-btn-main{width:44px;height:44px;font-size:1.2rem;}
+      .vote-number{font-size:0.9rem;}
+      .card-body h3{font-size:0.95rem;}
+      .card-body p{font-size:0.82rem;}
+      .card-meta{gap:0.3rem;}
+      .meta-cat,.urgency-badge{font-size:0.65rem;}
+      .meta-loc,.meta-time{font-size:0.68rem;}
+      .footer-stat{font-size:0.7rem;}
+      .feed-header{padding:2rem 5% 1.5rem;}
+      .feed-header h1{font-size:1.4rem;}
+      .live-counter{padding:0.8rem 1.2rem;}
+      .live-num{font-size:1.5rem;}
+      .filters-inner{gap:0.4rem;}
+      .filter-btn{padding:0.35rem 0.7rem;font-size:0.75rem;}
+      .search-wrap input{width:140px;}
+      .search-wrap input:focus{width:160px;}
+    }
+    @media(max-width:400px){
+      .card-top{gap:0.6rem;}
+      .vote-col{min-width:44px;}
+      .feed-header h1{font-size:1.2rem;}
+    }
   </style>
 </head>
 <body>

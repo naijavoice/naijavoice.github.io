@@ -60,7 +60,19 @@
     .strength-seg{height:4px;flex:1;border-radius:2px;background:var(--border);transition:background 0.3s;}
     .strength-label{font-size:0.72rem;color:var(--muted);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-    @media(max-width:768px){.auth-wrapper{grid-template-columns:1fr;}.auth-left{display:none;}.auth-right{padding:2rem 5%;}}
+    @media(max-width:768px){
+      .auth-wrapper{grid-template-columns:1fr;}
+      .auth-left{display:none;}
+      .auth-right{padding:1.5rem 5%;}
+      .auth-box{padding:0;}
+      .form-title{font-size:1.3rem;}
+      .field-row{grid-template-columns:1fr;}
+      .submit-btn{padding:0.85rem;}
+    }
+    @media(max-width:400px){
+      .auth-right{padding:1rem 4%;}
+      .tab-btn{font-size:0.85rem;padding:0.6rem;}
+    }
   </style>
 </head>
 <body>

@@ -86,7 +86,25 @@
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-    @media(max-width:600px){.share-row{margin-left:0;}.vote-section{gap:1rem;}.nav-links{display:none;}}
+    @media(max-width:600px){
+      .share-row{margin-left:0;}
+      .vote-section{gap:0.8rem;padding:1rem;}
+      .nav-links{display:none;}
+      .vote-big-btn{padding:0.7rem 1.1rem;font-size:0.88rem;}
+      .vote-count-big{font-size:1.4rem;}
+      .problem-hero{padding:1.5rem;}
+      .problem-title{font-size:1.2rem;}
+      .problem-desc{font-size:0.88rem;}
+      .details-grid{grid-template-columns:repeat(2,1fr);}
+      .main-wrap{padding:0 4%;}
+      .comment-form{padding:1rem;}
+      .comment-item{padding:1rem;}
+      .share-platform{padding:0.4rem 0.7rem;font-size:0.75rem;}
+    }
+    @media(max-width:400px){
+      .details-grid{grid-template-columns:1fr 1fr;}
+      .vote-section{flex-direction:column;align-items:flex-start;}
+    }
   </style>
 </head>
 <body>
@@ -209,6 +227,46 @@
     btn.classList.add('voted');btn.disabled=false;btn.innerHTML='✅ You Voted on This';
     document.getElementById('vote-count').textContent=problemData.votes.toLocaleString();
     showToast('✅ Vote cast! Thank you 🇳🇬');
+
+    // ── Check vote milestones ──
+    checkMilestone(problemData.votes);
+  }
+
+  function checkMilestone(votes){
+    const milestones = [10, 25, 50, 100, 250, 500, 1000];
+    if(milestones.includes(votes)){
+      showMilestoneAlert(votes);
+    }
+  }
+
+  function showMilestoneAlert(votes){
+    const messages = {
+      10:   {emoji:'🌱', msg:'10 Nigerians have spoken!', sub:'This problem is gaining attention!'},
+      25:   {emoji:'📣', msg:'25 votes reached!', sub:'People are noticing this problem!'},
+      50:   {emoji:'🔥', msg:'50 votes! This is trending!', sub:'Share it to push it higher!'},
+      100:  {emoji:'💥', msg:'100 votes! Government must see this!', sub:'Keep sharing — this is powerful!'},
+      250:  {emoji:'🚀', msg:'250 votes! NajaVoice Legend!', sub:'This problem cannot be ignored!'},
+      500:  {emoji:'👑', msg:'500 votes! History is being made!', sub:'Nigeria is watching this problem!'},
+      1000: {emoji:'🇳🇬', msg:'1,000 votes! This is historic!', sub:'NajaVoice is changing Nigeria!'},
+    };
+    const m = messages[votes];
+    if(!m) return;
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;animation:fadeIn 0.3s ease;';
+    overlay.innerHTML = `
+      <div style="background:var(--dark);border:2px solid var(--gold);border-radius:24px;padding:2.5rem;max-width:320px;width:100%;text-align:center;">
+        <div style="font-size:4rem;margin-bottom:1rem;">${m.emoji}</div>
+        <div style="background:var(--gold);color:var(--dark);font-family:Syne,sans-serif;font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:0.3rem 1rem;border-radius:50px;display:inline-block;margin-bottom:1rem;">🎉 Milestone Reached!</div>
+        <h3 style="font-family:Syne,sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:0.5rem;">${m.msg}</h3>
+        <p style="font-size:0.88rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:1.5rem;">${m.sub}</p>
+        <div style="display:flex;gap:0.8rem;">
+          <button onclick="shareWhatsApp();this.closest('[style*=fixed]').remove();" style="flex:1;padding:0.75rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:Syne,sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;">📱 Share Now</button>
+          <button onclick="this.closest('[style*=fixed]').remove();" style="flex:1;padding:0.75rem;background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:10px;font-family:DM Sans,sans-serif;font-size:0.85rem;cursor:pointer;">Close</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
   }
   function renderCommentForm(){
     const area=document.getElementById('comment-form-area');
