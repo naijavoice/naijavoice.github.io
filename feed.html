@@ -80,6 +80,10 @@
     .share-btn:hover{border-color:var(--green);color:var(--green);}
     .delete-btn{background:transparent;border:1px solid rgba(229,62,62,0.3);color:#e53e3e;font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.35rem 0.8rem;border-radius:50px;cursor:pointer;transition:all 0.2s;}
     .delete-btn:hover{background:rgba(229,62,62,0.08);}
+    .status-pill{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.68rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;}
+    .status-pending{background:rgba(245,166,35,0.12);color:#975a16;border:1px solid rgba(245,166,35,0.3);}
+    .status-inprogress{background:rgba(49,130,206,0.12);color:#2c5282;border:1px solid rgba(49,130,206,0.3);}
+    .status-resolved{background:rgba(0,135,81,0.12);color:#005c37;border:1px solid rgba(0,135,81,0.3);}
     .sidebar{display:flex;flex-direction:column;gap:1.2rem;}
     .side-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;}
     .side-title{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;color:var(--dark);margin-bottom:1rem;}
@@ -214,6 +218,12 @@ function getFiltered(){
   if(searchTerm)list=list.filter(p=>p.title?.toLowerCase().includes(searchTerm)||p.description?.toLowerCase().includes(searchTerm)||p.state?.toLowerCase().includes(searchTerm));
   return list;
 }
+function statusPill(status){
+  if(status==='resolved') return '<span class="status-pill status-resolved">✅ Resolved</span>';
+  if(status==='inprogress') return '<span class="status-pill status-inprogress">🔄 In Progress</span>';
+  return '<span class="status-pill status-pending">⏳ Pending</span>';
+}
+
 function renderFeed(){
   const list=getFiltered();
   const container=document.getElementById('feed-list');
@@ -235,6 +245,7 @@ function renderFeed(){
             <span class="meta-cat">${p.category_icon||'📋'} ${p.category}</span>
             <span class="meta-loc">📍 ${p.state} · ${p.lga}</span>
             <span class="urgency-badge ${urgencyClass(p.urgency)}">${urgencyLabel(p.urgency)}</span>
+            ${statusPill(p.status)}
             <span class="meta-time">${timeAgo(p.created_at)}</span>
           </div>
           <h3 onclick="window.location.href='problem.html?id=${p.id}'">${p.title}</h3>
