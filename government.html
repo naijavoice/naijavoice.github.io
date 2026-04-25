@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NajaVoice – Government Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--red:#e53e3e;--blue:#3182ce;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:#f0f4f0;color:var(--text);}
+    .login-wall{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:2rem;background-image:radial-gradient(circle at 20% 50%,rgba(0,135,81,0.15) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(245,166,35,0.1) 0%,transparent 50%);}
+    .login-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:3rem;width:100%;max-width:420px;text-align:center;backdrop-filter:blur(10px);}
+    .login-icon{font-size:3.5rem;margin-bottom:1rem;}
+    .login-box h1{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:0.5rem;}
+    .login-box p{color:rgba(255,255,255,0.5);font-size:0.88rem;line-height:1.6;margin-bottom:2rem;}
+    .login-field{margin-bottom:1rem;text-align:left;}
+    .login-field label{font-size:0.8rem;color:rgba(255,255,255,0.6);display:block;margin-bottom:0.4rem;}
+    .login-field input{width:100%;padding:0.8rem 1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;transition:border-color 0.2s;}
+    .login-field input:focus{border-color:var(--green);}
+    .login-field input::placeholder{color:rgba(255,255,255,0.3);}
+    .login-btn{width:100%;padding:0.9rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;margin-top:0.5rem;box-shadow:0 4px 20px rgba(0,135,81,0.35);}
+    .login-btn:hover{background:var(--green-dark);}
+    .login-error{background:rgba(229,62,62,0.15);border:1px solid rgba(229,62,62,0.3);color:#fc8181;padding:0.7rem 1rem;border-radius:8px;font-size:0.83rem;margin-top:1rem;display:none;}
+    .login-error.show{display:block;}
+    .login-hint{margin-top:1.5rem;font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.5;}
+    .dashboard{display:none;}
+    .dash-nav{background:var(--dark);padding:1rem 2%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .dash-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:#fff;text-decoration:none;}
+    .dash-logo span{color:var(--gold);}
+    .dash-logo small{font-size:0.65rem;background:var(--green);color:#fff;padding:0.2rem 0.5rem;border-radius:4px;margin-left:0.5rem;font-family:'DM Sans',sans-serif;font-weight:600;vertical-align:middle;}
+    .nav-right{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .last-updated{font-size:0.75rem;color:rgba(255,255,255,0.4);}
+    .refresh-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:0.4rem 0.9rem;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;}
+    .logout-btn{background:transparent;border:1px solid rgba(229,62,62,0.4);color:#fc8181;padding:0.4rem 0.9rem;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;}
+    .dash-main{max-width:1200px;margin:0 auto;padding:2rem 2%;}
+    .dash-header{margin-bottom:2rem;}
+    .dash-header h2{font-family:'Syne',sans-serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:800;color:var(--dark);margin-bottom:0.3rem;}
+    .dash-header p{font-size:0.88rem;color:var(--muted);}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;}
+    .stat-card.green::before{background:var(--green);}
+    .stat-card.gold::before{background:var(--gold);}
+    .stat-card.blue::before{background:var(--blue);}
+    .stat-card.red::before{background:var(--red);}
+    .stat-card.purple::before{background:#805ad5;}
+    .stat-icon{font-size:1.8rem;margin-bottom:0.6rem;}
+    .stat-value{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--dark);line-height:1;}
+    .stat-label{font-size:0.78rem;color:var(--muted);margin-top:0.3rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;}
+    .section-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--dark);margin-bottom:1rem;}
+    .bar-item{margin-bottom:0.9rem;}
+    .bar-label{display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.3rem;}
+    .bar-name{color:var(--text);font-weight:500;}
+    .bar-val{color:var(--muted);}
+    .bar-track{height:8px;background:#e8f5e9;border-radius:4px;overflow:hidden;}
+    .bar-fill{height:100%;border-radius:4px;background:var(--green);transition:width 1s ease;}
+    .bar-fill.gold{background:var(--gold);}
+    .table-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.5rem;}
+    .table-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+    .table-filters{display:flex;gap:0.5rem;flex-wrap:wrap;}
+    .tf-btn{padding:0.35rem 0.8rem;border-radius:50px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+    .tf-btn.active{background:var(--green);color:#fff;border-color:var(--green);}
+    .export-btn{background:var(--green);color:#fff;border:none;padding:0.5rem 1rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:0.4rem;}
+    table{width:100%;border-collapse:collapse;}
+    th{padding:0.8rem 1rem;text-align:left;font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;background:#f8fdf8;border-bottom:1px solid var(--border);}
+    td{padding:0.9rem 1rem;font-size:0.83rem;color:var(--text);border-bottom:1px solid #f0f7f0;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#f8fdf8;}
+    .rank-badge{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:800;}
+    .rank-1{background:rgba(245,166,35,0.15);color:#b7791f;}
+    .rank-2{background:rgba(160,160,160,0.15);color:#666;}
+    .rank-3{background:rgba(180,100,50,0.15);color:#925a2b;}
+    .rank-other{background:#f0f4f0;color:var(--muted);}
+    .votes-pill{background:rgba(0,135,81,0.1);color:var(--green-dark);padding:0.2rem 0.7rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;display:inline-block;}
+    .urgency-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+    .u-high{background:var(--red);}
+    .u-medium{background:var(--gold);}
+    .u-low{background:var(--green);}
+    .status-pill{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:50px;}
+    .status-pending{background:rgba(245,166,35,0.12);color:#975a16;}
+    .status-inprogress{background:rgba(49,130,206,0.12);color:#2c5282;}
+    .status-resolved{background:rgba(0,135,81,0.12);color:var(--green-dark);}
+    .action-wrap{display:flex;gap:0.4rem;flex-wrap:wrap;}
+    .action-btn{padding:0.28rem 0.6rem;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-progress{background:rgba(49,130,206,0.1);color:#2c5282;}
+    .btn-progress:hover{background:var(--blue);color:#fff;}
+    .btn-resolve{background:rgba(0,135,81,0.1);color:var(--green-dark);}
+    .btn-resolve:hover{background:var(--green);color:#fff;}
+    .btn-pending{background:rgba(245,166,35,0.1);color:#975a16;}
+    .btn-pending:hover{background:var(--gold);color:var(--dark);}
+    .problem-title-cell{max-width:200px;}
+    .problem-title-text{font-weight:600;color:var(--dark);font-size:0.83rem;line-height:1.3;cursor:pointer;}
+    .problem-title-text:hover{color:var(--green);}
+    .problem-desc-text{font-size:0.73rem;color:var(--muted);margin-top:0.2rem;line-height:1.4;}
+    .response-form{background:#f8fdf8;border:1px solid var(--border);border-radius:10px;padding:1rem;margin-top:0.6rem;display:none;}
+    .response-form.show{display:block;}
+    .response-form textarea{width:100%;padding:0.6rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;resize:vertical;min-height:70px;outline:none;}
+    .response-form textarea:focus{border-color:var(--green);}
+    .response-form-actions{display:flex;gap:0.5rem;margin-top:0.5rem;}
+    .response-submit{background:var(--green);color:#fff;border:none;padding:0.45rem 1rem;border-radius:8px;font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;}
+    .response-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.45rem 0.8rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;}
+    .gov-response{background:rgba(0,135,81,0.06);border-left:3px solid var(--green);padding:0.6rem 0.8rem;border-radius:0 8px 8px 0;margin-top:0.5rem;font-size:0.78rem;color:var(--text);line-height:1.5;}
+    .gov-response strong{color:var(--green-dark);font-size:0.72rem;}
+    .loading{text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @media(max-width:768px){.two-col{grid-template-columns:1fr;}.stats-grid{grid-template-columns:repeat(2,1fr);}.dash-main{padding:1rem;}.table-header{flex-direction:column;align-items:flex-start;}th:nth-child(4),td:nth-child(4),th:nth-child(5),td:nth-child(5){display:none;}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN WALL -->
+<div class="login-wall" id="login-wall">
+  <div class="login-box">
+    <div class="login-icon">🏛️</div>
+    <h1>Government Dashboard</h1>
+    <p>Restricted to authorised government officials and administrators only.</p>
+    <div class="login-field">
+      <label>Official Email</label>
+      <input type="email" id="gov-email" placeholder="official@government.gov.ng"/>
+    </div>
+    <div class="login-field">
+      <label>Access Code</label>
+      <input type="password" id="gov-code" placeholder="Enter access code" onkeypress="if(event.key==='Enter')govLogin()"/>
+    </div>
+    <button class="login-btn" onclick="govLogin()">🔐 Access Dashboard</button>
+    <div class="login-error" id="login-error">❌ Invalid credentials. Please try again.</div>
+    <div class="login-hint">For access: admin@najavoice.ng<br/>🔒 All access is logged and monitored</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <nav class="dash-nav">
+    <a href="index.html" class="dash-logo">Naja<span>Voice</span><small>GOV</small></a>
+    <div class="nav-right">
+      <span class="last-updated" id="last-updated">Loading...</span>
+      <button class="refresh-btn" onclick="loadDashboard()">🔄 Refresh</button>
+      <button class="logout-btn" onclick="govLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dash-main">
+    <div class="dash-header">
+      <h2>📊 Nigeria Problems Intelligence Dashboard</h2>
+      <p>Real-time overview of community problems — ranked by public votes.</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card green"><div class="stat-icon">📋</div><div class="stat-value" id="s-total">—</div><div class="stat-label">Total Problems</div></div>
+      <div class="stat-card gold"><div class="stat-icon">🗳️</div><div class="stat-value" id="s-votes">—</div><div class="stat-label">Total Votes</div></div>
+      <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-value" id="s-users">—</div><div class="stat-label">Citizens</div></div>
+      <div class="stat-card red"><div class="stat-icon">🔴</div><div class="stat-value" id="s-critical">—</div><div class="stat-label">Critical</div></div>
+      <div class="stat-card purple"><div class="stat-icon">🔄</div><div class="stat-value" id="s-inprogress">—</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value" id="s-resolved">—</div><div class="stat-label">Resolved</div></div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="two-col">
+      <div class="chart-card"><div class="section-title">📍 Problems by State</div><div id="state-chart"><div class="loading">Loading...</div></div></div>
+      <div class="chart-card"><div class="section-title">🏷️ Problems by Category</div><div id="cat-chart"><div class="loading">Loading...</div></div></div>
+    </div>
+
+    <!-- PROBLEMS TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="section-title" style="margin:0;">🔥 All Problems — Ranked by Votes</div>
+        <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+          <div class="table-filters">
+            <button class="tf-btn active" onclick="filterTable('all',this)">All</button>
+            <button class="tf-btn" onclick="filterTable('high',this)">🔴 Critical</button>
+            <button class="tf-btn" onclick="filterTable('pending',this)">⏳ Pending</button>
+            <button class="tf-btn" onclick="filterTable('inprogress',this)">🔄 In Progress</button>
+            <button class="tf-btn" onclick="filterTable('resolved',this)">✅ Resolved</button>
+          </div>
+          <button class="export-btn" onclick="exportCSV()">📥 Export CSV</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Problem</th>
+              <th>Location</th>
+              <th>Category</th>
+              <th>Urgency</th>
+              <th>Votes</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="problems-tbody"><tr><td colspan="8" class="loading">Loading problems...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+  const GOV_ACCESS_CODE = 'NAJAVOICE2025GOV';
+  let allProblems = [];
+  let tableFilter = 'all';
+  let govResponses = JSON.parse(localStorage.getItem('gov_responses')||'{}');
+
+  function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+  function govLogin(){
+    const email=document.getElementById('gov-email').value.trim();
+    const code=document.getElementById('gov-code').value.trim();
+    const errEl=document.getElementById('login-error');
+    if(!email||!code){errEl.textContent='❌ Please enter both email and access code.';errEl.classList.add('show');return;}
+    if(code!==GOV_ACCESS_CODE){errEl.textContent='❌ Invalid access code.';errEl.classList.add('show');return;}
+    localStorage.setItem('gov_session',JSON.stringify({email,time:Date.now()}));
+    document.getElementById('login-wall').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    loadDashboard();
+  }
+
+  function govLogout(){
+    localStorage.removeItem('gov_session');
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('login-wall').style.display='flex';
+    document.getElementById('gov-code').value='';
+  }
+
+  const govSession=JSON.parse(localStorage.getItem('gov_session')||'null');
+  if(govSession&&(Date.now()-govSession.time)<8*60*60*1000){
+    document.getElementById('login-wall').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    loadDashboard();
+  }
+
+  async function loadDashboard(){
+    document.getElementById('last-updated').textContent='Updating...';
+    const [{data:problems},{count:userCount}]=await Promise.all([
+      sb.from('problems').select('*').order('votes',{ascending:false}),
+      sb.from('profiles').select('*',{count:'exact',head:true})
+    ]);
+    allProblems=problems||[];
+    const totalVotes=allProblems.reduce((a,p)=>a+(p.votes||0),0);
+    const critical=allProblems.filter(p=>p.urgency==='high').length;
+    const inprogress=allProblems.filter(p=>p.status==='inprogress').length;
+    const resolved=allProblems.filter(p=>p.status==='resolved').length;
+    document.getElementById('s-total').textContent=allProblems.length;
+    document.getElementById('s-votes').textContent=totalVotes.toLocaleString();
+    document.getElementById('s-users').textContent=userCount||0;
+    document.getElementById('s-critical').textContent=critical;
+    document.getElementById('s-inprogress').textContent=inprogress;
+    document.getElementById('s-resolved').textContent=resolved;
+    document.getElementById('last-updated').textContent='Updated: '+new Date().toLocaleTimeString();
+    renderStateChart();renderCatChart();renderTable();
+  }
+
+  function renderStateChart(){
+    const counts={};
+    allProblems.forEach(p=>{if(p.state)counts[p.state]=(counts[p.state]||0)+1;});
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const max=sorted[0]?.[1]||1;
+    document.getElementById('state-chart').innerHTML=sorted.map(([state,count])=>`
+      <div class="bar-item">
+        <div class="bar-label"><span class="bar-name">📍 ${state}</span><span class="bar-val">${count} problem${count>1?'s':''}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/max*100)}%"></div></div>
+      </div>`).join('')||'<div style="color:var(--muted);font-size:0.85rem;">No data yet.</div>';
+  }
+
+  function renderCatChart(){
+    const counts={};const icons={};
+    allProblems.forEach(p=>{if(p.category){counts[p.category]=(counts[p.category]||0)+1;icons[p.category]=p.category_icon||'📋';}});
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const max=sorted[0]?.[1]||1;
+    document.getElementById('cat-chart').innerHTML=sorted.map(([cat,count])=>`
+      <div class="bar-item">
+        <div class="bar-label"><span class="bar-name">${icons[cat]} ${cat}</span><span class="bar-val">${count}</span></div>
+        <div class="bar-track"><div class="bar-fill gold" style="width:${Math.round(count/max*100)}%"></div></div>
+      </div>`).join('')||'<div style="color:var(--muted);font-size:0.85rem;">No data yet.</div>';
+  }
+
+  function statusPill(status){
+    if(status==='resolved')return'<span class="status-pill status-resolved">✅ Resolved</span>';
+    if(status==='inprogress')return'<span class="status-pill status-inprogress">🔄 In Progress</span>';
+    return'<span class="status-pill status-pending">⏳ Pending</span>';
+  }
+
+  function filterTable(filter,btn){
+    tableFilter=filter;
+    document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  function renderTable(){
+    let list=[...allProblems];
+    if(tableFilter==='high')list=list.filter(p=>p.urgency==='high');
+    if(tableFilter==='pending')list=list.filter(p=>!p.status||p.status==='pending');
+    if(tableFilter==='inprogress')list=list.filter(p=>p.status==='inprogress');
+    if(tableFilter==='resolved')list=list.filter(p=>p.status==='resolved');
+    if(!list.length){document.getElementById('problems-tbody').innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">No problems found.</td></tr>';return;}
+    document.getElementById('problems-tbody').innerHTML=list.map((p,i)=>{
+      const rank=i+1;
+      const rankClass=rank===1?'rank-1':rank===2?'rank-2':rank===3?'rank-3':'rank-other';
+      const urgencyDot=`<span class="urgency-dot u-${p.urgency||'low'}"></span>`;
+      const urgencyLabel=p.urgency==='high'?'Critical':p.urgency==='medium'?'Medium':'Low';
+      const govResp=govResponses[p.id];
+      return`<tr>
+        <td><span class="rank-badge ${rankClass}">${rank}</span></td>
+        <td class="problem-title-cell">
+          <div class="problem-title-text" onclick="window.open('problem.html?id=${p.id}','_blank')">${p.title}</div>
+          <div class="problem-desc-text">${(p.description||'').slice(0,60)}...</div>
+          ${govResp?`<div class="gov-response"><strong>🏛️ Gov Response:</strong> ${govResp}</div>`:''}
+          <div class="response-form" id="rf-${p.id}">
+            <textarea id="rt-${p.id}" placeholder="Type official government response..." rows="2"></textarea>
+            <div class="response-form-actions">
+              <button class="response-submit" onclick="saveResponse('${p.id}')">💾 Save Response</button>
+              <button class="response-cancel" onclick="toggleResponse('${p.id}')">Cancel</button>
+            </div>
+          </div>
+        </td>
+        <td>${p.state||'—'}<br/><span style="font-size:0.73rem;color:var(--muted);">${p.lga||''}</span></td>
+        <td>${p.category_icon||''} ${p.category||'—'}</td>
+        <td>${urgencyDot}${urgencyLabel}</td>
+        <td><span class="votes-pill">▲ ${(p.votes||0).toLocaleString()}</span></td>
+        <td>${statusPill(p.status)}</td>
+        <td>
+          <div class="action-wrap">
+            <button class="action-btn btn-progress" onclick="updateStatus('${p.id}','inprogress')">🔄</button>
+            <button class="action-btn btn-resolve" onclick="updateStatus('${p.id}','resolved')">✅</button>
+            <button class="action-btn btn-pending" onclick="toggleResponse('${p.id}')">💬</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function updateStatus(id,status){
+    const {error}=await sb.from('problems').update({status,updated_at:new Date().toISOString()}).eq('id',id);
+    if(error){showToast('❌ Failed to update status.');return;}
+    const p=allProblems.find(x=>x.id===id);
+    if(p)p.status=status;
+    const labels={inprogress:'🔄 Marked as In Progress',resolved:'✅ Marked as Resolved',pending:'⏳ Reset to Pending'};
+    showToast(labels[status]||'✅ Updated!');
+    renderTable();
+    // Update stats
+    document.getElementById('s-inprogress').textContent=allProblems.filter(p=>p.status==='inprogress').length;
+    document.getElementById('s-resolved').textContent=allProblems.filter(p=>p.status==='resolved').length;
+  }
+
+  function toggleResponse(id){
+    const form=document.getElementById('rf-'+id);
+    if(form)form.classList.toggle('show');
+  }
+
+  function saveResponse(id){
+    const text=document.getElementById('rt-'+id)?.value?.trim();
+    if(!text){showToast('⚠️ Please type a response.');return;}
+    govResponses[id]=text;
+    localStorage.setItem('gov_responses',JSON.stringify(govResponses));
+    toggleResponse(id);
+    renderTable();
+    showToast('✅ Government response saved!');
+  }
+
+  function exportCSV(){
+    const headers=['Rank','Title','State','LGA','Category','Urgency','Votes','Status','Date'];
+    const rows=allProblems.map((p,i)=>[
+      i+1,`"${(p.title||'').replace(/"/g,'')}"`,
+      p.state||'',p.lga||'',p.category||'',
+      p.urgency||'',p.votes||0,p.status||'pending',
+      p.created_at?new Date(p.created_at).toLocaleDateString():''
+    ]);
+    const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='najavoice-problems-'+new Date().toISOString().slice(0,10)+'.csv';
+    a.click();URL.revokeObjectURL(url);
+    showToast('📥 CSV exported!');
+  }
+</script>
+</body>
+</html>

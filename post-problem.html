@@ -95,6 +95,21 @@
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .upload-zone{border:2px dashed var(--border);border-radius:14px;padding:2rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;background:#fafef8;}
+    .upload-zone:hover{border-color:var(--green);background:rgba(0,135,81,0.03);}
+    .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .upload-icon{font-size:2.5rem;margin-bottom:0.6rem;}
+    .upload-zone h4{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--dark);margin-bottom:0.3rem;}
+    .upload-zone p{font-size:0.8rem;color:var(--muted);}
+    .upload-previews{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:1rem;}
+    .preview-wrap{position:relative;width:80px;height:80px;}
+    .preview-thumb{width:80px;height:80px;border-radius:10px;object-fit:cover;border:2px solid var(--border);}
+    .remove-img{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--error);color:#fff;border:none;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1;}
+    .upload-progress{margin-top:0.8rem;display:none;}
+    .upload-progress.show{display:block;}
+    .up-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+    .up-fill{height:100%;background:var(--green);border-radius:3px;transition:width 0.3s;width:0%;}
+    .up-label{font-size:0.75rem;color:var(--muted);margin-top:0.3rem;}
     @media(max-width:600px){
       .two-col{grid-template-columns:1fr;}
       .urgency-grid{grid-template-columns:1fr;}
@@ -243,6 +258,20 @@
             </select>
           </div>
         </div>
+        <div class="field" style="margin-top:1rem;">
+          <label>📸 Add Photos <span style="color:var(--muted);font-weight:400;">(Optional — max 3 photos)</span></label>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" accept="image/*" multiple onchange="handleImageSelect(this)"/>
+            <div class="upload-icon">📷</div>
+            <h4>Tap to add photos</h4>
+            <p>Show the problem visually · JPG or PNG · Max 5MB each</p>
+          </div>
+          <div class="upload-previews" id="upload-previews"></div>
+          <div class="upload-progress" id="upload-progress">
+            <div class="up-track"><div class="up-fill" id="up-fill"></div></div>
+            <div class="up-label" id="up-label">Uploading photos...</div>
+          </div>
+        </div>
       </div>
       <div class="btn-row"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="goStep(4)">Preview My Post →</button></div>
     </div>
@@ -289,6 +318,65 @@
   function countChars(inputId,countId,max){const v=document.getElementById(inputId).value.length;const el=document.getElementById(countId);el.textContent=`${v} / ${max}`;el.style.color=v>=max?'var(--error)':'' ;}
   function selectCat(el,name,icon){document.querySelectorAll('.cat-option').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedCat=name;selectedCatIcon=icon;}
   function selectUrgency(level){['low','medium','high'].forEach(l=>{document.getElementById('urg-'+l).className='urgency-opt';});document.getElementById('urg-'+level).classList.add('selected-'+level);selectedUrgency=level;}
+  let selectedImages = [];
+
+  function handleImageSelect(input){
+    const files = Array.from(input.files).slice(0,3);
+    selectedImages = files;
+    const previews = document.getElementById('upload-previews');
+    previews.innerHTML = '';
+    files.forEach((file,i)=>{
+      const reader = new FileReader();
+      reader.onload = e => {
+        const wrap = document.createElement('div');
+        wrap.className = 'preview-wrap';
+        wrap.innerHTML = `<img src="${e.target.result}" class="preview-thumb"/><button class="remove-img" onclick="removeImage(${i})">✕</button>`;
+        previews.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function removeImage(index){
+    selectedImages.splice(index,1);
+    const previews = document.getElementById('upload-previews');
+    previews.innerHTML = '';
+    selectedImages.forEach((file,i)=>{
+      const reader = new FileReader();
+      reader.onload = e => {
+        const wrap = document.createElement('div');
+        wrap.className = 'preview-wrap';
+        wrap.innerHTML = `<img src="${e.target.result}" class="preview-thumb"/><button class="remove-img" onclick="removeImage(${i})">✕</button>`;
+        previews.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadImages(problemId){
+    if(!selectedImages.length) return [];
+    const urls = [];
+    const progressEl = document.getElementById('upload-progress');
+    const fillEl = document.getElementById('up-fill');
+    const labelEl = document.getElementById('up-label');
+    progressEl.classList.add('show');
+    for(let i=0;i<selectedImages.length;i++){
+      const file = selectedImages[i];
+      const ext = file.name.split('.').pop();
+      const path = `${currentUser.id}/${problemId}-${i}.${ext}`;
+      labelEl.textContent = `Uploading photo ${i+1} of ${selectedImages.length}...`;
+      fillEl.style.width = `${Math.round(((i+0.5)/selectedImages.length)*100)}%`;
+      const {data,error} = await sb.storage.from('problem-images').upload(path,file,{upsert:true});
+      if(!error){
+        const {data:urlData} = sb.storage.from('problem-images').getPublicUrl(path);
+        urls.push(urlData.publicUrl);
+      }
+      fillEl.style.width = `${Math.round(((i+1)/selectedImages.length)*100)}%`;
+    }
+    labelEl.textContent = '✅ Photos uploaded!';
+    return urls;
+  }
+
   function validateStep(step){
     if(step===1){
       if(!document.getElementById('p-title').value.trim()){showToast('⚠️ Please enter a problem title.');return false;}
@@ -339,10 +427,19 @@
       urgency:selectedUrgency,
       duration:document.getElementById('p-duration').value,
       govt_reported:document.getElementById('p-govt').value,
-      votes:0
+      votes:0,
+      image_urls:[],
+      status:'pending'
     };
-    const {error}=await sb.from('problems').insert([problem]);
+    const {data:inserted,error}=await sb.from('problems').insert([problem]).select();
     if(error){showToast('❌ Error posting. Please try again.');btn.disabled=false;btn.textContent='🚀 Submit Problem Now';return;}
+    if(selectedImages.length>0&&inserted?.[0]?.id){
+      btn.textContent='📸 Uploading photos...';
+      const imageUrls = await uploadImages(inserted[0].id);
+      if(imageUrls.length>0){
+        await sb.from('problems').update({image_urls:imageUrls}).eq('id',inserted[0].id);
+      }
+    }
     document.getElementById('step4').classList.remove('active');
     document.getElementById('success-screen').classList.add('show');
     window.scrollTo({top:0,behavior:'smooth'});

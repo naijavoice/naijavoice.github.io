@@ -142,6 +142,7 @@
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="search.html">🔍 Search</a></li>
+    <li><a href="government.html">🏛️ Gov</a></li>
     <li><a href="feed.html" style="color:var(--green);font-weight:600;">Problems</a></li>
     <li id="nav-auth-area"><a href="auth.html" class="nav-cta">+ Post a Problem</a></li>
   </ul>
@@ -308,7 +309,24 @@ function renderSidebar(){
   const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);const max=top[0]?.[1]||1;
   document.getElementById('state-list').innerHTML=top.map(([state,count],i)=>`<div class="state-row"><div class="state-rank">${i+1}</div><div class="state-bar-wrap"><div class="state-name">${state}</div><div class="state-track"><div class="state-fill" style="width:${Math.round(count/max*100)}%"></div></div></div><div class="state-count">${count}</div></div>`).join('')||'<div style="font-size:0.8rem;color:var(--muted);">No data yet.</div>';
 }
-function shareProblem(id,title){const text=`🇳🇬 "${title}" — Vote on NajaVoice! ${window.location.origin}/problem.html?id=${id}`;if(navigator.share)navigator.share({title:'NajaVoice',text,url:window.location.href});else navigator.clipboard.writeText(text).then(()=>showToast('🔗 Link copied!'));}
+function shareProblem(id,title){
+  const url = window.location.origin+'/problem.html?id='+id;
+  const problem = allProblems.find(p=>p.id==id);
+  const votes = problem?.votes||0;
+  const text = `🇳🇬 "${title}"
+
+${votes} Nigerians have voted on this problem!
+
+Vote now on NajaVoice 👇
+${url}
+
+#NajaVoice #Nigeria #GrassRoots`;
+  if(navigator.share){
+    navigator.share({title:'NajaVoice — '+title, text, url});
+  } else {
+    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied! Share it everywhere!'));
+  }
+}
 async function logout(){await sb.auth.signOut();window.location.reload();}
 init();
 </script>
