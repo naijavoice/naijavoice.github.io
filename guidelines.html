@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NaijaVoice – Community Guidelines</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#008751"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--error:#e53e3e;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+    .logo-wrap{display:flex;align-items:center;gap:0.5rem;text-decoration:none;}
+    .logo-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+    .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--green);}
+    .logo-text span{color:var(--gold);}
+    .back-btn{display:inline-flex;align-items:center;gap:0.5rem;color:var(--muted);font-size:0.88rem;text-decoration:none;background:var(--card);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:50px;transition:all 0.2s;}
+    .back-btn:hover{color:var(--green);border-color:var(--green);}
+    .hero{background:var(--dark);padding:3rem 5%;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
+    .hero-inner{max-width:800px;margin:0 auto;}
+    .hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.4);color:var(--green-light);font-size:0.73rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.35rem 0.9rem;border-radius:50px;margin-bottom:0.8rem;}
+    .hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:#fff;margin-bottom:0.8rem;}
+    .hero p{color:rgba(255,255,255,0.6);font-size:0.95rem;line-height:1.7;max-width:580px;}
+    .content{max-width:800px;margin:2.5rem auto;padding:0 5%;}
+    .section-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem;margin-bottom:1.5rem;}
+    .section-card h2{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--dark);margin-bottom:1rem;display:flex;align-items:center;gap:0.6rem;}
+    .section-card p{font-size:0.9rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
+    .rule-list{list-style:none;display:flex;flex-direction:column;gap:0.7rem;}
+    .rule-item{display:flex;align-items:flex-start;gap:0.8rem;padding:0.8rem 1rem;border-radius:10px;font-size:0.88rem;line-height:1.5;}
+    .rule-item.allowed{background:rgba(0,135,81,0.06);border:1px solid rgba(0,135,81,0.15);}
+    .rule-item.not-allowed{background:rgba(229,62,62,0.05);border:1px solid rgba(229,62,62,0.15);}
+    .rule-icon{font-size:1rem;flex-shrink:0;margin-top:0.1rem;}
+    .rule-text{color:var(--text);}
+    .rule-text strong{color:var(--dark);display:block;margin-bottom:0.2rem;font-weight:600;}
+    .warning-box{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.3);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;gap:0.8rem;}
+    .warning-box .wi{font-size:1.5rem;flex-shrink:0;}
+    .warning-box p{font-size:0.88rem;color:var(--text);line-height:1.6;}
+    .agree-section{background:var(--green);border-radius:18px;padding:2rem;text-align:center;margin-bottom:2rem;}
+    .agree-section h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:0.5rem;}
+    .agree-section p{font-size:0.88rem;color:rgba(255,255,255,0.75);margin-bottom:1.5rem;line-height:1.5;}
+    .agree-btn{display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:var(--green);padding:0.85rem 2rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;text-decoration:none;transition:transform 0.2s;}
+    .agree-btn:hover{transform:translateY(-2px);}
+    footer{border-top:1px solid var(--border);padding:2rem 5%;text-align:center;max-width:800px;margin:0 auto;}
+    footer p{font-size:0.8rem;color:var(--muted);}
+    footer a{color:var(--green);text-decoration:none;}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo-wrap">
+    <div class="logo-icon">🗳️</div>
+    <div class="logo-text">Naija<span>Voice</span></div>
+  </a>
+  <a href="index.html" class="back-btn">⬅️ Back to Home</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">📋 Platform Rules</div>
+    <h1>Community Guidelines</h1>
+    <p>NaijaVoice is a civic public-opinion and problem-reporting platform. These guidelines ensure we remain a safe, honest and responsible space for all Nigerians.</p>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="warning-box">
+    <div class="wi">⚠️</div>
+    <p><strong>Important:</strong> NaijaVoice is focused on community problems and locations — not targeting or attacking individuals. All posts must relate to civic, infrastructure or community issues affecting the public.</p>
+  </div>
+
+  <!-- WHAT YOU CAN DO -->
+  <div class="section-card">
+    <h2>✅ What You Can Post</h2>
+    <p>NaijaVoice welcomes civic reports that help communities and hold institutions accountable.</p>
+    <ul class="rule-list">
+      <li class="rule-item allowed"><span class="rule-icon">✅</span><div class="rule-text"><strong>Infrastructure problems</strong>Bad roads, broken bridges, power outages, water supply failures</div></li>
+      <li class="rule-item allowed"><span class="rule-icon">✅</span><div class="rule-text"><strong>Public service failures</strong>Hospitals without equipment, schools without teachers, refuse not collected</div></li>
+      <li class="rule-item allowed"><span class="rule-icon">✅</span><div class="rule-text"><strong>Environmental issues</strong>Flooding, erosion, pollution affecting communities</div></li>
+      <li class="rule-item allowed"><span class="rule-icon">✅</span><div class="rule-text"><strong>Community concerns</strong>Security issues, markets, public spaces, transportation</div></li>
+      <li class="rule-item allowed"><span class="rule-icon">✅</span><div class="rule-text"><strong>Government accountability</strong>Reporting unaddressed petitions, unfulfilled promises by institutions</div></li>
+    </ul>
+  </div>
+
+  <!-- WHAT IS PROHIBITED -->
+  <div class="section-card">
+    <h2>🚫 What is Strictly Prohibited</h2>
+    <p>The following content will be removed and may result in account suspension.</p>
+    <ul class="rule-list">
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>False accusations</strong>Posting claims you know to be untrue or unverified accusations targeting individuals</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Harassment & personal attacks</strong>Using the platform to target, shame or intimidate specific individuals</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Hate speech</strong>Content targeting people based on ethnicity, religion, gender, tribe or origin</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Threats & incitement</strong>Any content that threatens violence or encourages illegal action</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Defamation</strong>False statements of fact that damage a person's reputation</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Private information</strong>Sharing someone's phone number, address, ID, bank details or personal documents</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Misleading edited evidence</strong>Doctored images, screenshots or videos used to mislead</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Spam & irrelevant content</strong>Advertisements, promotions or content unrelated to civic issues</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Illegal content</strong>Content that violates Nigerian law or promotes illegal activity</div></li>
+    </ul>
+  </div>
+
+  <!-- IMAGE GUIDELINES -->
+  <div class="section-card">
+    <h2>📸 Image Upload Guidelines</h2>
+    <p>Images help document real problems. Please follow these image rules:</p>
+    <ul class="rule-list">
+      <li class="rule-item allowed"><span class="rule-icon">✅</span><div class="rule-text"><strong>Acceptable images</strong>Roads, flooding, electrical infrastructure, water problems, schools, hospitals, public infrastructure</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">❌</span><div class="rule-text"><strong>Not acceptable</strong>Images of individuals used for accusation, private documents, medical records, edited evidence</div></li>
+    </ul>
+  </div>
+
+  <!-- CONSEQUENCES -->
+  <div class="section-card">
+    <h2>⚖️ Consequences of Violations</h2>
+    <ul class="rule-list">
+      <li class="rule-item not-allowed"><span class="rule-icon">🔴</span><div class="rule-text"><strong>Content removal</strong>Posts violating guidelines will be removed without notice</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">🔴</span><div class="rule-text"><strong>Account suspension</strong>Repeated violations lead to temporary or permanent account suspension</div></li>
+      <li class="rule-item not-allowed"><span class="rule-icon">🔴</span><div class="rule-text"><strong>Legal liability</strong>Users remain personally responsible for content they post under Nigerian law</div></li>
+    </ul>
+  </div>
+
+  <!-- REPORTING -->
+  <div class="section-card">
+    <h2>🚩 How to Report Violations</h2>
+    <p>See a post that violates these guidelines? Use the <strong>Report</strong> button on any post. Our moderation team will review it promptly. You can report for:</p>
+    <ul class="rule-list">
+      <li class="rule-item allowed"><span class="rule-icon">🚩</span><div class="rule-text">False information · Harassment · Hate speech · Privacy violation · Spam · Harmful content</div></li>
+    </ul>
+  </div>
+
+  <div class="agree-section">
+    <h3>Ready to Post Responsibly?</h3>
+    <p>By posting on NaijaVoice you confirm that you have read and agreed to these Community Guidelines.</p>
+    <a href="post-problem.html" class="agree-btn">✍️ Post a Problem Responsibly</a>
+  </div>
+
+</div>
+
+<footer>
+  <p>Last updated: May 2026 · <a href="terms.html">Terms of Use</a> · <a href="privacy.html">Privacy Policy</a> · <a href="index.html">Home</a></p>
+</footer>
+</body>
+</html>
