@@ -3,29 +3,30 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NaijaVoice – Problem Detail</title>
   <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#008751"/>
-  <title>NajaVoice – Problem Detail</title>
+  <meta name="theme-color" content="#008751"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--error:#e53e3e;}
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
     nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;color:var(--green);text-decoration:none;}
-    .logo span{color:var(--gold);}
-    .nav-links{display:flex;gap:1.2rem;list-style:none;align-items:center;}
-    .nav-links a{font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;}
-    .nav-links a:hover{color:var(--green);}
+    .logo-wrap{display:flex;align-items:center;gap:0.5rem;text-decoration:none;}
+    .logo-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+    .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--green);}
+    .logo-text span{color:var(--gold);}
+    .nav-right{display:flex;align-items:center;gap:1rem;}
     .nav-user{font-size:0.85rem;color:var(--green);font-weight:600;text-decoration:none;}
-    .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.8rem;padding:0.4rem 0.9rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.78rem;padding:0.35rem 0.8rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    /* BACK BUTTON */
+    .back-bar{padding:1rem 5%;max-width:860px;margin:0 auto;}
+    .back-btn{display:inline-flex;align-items:center;gap:0.5rem;color:var(--muted);font-size:0.88rem;text-decoration:none;background:var(--card);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:50px;transition:all 0.2s;}
+    .back-btn:hover{color:var(--green);border-color:var(--green);}
     .loading-screen{min-height:60vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
     .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .not-found{min-height:60vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;text-align:center;padding:2rem;}
-    .main-wrap{max-width:860px;margin:2rem auto;padding:0 5%;}
-    .back-btn{display:inline-flex;align-items:center;gap:0.4rem;color:var(--muted);font-size:0.85rem;text-decoration:none;margin-bottom:1.5rem;transition:color 0.2s;}
-    .back-btn:hover{color:var(--green);}
+    .main-wrap{max-width:860px;margin:0 auto;padding:0 5% 3rem;}
     .problem-hero{background:var(--dark);border-radius:20px;padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
     .problem-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
     .problem-meta{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem;}
@@ -44,12 +45,11 @@
     .vote-big-btn{display:flex;align-items:center;gap:0.7rem;background:var(--green);color:#fff;border:none;padding:0.8rem 1.5rem;border-radius:12px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(0,135,81,0.35);}
     .vote-big-btn:hover{background:var(--green-dark);transform:translateY(-2px);}
     .vote-big-btn.voted{background:rgba(0,135,81,0.2);border:2px solid var(--green-light);color:var(--green-light);box-shadow:none;}
-    .vote-big-btn.voted:hover{transform:none;}
     .vote-stats{display:flex;flex-direction:column;}
     .vote-count-big{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff;line-height:1;}
     .vote-count-label{font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:0.2rem;}
     .share-row{margin-left:auto;display:flex;gap:0.6rem;flex-wrap:wrap;}
-    .share-platform{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:0.5rem 0.9rem;border-radius:8px;cursor:pointer;font-size:0.82rem;font-family:'DM Sans',sans-serif;transition:background 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;}
+    .share-platform{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:0.5rem 0.9rem;border-radius:8px;cursor:pointer;font-size:0.82rem;font-family:'DM Sans',sans-serif;transition:background 0.2s;}
     .share-platform:hover{background:rgba(255,255,255,0.15);}
     .details-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.8rem;margin-bottom:1.5rem;}
     .detail-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;}
@@ -73,430 +73,238 @@
     .comment-item{padding:1.3rem 1.5rem;border-bottom:1px solid #f0f7f0;animation:fadeUp 0.3s ease both;}
     .comment-item:last-child{border-bottom:none;}
     .comment-header{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.6rem;}
-    .comment-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:#fff;flex-shrink:0;cursor:pointer;}
-    .comment-author{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--dark);cursor:pointer;}
-    .comment-author:hover{color:var(--green);}
-    .comment-state{font-size:0.72rem;color:var(--muted);}
+    .comment-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:#fff;flex-shrink:0;}
+    .comment-author{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--dark);}
     .comment-time{font-size:0.72rem;color:var(--muted);margin-left:auto;}
     .comment-text{font-size:0.88rem;color:var(--text);line-height:1.65;}
-    .comment-actions{display:flex;align-items:center;gap:0.6rem;margin-top:0.6rem;}
-    .comment-delete{background:none;border:1px solid rgba(229,62,62,0.2);color:#e53e3e;font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
-    .comment-delete:hover{background:rgba(229,62,62,0.08);}
+    .comment-actions{display:flex;gap:0.6rem;margin-top:0.6rem;}
+    .comment-delete{background:none;border:1px solid rgba(229,62,62,0.2);color:#e53e3e;font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
     .no-comments{text-align:center;padding:3rem 2rem;}
-    .no-comments .nc-icon{font-size:2.5rem;margin-bottom:0.8rem;}
     .no-comments p{color:var(--muted);font-size:0.88rem;line-height:1.6;}
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-    .status-bar{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
-    .status-bar h4{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;color:var(--dark);}
-    .status-pill{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;}
-    .status-pending{background:rgba(245,166,35,0.12);color:#975a16;border:1px solid rgba(245,166,35,0.3);}
-    .status-inprogress{background:rgba(49,130,206,0.12);color:#2c5282;border:1px solid rgba(49,130,206,0.3);}
-    .status-resolved{background:rgba(0,135,81,0.12);color:#005c37;border:1px solid rgba(0,135,81,0.3);}
-    .status-actions{display:flex;gap:0.5rem;margin-left:auto;flex-wrap:wrap;}
-    .status-btn{padding:0.35rem 0.8rem;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
-    .btn-pending{background:rgba(245,166,35,0.15);color:#975a16;}
-    .btn-pending:hover{background:rgba(245,166,35,0.3);}
-    .btn-progress{background:rgba(49,130,206,0.15);color:#2c5282;}
-    .btn-progress:hover{background:rgba(49,130,206,0.3);}
-    .btn-resolved{background:rgba(0,135,81,0.15);color:#005c37;}
-    .btn-resolved:hover{background:rgba(0,135,81,0.3);}
-    .timeline{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;}
-    .timeline h4{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;color:var(--dark);margin-bottom:1rem;}
-    .timeline-item{display:flex;gap:0.8rem;margin-bottom:0.8rem;}
-    .timeline-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px;}
-    .dot-pending{background:var(--gold);}
-    .dot-progress{background:#3182ce;}
-    .dot-resolved{background:var(--green);}
-    .timeline-line{display:flex;flex-direction:column;gap:0;}
-    .timeline-label{font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--dark);}
-    .timeline-time{font-size:0.72rem;color:var(--muted);}
-    .photo-gallery{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.5rem;}
-    .gallery-img{width:110px;height:85px;object-fit:cover;border-radius:10px;border:2px solid var(--border);cursor:pointer;transition:transform 0.2s;}
-    .gallery-img:hover{transform:scale(1.05);}
-    .img-modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;}
-    .img-modal img{max-width:100%;max-height:90vh;border-radius:12px;}
-    .img-modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;}
-    .share-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;}
-    .share-card h4{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
-    .share-buttons{display:flex;gap:0.6rem;flex-wrap:wrap;}
-    .share-card-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.55rem 1rem;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;}
-    .btn-twitter{background:#000;color:#fff;}
-    .btn-twitter:hover{background:#333;}
-    .btn-whatsapp{background:#25d366;color:#fff;}
-    .btn-whatsapp:hover{background:#128c7e;}
-    .btn-facebook{background:#1877f2;color:#fff;}
-    .btn-facebook:hover{background:#166fe5;}
-    .btn-copy{background:var(--cream);color:var(--text);border:1.5px solid var(--border);}
-    .btn-copy:hover{border-color:var(--green);color:var(--green);}
-    .copy-link-wrap{display:flex;gap:0.5rem;margin-top:0.8rem;}
-    .copy-link-input{flex:1;padding:0.55rem 0.8rem;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--muted);background:#f8f8f8;outline:none;}
-    @media(max-width:600px){
-      .share-row{margin-left:0;}
-      .vote-section{gap:0.8rem;padding:1rem;}
-      .nav-links{display:none;}
-      .vote-big-btn{padding:0.7rem 1.1rem;font-size:0.88rem;}
-      .vote-count-big{font-size:1.4rem;}
-      .problem-hero{padding:1.5rem;}
-      .problem-title{font-size:1.2rem;}
-      .problem-desc{font-size:0.88rem;}
-      .details-grid{grid-template-columns:repeat(2,1fr);}
-      .main-wrap{padding:0 4%;}
-      .comment-form{padding:1rem;}
-      .comment-item{padding:1rem;}
-      .share-platform{padding:0.4rem 0.7rem;font-size:0.75rem;}
-    }
-    @media(max-width:400px){
-      .details-grid{grid-template-columns:1fr 1fr;}
-      .vote-section{flex-direction:column;align-items:flex-start;}
-    }
+    @media(max-width:600px){.share-row{margin-left:0;}.vote-section{gap:1rem;}.details-grid{grid-template-columns:1fr 1fr;}}
   </style>
 </head>
 <body>
 <nav>
-  <a href="index.html" class="logo">Naja<span>Voice</span></a>
-  <ul class="nav-links">
-    <li><a href="feed.html">Problems</a></li>
-    <li><a href="post-problem.html">Post a Problem</a></li>
-    <li id="nav-auth-area"><a href="auth.html" style="color:var(--green);font-weight:600;">Login</a></li>
-  </ul>
+  <a href="index.html" class="logo-wrap">
+    <div class="logo-icon">🗳️</div>
+    <div class="logo-text">Naija<span>Voice</span></div>
+  </a>
+  <div class="nav-right">
+    <div id="nav-auth-area"></div>
+  </div>
 </nav>
+
 <div class="loading-screen" id="loading-screen">
   <div class="spinner"></div>
   <p style="color:var(--muted);font-size:0.9rem;">Loading problem...</p>
 </div>
-<div class="not-found" id="not-found" style="display:none;">
+
+<div id="page-content" style="display:none;">
+  <div class="back-bar">
+    <a href="feed.html" class="back-btn">⬅️ Back to Problems</a>
+  </div>
+  <div class="main-wrap">
+    <div class="problem-hero">
+      <div class="problem-meta" id="problem-meta"></div>
+      <h1 class="problem-title" id="problem-title">Loading...</h1>
+      <p class="problem-desc" id="problem-desc"></p>
+      <p class="posted-by" id="posted-by"></p>
+      <div class="vote-section">
+        <button class="vote-big-btn" id="vote-btn" onclick="castVote()">👍 Vote for this Problem</button>
+        <div class="vote-stats">
+          <div class="vote-count-big" id="vote-count">0</div>
+          <div class="vote-count-label">Nigerians voted on this</div>
+        </div>
+        <div class="share-row">
+          <button class="share-platform" onclick="shareTwitter()">🐦 Tweet</button>
+          <button class="share-platform" onclick="shareWhatsApp()">📱 WhatsApp</button>
+          <button class="share-platform" onclick="copyLink()">🔗 Copy</button>
+        </div>
+      </div>
+    </div>
+    <div class="details-grid" id="details-grid"></div>
+    <div class="comments-section">
+      <div class="comments-header">
+        <h3>💬 Community Discussion</h3>
+        <span class="comment-count-badge" id="comment-count">0 comments</span>
+      </div>
+      <div id="comment-form-area"></div>
+      <div class="comments-list" id="comments-list">
+        <div class="no-comments"><p>No comments yet. Be the first!</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="not-found" style="display:none;min-height:60vh;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;text-align:center;padding:2rem;">
   <div style="font-size:4rem;">😕</div>
   <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--dark);">Problem Not Found</h2>
-  <p style="color:var(--muted);">This problem may have been deleted.</p>
-  <a href="feed.html" style="color:var(--green);font-weight:600;text-decoration:none;margin-top:1rem;">← Back to Feed</a>
+  <a href="feed.html" class="back-btn">⬅️ Back to Feed</a>
 </div>
-<div class="main-wrap" id="main-content" style="display:none;">
-  <a href="feed.html" class="back-btn">← Back to All Problems</a>
-  <div class="problem-hero">
-    <div class="problem-meta" id="problem-meta"></div>
-    <h1 class="problem-title" id="problem-title">Loading...</h1>
-    <p class="problem-desc" id="problem-desc"></p>
-    <p class="posted-by" id="posted-by"></p>
-    <div class="vote-section">
-      <button class="vote-big-btn" id="vote-btn" onclick="castVote()">👍 Vote for this Problem</button>
-      <div class="vote-stats">
-        <div class="vote-count-big" id="vote-count">0</div>
-        <div class="vote-count-label">Nigerians voted on this</div>
-      </div>
-      <div class="share-row">
-        <button class="share-platform" onclick="shareTwitter()">🐦 Tweet</button>
-        <button class="share-platform" onclick="shareWhatsApp()">📱 WhatsApp</button>
-        <button class="share-platform" onclick="copyLink()">🔗 Copy</button>
-      </div>
-    </div>
-  </div>
-  <div class="details-grid" id="details-grid"></div>
-  <!-- STATUS BAR -->
-  <div class="status-bar" id="status-bar">
-    <h4>📊 Problem Status:</h4>
-    <span class="status-pill status-pending" id="status-pill">⏳ Pending</span>
-    <div class="status-actions" id="status-actions" style="display:none;">
-      <button class="status-btn btn-pending" onclick="updateStatus('pending')">⏳ Pending</button>
-      <button class="status-btn btn-progress" onclick="updateStatus('inprogress')">🔄 In Progress</button>
-      <button class="status-btn btn-resolved" onclick="updateStatus('resolved')">✅ Resolved</button>
-    </div>
-  </div>
 
-  <!-- STATUS TIMELINE -->
-  <div class="timeline" id="timeline">
-    <h4>📅 Status Timeline</h4>
-    <div id="timeline-items"></div>
-  </div>
-
-  <!-- PHOTO GALLERY -->
-  <div class="photo-gallery" id="photo-gallery" style="display:none;"></div>
-
-  <!-- SHARE CARD -->
-  <div class="share-card">
-    <h4>📢 Share This Problem — Make Nigeria Listen!</h4>
-    <div class="share-buttons">
-      <button class="share-card-btn btn-twitter" onclick="shareTwitter()">🐦 Twitter/X</button>
-      <button class="share-card-btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
-      <button class="share-card-btn btn-facebook" onclick="shareFacebook()">📘 Facebook</button>
-      <button class="share-card-btn btn-copy" onclick="copyLink()">🔗 Copy Link</button>
-    </div>
-    <div class="copy-link-wrap">
-      <input class="copy-link-input" id="share-url" readonly/>
-      <button class="share-card-btn btn-copy" onclick="copyLink()" style="white-space:nowrap;">📋 Copy</button>
-    </div>
-  </div>
-
-  <div class="comments-section">
-    <div class="comments-header">
-      <h3>💬 Community Discussion</h3>
-      <span class="comment-count-badge" id="comment-count">0 comments</span>
-    </div>
-    <div id="comment-form-area"></div>
-    <div class="comments-list" id="comments-list">
-      <div class="no-comments"><div class="nc-icon">💬</div><p>No comments yet.<br/>Be the first to share your thoughts!</p></div>
-    </div>
-  </div>
-</div>
 <div class="toast" id="toast"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
 <script>
-  let problemData=null,currentUser=null,hasVoted=false;
-  const urlParams=new URLSearchParams(window.location.search);
-  const problemId=urlParams.get('id');
-  function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
-  function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'Just now';if(d<3600)return`${Math.floor(d/60)}m ago`;if(d<86400)return`${Math.floor(d/3600)}h ago`;return`${Math.floor(d/86400)}d ago`;}
-  function urgencyClass(u){return u==='high'?'ub-high':u==='medium'?'ub-medium':'ub-low';}
-  function urgencyLabel(u){return u==='high'?'🔴 Critical':u==='medium'?'🟠 Medium':'🟡 Low';}
-  async function init(){
-    if(!problemId){document.getElementById('loading-screen').style.display='none';document.getElementById('not-found').style.display='flex';return;}
-    const {data:{user}}=await sb.auth.getUser();
+const _sb = supabase.createClient(
+  'https://zszcmrbbgchafoydqoqb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
+);
+let problemData=null,currentUser=null,hasVoted=false;
+const problemId=new URLSearchParams(window.location.search).get('id');
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'Just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
+function urgencyClass(u){return u==='high'?'ub-high':u==='medium'?'ub-medium':'ub-low';}
+function urgencyLabel(u){return u==='high'?'🔴 Critical':u==='medium'?'🟠 Medium':'🟡 Low';}
+
+async function init(){
+  if(!problemId){
+    document.getElementById('loading-screen').style.display='none';
+    document.getElementById('not-found').style.display='flex';
+    return;
+  }
+  try{
+    const {data:{user}}=await _sb.auth.getUser();
     currentUser=user;
     if(user){
-      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+      const {data:profile}=await _sb.from('profiles').select('full_name').eq('id',user.id).single();
       const name=profile?.full_name?.split(' ')[0]||'User';
-      document.getElementById('nav-auth-area').innerHTML=`<a href="profile.html" class="nav-user">👤 ${name}</a><button class="nav-logout" onclick="logout()">Logout</button>`;
-      const {data:vote}=await sb.from('votes').select('id').eq('user_id',user.id).eq('problem_id',problemId).single();
+      document.getElementById('nav-auth-area').innerHTML='<a href="profile.html" class="nav-user">👤 '+name+'</a><button class="nav-logout" onclick="logout()">Logout</button>';
+      const {data:vote}=await _sb.from('votes').select('id').eq('user_id',user.id).eq('problem_id',problemId).single();
       hasVoted=!!vote;
     }
-    const {data:problem,error}=await sb.from('problems').select('*').eq('id',problemId).single();
-    if(error||!problem){document.getElementById('loading-screen').style.display='none';document.getElementById('not-found').style.display='flex';return;}
+    const {data:problem,error}=await _sb.from('problems').select('*').eq('id',problemId).single();
+    if(error||!problem){
+      document.getElementById('loading-screen').style.display='none';
+      document.getElementById('not-found').style.display='flex';
+      return;
+    }
     problemData=problem;
     await renderProblem();
     renderCommentForm();
     await loadComments();
     document.getElementById('loading-screen').style.display='none';
-    document.getElementById('main-content').style.display='block';
+    document.getElementById('page-content').style.display='block';
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading-screen').style.display='none';
+    document.getElementById('not-found').style.display='flex';
   }
-  async function renderProblem(){
-    const p=problemData;
-    document.title=`NajaVoice – ${p.title}`;
-    let posterName='Anonymous';
-    if(p.user_id){const {data:poster}=await sb.from('profiles').select('full_name').eq('id',p.user_id).single();if(poster?.full_name)posterName=poster.full_name;}
-    renderStatusBar();
-    document.getElementById('problem-meta').innerHTML=`
-      <span class="meta-cat">${p.category_icon||'📋'} ${p.category||'General'}</span>
-      <span class="meta-loc">📍 ${p.state||'Nigeria'} · ${p.lga||''}</span>
-      <span class="urgency-badge ${urgencyClass(p.urgency)}">${urgencyLabel(p.urgency)}</span>
-      <span class="meta-time">${timeAgo(p.created_at)}</span>`;
-    document.getElementById('problem-title').textContent=p.title;
-    document.getElementById('problem-desc').textContent=p.description;
-    document.getElementById('posted-by').innerHTML=`✍️ Posted by <strong>${posterName}</strong>`;
+}
 
-    // Set share URL
-    const shareUrl = window.location.href;
-    const shareInput = document.getElementById('share-url');
-    if(shareInput) shareInput.value = shareUrl;
+async function renderProblem(){
+  const p=problemData;
+  document.title='NaijaVoice - '+p.title;
+  let posterName='Anonymous';
+  if(p.user_id){
+    const {data:poster}=await _sb.from('profiles').select('full_name').eq('id',p.user_id).single();
+    if(poster?.full_name)posterName=poster.full_name;
+  }
+  document.getElementById('problem-meta').innerHTML=
+    '<span class="meta-cat">'+(p.category_icon||'📋')+' '+(p.category||'General')+'</span>'
+    +'<span class="meta-loc">📍 '+(p.state||'Nigeria')+' · '+(p.lga||'')+'</span>'
+    +'<span class="urgency-badge '+urgencyClass(p.urgency)+'">'+urgencyLabel(p.urgency)+'</span>'
+    +'<span class="meta-time">'+timeAgo(p.created_at)+'</span>';
+  document.getElementById('problem-title').textContent=p.title;
+  document.getElementById('problem-desc').textContent=p.description;
+  document.getElementById('posted-by').innerHTML='✍️ Posted by <strong>'+posterName+'</strong>';
+  const voteBtn=document.getElementById('vote-btn');
+  if(hasVoted){voteBtn.classList.add('voted');voteBtn.innerHTML='✅ You Voted on This';}
+  document.getElementById('vote-count').textContent=(p.votes||0).toLocaleString();
+  document.getElementById('details-grid').innerHTML=[
+    {label:'📍 State',value:p.state||'—'},
+    {label:'🏘️ LGA',value:p.lga||'—'},
+    {label:'👥 People Affected',value:p.affected||'—'},
+    {label:'📅 Duration',value:p.duration||'—'},
+    {label:'🏛️ Govt Reported',value:p.govt_reported||'—'},
+    {label:'🗳️ Total Votes',value:(p.votes||0).toLocaleString()},
+  ].map(d=>'<div class="detail-item"><div class="detail-label">'+d.label+'</div><div class="detail-value">'+d.value+'</div></div>').join('');
+}
 
-    // Photo gallery
-    if(p.image_urls && p.image_urls.length > 0){
-      const gallery = document.getElementById('photo-gallery');
-      gallery.style.display = 'flex';
-      gallery.innerHTML = p.image_urls.map(url=>
-        `<img src="${url}" class="gallery-img" onclick="openImageModal('${url}')" alt="Problem photo"/>`
-      ).join('');
-    }
-    const voteBtn=document.getElementById('vote-btn');
-    if(hasVoted){voteBtn.classList.add('voted');voteBtn.innerHTML='✅ You Voted on This';}
-    document.getElementById('vote-count').textContent=(p.votes||0).toLocaleString();
-    document.getElementById('details-grid').innerHTML=[
-      {label:'📍 State',value:p.state||'—'},
-      {label:'🏘️ LGA',value:p.lga||'—'},
-      {label:'👥 People Affected',value:p.affected||'—'},
-      {label:'📅 Duration',value:p.duration||'—'},
-      {label:'🏛️ Govt Reported',value:p.govt_reported||'—'},
-      {label:'🗳️ Total Votes',value:(p.votes||0).toLocaleString()},
-    ].map(d=>`<div class="detail-item"><div class="detail-label">${d.label}</div><div class="detail-value">${d.value}</div></div>`).join('');
-  }
-  // ── STATUS FUNCTIONS ──
-  function getStatusPillHTML(status){
-    if(status==='resolved') return '<span class="status-pill status-resolved">✅ Resolved</span>';
-    if(status==='inprogress') return '<span class="status-pill status-inprogress">🔄 In Progress</span>';
-    return '<span class="status-pill status-pending">⏳ Pending</span>';
-  }
+async function castVote(){
+  if(hasVoted){showToast('⚠️ You already voted on this!');return;}
+  if(!currentUser){showToast('👋 Please login to vote!');setTimeout(()=>window.location.href='auth.html',1500);return;}
+  const btn=document.getElementById('vote-btn');
+  btn.disabled=true;btn.textContent='Voting...';
+  await _sb.from('votes').insert({user_id:currentUser.id,problem_id:problemId});
+  await _sb.rpc('increment_vote',{problem_id:problemId});
+  hasVoted=true;
+  problemData.votes=(problemData.votes||0)+1;
+  btn.classList.add('voted');btn.disabled=false;btn.innerHTML='✅ You Voted on This';
+  document.getElementById('vote-count').textContent=problemData.votes.toLocaleString();
+  showToast('✅ Vote cast! Thank you 🇳🇬');
+}
 
-  function renderStatusBar(){
-    const p = problemData;
-    const pill = document.getElementById('status-pill');
-    const actions = document.getElementById('status-actions');
-    if(pill) pill.outerHTML = getStatusPillHTML(p.status||'pending');
+function renderCommentForm(){
+  const area=document.getElementById('comment-form-area');
+  if(!currentUser){
+    area.innerHTML='<div class="login-prompt">💬 Want to comment? <a href="auth.html">Login or create a free account</a></div>';
+    return;
+  }
+  area.innerHTML='<div class="comment-form"><textarea id="comment-input" placeholder="Share your thoughts... (max 300 characters)" maxlength="300" oninput="document.getElementById(\'cc\').textContent=this.value.length+\'/300\'"></textarea><div class="form-footer"><span class="char-count" id="cc">0/300</span><button class="submit-comment" onclick="postComment()">💬 Post Comment</button></div></div>';
+}
 
-    // Show update buttons only to problem owner
-    if(currentUser && p.user_id === currentUser.id){
-      if(actions) actions.style.display = 'flex';
-    }
+async function loadComments(){
+  const {data:comments,error}=await _sb.from('comments').select('*, profiles(full_name,state)').eq('problem_id',problemId).order('created_at',{ascending:false});
+  if(error){renderCommentsList([]);return;}
+  renderCommentsList(comments||[]);
+}
 
-    // Timeline
-    const timeline = document.getElementById('timeline-items');
-    const events = [];
-    events.push({dot:'dot-pending',label:'Problem Posted',time:p.created_at});
-    if(p.status==='inprogress'||p.status==='resolved'){
-      events.push({dot:'dot-progress',label:'Marked In Progress',time:p.updated_at||p.created_at});
-    }
-    if(p.status==='resolved'){
-      events.push({dot:'dot-resolved',label:'✅ Problem Resolved!',time:p.updated_at||p.created_at});
-    }
-    if(timeline){
-      timeline.innerHTML = events.map(e=>`
-        <div class="timeline-item">
-          <div class="timeline-dot ${e.dot}"></div>
-          <div class="timeline-line">
-            <div class="timeline-label">${e.label}</div>
-            <div class="timeline-time">${timeAgo(e.time)}</div>
-          </div>
-        </div>`).join('');
-    }
-  }
+function renderCommentsList(comments){
+  document.getElementById('comment-count').textContent=comments.length+' comment'+(comments.length!==1?'s':'');
+  if(!comments.length){document.getElementById('comments-list').innerHTML='<div class="no-comments"><p>No comments yet. Be the first to share your thoughts!</p></div>';return;}
+  document.getElementById('comments-list').innerHTML=comments.map((c,i)=>{
+    const name=c.profiles?.full_name||'Anonymous';
+    const initials=name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const isOwner=currentUser&&c.user_id===currentUser.id;
+    return '<div class="comment-item" style="animation-delay:'+(i*0.05)+'s" id="comment-'+c.id+'">'
+      +'<div class="comment-header">'
+      +'<div class="comment-avatar">'+initials+'</div>'
+      +'<div><div class="comment-author">'+name+'</div></div>'
+      +'<div class="comment-time">'+timeAgo(c.created_at)+'</div>'
+      +'</div>'
+      +'<div class="comment-text">'+c.content+'</div>'
+      +'<div class="comment-actions">'
+      +(isOwner?'<button class="comment-delete" onclick="deleteComment(\''+c.id+'\')">🗑️ Delete</button>':'')
+      +'</div></div>';
+  }).join('');
+}
 
-  async function updateStatus(newStatus){
-    if(!currentUser||problemData.user_id!==currentUser.id){showToast('❌ Only the poster can update status.');return;}
-    const {error} = await sb.from('problems').update({status:newStatus,updated_at:new Date().toISOString()}).eq('id',problemId);
-    if(error){showToast('❌ Failed to update status.');return;}
-    problemData.status = newStatus;
-    renderStatusBar();
-    const labels = {pending:'⏳ Status set to Pending',inprogress:'🔄 Status set to In Progress',resolved:'✅ Problem marked as Resolved!'};
-    showToast(labels[newStatus]||'✅ Status updated!');
+async function postComment(){
+  if(!currentUser){showToast('👋 Please login to comment!');return;}
+  const input=document.getElementById('comment-input');
+  const text=input?.value?.trim();
+  if(!text||text.length<3){showToast('⚠️ Please write at least 3 characters.');return;}
+  const btn=document.querySelector('.submit-comment');
+  btn.disabled=true;btn.textContent='Posting...';
+  const {error}=await _sb.from('comments').insert({problem_id:problemId,user_id:currentUser.id,content:text,likes:0});
+  if(error){showToast('❌ Failed to post comment.');btn.disabled=false;btn.innerHTML='💬 Post Comment';return;}
+  input.value='';document.getElementById('cc').textContent='0/300';
+  btn.disabled=false;btn.innerHTML='💬 Post Comment';
+  showToast('✅ Comment posted!');
+  await loadComments();
+}
 
-    // Show celebration if resolved
-    if(newStatus==='resolved') showResolvedCelebration();
-  }
+async function deleteComment(id){
+  if(!currentUser)return;
+  const el=document.getElementById('comment-'+id);
+  if(el)el.style.opacity='0.4';
+  const {error}=await _sb.from('comments').delete().eq('id',id).eq('user_id',currentUser.id);
+  if(error){showToast('❌ Could not delete.');if(el)el.style.opacity='1';return;}
+  showToast('✅ Comment deleted!');
+  await loadComments();
+}
 
-  function showResolvedCelebration(){
-    const overlay = document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;';
-    overlay.innerHTML=`<div style="background:var(--dark);border:2px solid var(--green);border-radius:24px;padding:2.5rem;max-width:320px;width:100%;text-align:center;">
-      <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
-      <div style="background:var(--green);color:#fff;font-family:Syne,sans-serif;font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:0.3rem 1rem;border-radius:50px;display:inline-block;margin-bottom:1rem;">Problem Resolved!</div>
-      <h3 style="font-family:Syne,sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:0.5rem;">This is how change happens! 🇳🇬</h3>
-      <p style="font-size:0.88rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:1.5rem;">Mark this as resolved so other Nigerians know their voices made a difference!</p>
-      <button onclick="this.closest('[style*=fixed]').remove();" style="width:100%;padding:0.85rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:Syne,sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;">🙌 Amazing! Close</button>
-    </div>`;
-    document.body.appendChild(overlay);
-    overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
-  }
-
-  async function castVote(){
-    if(hasVoted){showToast('⚠️ You already voted on this!');return;}
-    if(!currentUser){showToast('👋 Please login to vote!');setTimeout(()=>window.location.href='auth.html',1500);return;}
-    const btn=document.getElementById('vote-btn');
-    btn.disabled=true;btn.textContent='Voting...';
-    const {error:vErr}=await sb.from('votes').insert({user_id:currentUser.id,problem_id:problemId});
-    if(vErr&&vErr.code!=='23505'){showToast('❌ Vote failed.');btn.disabled=false;btn.innerHTML='👍 Vote for this Problem';return;}
-    await sb.rpc('increment_vote',{problem_id:problemId});
-    hasVoted=true;
-    problemData.votes=(problemData.votes||0)+1;
-    btn.classList.add('voted');btn.disabled=false;btn.innerHTML='✅ You Voted on This';
-    document.getElementById('vote-count').textContent=problemData.votes.toLocaleString();
-    showToast('✅ Vote cast! Thank you 🇳🇬');
-
-    // ── Check vote milestones ──
-    checkMilestone(problemData.votes);
-  }
-
-  function checkMilestone(votes){
-    const milestones = [10, 25, 50, 100, 250, 500, 1000];
-    if(milestones.includes(votes)){
-      showMilestoneAlert(votes);
-    }
-  }
-
-  function showMilestoneAlert(votes){
-    const messages = {
-      10:   {emoji:'🌱', msg:'10 Nigerians have spoken!', sub:'This problem is gaining attention!'},
-      25:   {emoji:'📣', msg:'25 votes reached!', sub:'People are noticing this problem!'},
-      50:   {emoji:'🔥', msg:'50 votes! This is trending!', sub:'Share it to push it higher!'},
-      100:  {emoji:'💥', msg:'100 votes! Government must see this!', sub:'Keep sharing — this is powerful!'},
-      250:  {emoji:'🚀', msg:'250 votes! NajaVoice Legend!', sub:'This problem cannot be ignored!'},
-      500:  {emoji:'👑', msg:'500 votes! History is being made!', sub:'Nigeria is watching this problem!'},
-      1000: {emoji:'🇳🇬', msg:'1,000 votes! This is historic!', sub:'NajaVoice is changing Nigeria!'},
-    };
-    const m = messages[votes];
-    if(!m) return;
-
-    const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;animation:fadeIn 0.3s ease;';
-    overlay.innerHTML = `
-      <div style="background:var(--dark);border:2px solid var(--gold);border-radius:24px;padding:2.5rem;max-width:320px;width:100%;text-align:center;">
-        <div style="font-size:4rem;margin-bottom:1rem;">${m.emoji}</div>
-        <div style="background:var(--gold);color:var(--dark);font-family:Syne,sans-serif;font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:0.3rem 1rem;border-radius:50px;display:inline-block;margin-bottom:1rem;">🎉 Milestone Reached!</div>
-        <h3 style="font-family:Syne,sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:0.5rem;">${m.msg}</h3>
-        <p style="font-size:0.88rem;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:1.5rem;">${m.sub}</p>
-        <div style="display:flex;gap:0.8rem;">
-          <button onclick="shareWhatsApp();this.closest('[style*=fixed]').remove();" style="flex:1;padding:0.75rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:Syne,sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;">📱 Share Now</button>
-          <button onclick="this.closest('[style*=fixed]').remove();" style="flex:1;padding:0.75rem;background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:10px;font-family:DM Sans,sans-serif;font-size:0.85rem;cursor:pointer;">Close</button>
-        </div>
-      </div>`;
-    document.body.appendChild(overlay);
-    overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
-  }
-  function renderCommentForm(){
-    const area=document.getElementById('comment-form-area');
-    if(!currentUser){area.innerHTML=`<div class="login-prompt">💬 Want to join the discussion? <a href="auth.html">Login or create a free account</a> to comment.</div>`;return;}
-    area.innerHTML=`<div class="comment-form">
-      <textarea id="comment-input" placeholder="Share your thoughts on this problem... (max 300 characters)" maxlength="300" oninput="document.getElementById('cc').textContent=this.value.length+'/300'"></textarea>
-      <div class="form-footer"><span class="char-count" id="cc">0/300</span><button class="submit-comment" onclick="postComment()">💬 Post Comment</button></div>
-    </div>`;
-  }
-  async function loadComments(){
-    const {data:comments,error}=await sb.from('comments').select('*, profiles(full_name,state)').eq('problem_id',problemId).order('created_at',{ascending:false});
-    if(error){renderCommentsList([]);return;}
-    renderCommentsList(comments||[]);
-  }
-  function renderCommentsList(comments){
-    document.getElementById('comment-count').textContent=comments.length+' comment'+(comments.length!==1?'s':'');
-    if(!comments.length){document.getElementById('comments-list').innerHTML=`<div class="no-comments"><div class="nc-icon">💬</div><p>No comments yet.<br/>Be the first to share your thoughts!</p></div>`;return;}
-    document.getElementById('comments-list').innerHTML=comments.map((c,i)=>{
-      const name=c.profiles?.full_name||'Anonymous';
-      const state=c.profiles?.state||'';
-      const initials=name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-      const isOwner=currentUser&&c.user_id===currentUser.id;
-      return`<div class="comment-item" style="animation-delay:${i*0.05}s" id="comment-${c.id}">
-        <div class="comment-header">
-          <div class="comment-avatar" onclick="window.location.href='profile.html'">${initials}</div>
-          <div>
-            <div class="comment-author" onclick="window.location.href='profile.html'">${name}</div>
-            ${state?`<div class="comment-state">📍 ${state}</div>`:''}
-          </div>
-          <div class="comment-time">${timeAgo(c.created_at)}</div>
-        </div>
-        <div class="comment-text">${c.content}</div>
-        <div class="comment-actions">
-          ${isOwner?`<button class="comment-delete" onclick="deleteComment('${c.id}')">🗑️ Delete</button>`:''}
-        </div>
-      </div>`;
-    }).join('');
-  }
-  async function postComment(){
-    if(!currentUser){showToast('👋 Please login to comment!');return;}
-    const input=document.getElementById('comment-input');
-    const text=input?.value?.trim();
-    if(!text||text.length<3){showToast('⚠️ Please write at least 3 characters.');return;}
-    const btn=document.querySelector('.submit-comment');
-    btn.disabled=true;btn.textContent='Posting...';
-    const {error}=await sb.from('comments').insert({problem_id:problemId,user_id:currentUser.id,content:text,likes:0});
-    if(error){showToast('❌ Failed to post comment.');btn.disabled=false;btn.innerHTML='💬 Post Comment';return;}
-    input.value='';
-    document.getElementById('cc').textContent='0/300';
-    btn.disabled=false;btn.innerHTML='💬 Post Comment';
-    showToast('✅ Comment posted!');
-    await loadComments();
-  }
-  async function deleteComment(id){
-    if(!currentUser)return;
-    const el=document.getElementById('comment-'+id);
-    if(el)el.style.opacity='0.4';
-    const {error}=await sb.from('comments').delete().eq('id',id).eq('user_id',currentUser.id);
-    if(error){showToast('❌ Could not delete.');if(el)el.style.opacity='1';return;}
-    showToast('✅ Comment deleted!');
-    await loadComments();
-  }
-  function shareTwitter(){const text=encodeURIComponent(`🇳🇬 "${problemData?.title}" — Vote on NajaVoice! ${window.location.href} #NajaVoice #Nigeria`);window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');}
-  function shareWhatsApp(){const text=encodeURIComponent(`🇳🇬 *${problemData?.title}*\n\nVote on NajaVoice:\n${window.location.href}`);window.open(`https://wa.me/?text=${text}`,'_blank');}
-  function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>showToast('🔗 Link copied!'));}
-  async function logout(){await sb.auth.signOut();window.location.reload();}
-  init();
+function shareTwitter(){const text=encodeURIComponent('🇳🇬 "'+problemData?.title+'" - Vote on NaijaVoice!\n'+window.location.href+'\n\n#NaijaVoice #Nigeria');window.open('https://twitter.com/intent/tweet?text='+text,'_blank');}
+function shareWhatsApp(){const text=encodeURIComponent('🇳🇬 *'+problemData?.title+'*\n\nVote on NaijaVoice:\n'+window.location.href);window.open('https://wa.me/?text='+text,'_blank');}
+function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>showToast('🔗 Link copied!'));}
+async function logout(){await _sb.auth.signOut();window.location.href='index.html';}
+init();
+</script>
 <script src="/pwa.js"></script>
 </body>
 </html>
