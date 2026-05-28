@@ -63,8 +63,14 @@ async function submitReport(problemId, problemTitle, btn) {
       problem_id: problemId,
       reason,
       details,
+      status: 'pending',
       reported_at: new Date().toISOString()
     });
+
+    // Increment report count on the problem
+    if (!error) {
+      await _sb.rpc('increment_report_count', { problem_id: problemId });
+    }
 
     document.getElementById('report-modal').remove();
 

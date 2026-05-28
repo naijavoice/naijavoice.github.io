@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NaijaVoice – Moderation Queue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--red:#e53e3e;--blue:#3182ce;--orange:#dd6b20;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:#f0f4f0;color:var(--text);}
+
+    /* LOGIN */
+    .login-wall{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:2rem;background-image:radial-gradient(circle at 20% 50%,rgba(0,135,81,0.15) 0%,transparent 50%);}
+    .login-box{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:3rem;width:100%;max-width:400px;text-align:center;}
+    .login-box .li{font-size:3rem;margin-bottom:1rem;}
+    .login-box h1{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:0.4rem;}
+    .login-box p{color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:2rem;line-height:1.5;}
+    .login-field{margin-bottom:1rem;text-align:left;}
+    .login-field label{font-size:0.78rem;color:rgba(255,255,255,0.6);display:block;margin-bottom:0.4rem;}
+    .login-field input{width:100%;padding:0.8rem 1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;}
+    .login-field input:focus{border-color:var(--green);}
+    .login-field input::placeholder{color:rgba(255,255,255,0.3);}
+    .login-btn{width:100%;padding:0.9rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:0.5rem;}
+    .login-error{background:rgba(229,62,62,0.15);border:1px solid rgba(229,62,62,0.3);color:#fc8181;padding:0.7rem 1rem;border-radius:8px;font-size:0.82rem;margin-top:1rem;display:none;}
+    .login-error.show{display:block;}
+
+    /* DASHBOARD */
+    .dashboard{display:none;}
+    .top-bar{background:var(--dark);padding:0.9rem 2%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .top-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;text-decoration:none;}
+    .top-logo span{color:var(--gold);}
+    .top-logo small{font-size:0.6rem;background:var(--red);color:#fff;padding:0.15rem 0.5rem;border-radius:4px;margin-left:0.4rem;vertical-align:middle;}
+    .top-right{display:flex;align-items:center;gap:1rem;}
+    .top-badge{font-size:0.75rem;color:rgba(255,255,255,0.5);}
+    .logout-btn{background:transparent;border:1px solid rgba(229,62,62,0.4);color:#fc8181;padding:0.35rem 0.8rem;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;}
+
+    .main{max-width:1200px;margin:1.5rem auto;padding:0 2%;}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;}
+    .sc-red::before{background:var(--red);}
+    .sc-orange::before{background:var(--orange);}
+    .sc-green::before{background:var(--green);}
+    .sc-blue::before{background:var(--blue);}
+    .sc-icon{font-size:1.5rem;margin-bottom:0.4rem;}
+    .sc-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark);line-height:1;}
+    .sc-label{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;text-transform:uppercase;letter-spacing:0.05em;}
+
+    /* TABS */
+    .tabs{display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:1.5rem;}
+    .tab{flex:1;padding:0.6rem;border:none;background:transparent;font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--muted);border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .tab.active{background:var(--dark);color:#fff;}
+    .tab-badge{background:var(--red);color:#fff;font-size:0.62rem;font-weight:800;padding:0.1rem 0.4rem;border-radius:50px;margin-left:0.3rem;display:inline-block;}
+
+    /* REPORT CARDS */
+    .queue-list{display:flex;flex-direction:column;gap:1rem;}
+    .report-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp 0.3s ease both;}
+    .report-card.flagged{border-left:4px solid var(--red);}
+    .report-card.reviewed{border-left:4px solid var(--green);opacity:0.75;}
+    .report-card.removed{border-left:4px solid var(--muted);opacity:0.5;}
+    .rc-header{padding:1rem 1.3rem;background:#fafdf8;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .rc-rank{font-family:'Syne',sans-serif;font-size:0.72rem;font-weight:700;color:var(--muted);background:#f0f4f0;padding:0.2rem 0.6rem;border-radius:50px;}
+    .rc-reason{font-size:0.75rem;font-weight:700;padding:0.2rem 0.7rem;border-radius:50px;}
+    .reason-false_info{background:rgba(229,62,62,0.1);color:#c53030;}
+    .reason-harassment{background:rgba(229,62,62,0.1);color:#c53030;}
+    .reason-hate_speech{background:rgba(229,62,62,0.12);color:#c53030;}
+    .reason-harmful{background:rgba(221,107,32,0.1);color:#c05621;}
+    .reason-privacy{background:rgba(49,130,206,0.1);color:#2c5282;}
+    .reason-spam{background:rgba(113,128,150,0.1);color:#4a5568;}
+    .reason-other{background:rgba(113,128,150,0.1);color:#4a5568;}
+    .rc-time{font-size:0.72rem;color:var(--muted);margin-left:auto;}
+    .rc-status{font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;}
+    .rs-pending{background:rgba(245,166,35,0.12);color:#975a16;}
+    .rs-reviewed{background:rgba(0,135,81,0.1);color:#005c37;}
+    .rs-removed{background:rgba(113,128,150,0.1);color:#4a5568;}
+    .rs-escalated{background:rgba(229,62,62,0.1);color:#c53030;}
+    .rc-body{padding:1rem 1.3rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;}
+    .rc-problem-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:var(--dark);margin-bottom:0.3rem;cursor:pointer;}
+    .rc-problem-title:hover{color:var(--green);}
+    .rc-problem-meta{font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem;}
+    .rc-report-details{font-size:0.82rem;color:var(--text);background:#f8f9fa;border-radius:8px;padding:0.6rem 0.8rem;margin-top:0.5rem;line-height:1.5;}
+    .rc-report-count{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(229,62,62,0.08);border:1px solid rgba(229,62,62,0.2);color:var(--red);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;margin-top:0.4rem;}
+    .rc-img{width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border);flex-shrink:0;cursor:pointer;}
+    .rc-actions{padding:0.8rem 1.3rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;flex-wrap:wrap;background:#fafdf8;}
+    .action-btn{padding:0.4rem 0.9rem;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:0.3rem;}
+    .btn-approve{background:rgba(0,135,81,0.1);color:#005c37;}
+    .btn-approve:hover{background:var(--green);color:#fff;}
+    .btn-remove{background:rgba(229,62,62,0.1);color:#c53030;}
+    .btn-remove:hover{background:var(--red);color:#fff;}
+    .btn-escalate{background:rgba(221,107,32,0.1);color:#c05621;}
+    .btn-escalate:hover{background:var(--orange);color:#fff;}
+    .btn-restore{background:rgba(113,128,150,0.1);color:#4a5568;}
+    .btn-restore:hover{background:#718096;color:#fff;}
+    .btn-view{background:rgba(49,130,206,0.1);color:#2c5282;text-decoration:none;}
+    .btn-view:hover{background:var(--blue);color:#fff;}
+
+    /* LOG TABLE */
+    .log-table{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    th{padding:0.8rem 1rem;text-align:left;font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;background:#f8fdf8;border-bottom:1px solid var(--border);}
+    td{padding:0.8rem 1rem;font-size:0.82rem;color:var(--text);border-bottom:1px solid #f0f7f0;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    .action-tag{font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;}
+    .at-approved{background:rgba(0,135,81,0.1);color:#005c37;}
+    .at-removed{background:rgba(229,62,62,0.1);color:#c53030;}
+    .at-escalated{background:rgba(221,107,32,0.1);color:#c05621;}
+    .at-restored{background:rgba(49,130,206,0.1);color:#2c5282;}
+
+    .empty-state{text-align:center;padding:3rem;background:var(--card);border-radius:14px;border:1px solid var(--border);}
+    .empty-state .ei{font-size:3rem;margin-bottom:0.8rem;}
+    .empty-state p{color:var(--muted);font-size:0.88rem;}
+    .loading{text-align:center;padding:3rem;color:var(--muted);}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:600px){.rc-body{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}th:nth-child(3),td:nth-child(3){display:none;}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN WALL -->
+<div class="login-wall" id="login-wall">
+  <div class="login-box">
+    <div class="li">🛡️</div>
+    <h1>Moderation Centre</h1>
+    <p>Restricted to NaijaVoice administrators only. All actions are logged.</p>
+    <div class="login-field">
+      <label>Admin Email</label>
+      <input type="email" id="mod-email" placeholder="admin@naijavoice.ng"/>
+    </div>
+    <div class="login-field">
+      <label>Access Code</label>
+      <input type="password" id="mod-code" placeholder="Enter moderation code" onkeypress="if(event.key==='Enter')modLogin()"/>
+    </div>
+    <button class="login-btn" onclick="modLogin()">🛡️ Enter Moderation Centre</button>
+    <div class="login-error" id="login-error">❌ Invalid credentials.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="top-bar">
+    <a href="index.html" class="top-logo">Naija<span>Voice</span><small>MOD</small></a>
+    <div class="top-right">
+      <span class="top-badge" id="last-refresh">Loading...</span>
+      <button class="logout-btn" onclick="modLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card sc-red"><div class="sc-icon">🚩</div><div class="sc-num" id="s-pending">—</div><div class="sc-label">Pending Review</div></div>
+      <div class="stat-card sc-orange"><div class="sc-icon">⚠️</div><div class="sc-num" id="s-flagged">—</div><div class="sc-label">Total Reports</div></div>
+      <div class="stat-card sc-green"><div class="sc-icon">✅</div><div class="sc-num" id="s-reviewed">—</div><div class="sc-label">Reviewed</div></div>
+      <div class="stat-card sc-blue"><div class="sc-icon">🗑️</div><div class="sc-num" id="s-removed">—</div><div class="sc-label">Removed</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('queue',this)">🚩 Report Queue <span class="tab-badge" id="queue-badge">0</span></button>
+      <button class="tab" onclick="switchTab('all',this)">📋 All Problems</button>
+      <button class="tab" onclick="switchTab('removed',this)">🗑️ Removed</button>
+      <button class="tab" onclick="switchTab('log',this)">📜 Action Log</button>
+    </div>
+
+    <!-- QUEUE TAB -->
+    <div id="tab-queue">
+      <div class="queue-list" id="queue-list"><div class="loading">Loading reports...</div></div>
+    </div>
+
+    <!-- ALL PROBLEMS TAB -->
+    <div id="tab-all" style="display:none;">
+      <div class="queue-list" id="all-list"><div class="loading">Loading problems...</div></div>
+    </div>
+
+    <!-- REMOVED TAB -->
+    <div id="tab-removed" style="display:none;">
+      <div class="queue-list" id="removed-list"><div class="loading">Loading removed posts...</div></div>
+    </div>
+
+    <!-- ACTION LOG TAB -->
+    <div id="tab-log" style="display:none;">
+      <div class="log-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Problem</th>
+              <th>Action</th>
+              <th>Notes</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="log-tbody"><tr><td colspan="4" class="loading">Loading log...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const MOD_CODE = 'NAIJAVOICE2025MOD';
+const _sb = supabase.createClient(
+  'https://zszcmrbbgchafoydqoqb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
+);
+
+let allReports = [];
+let allProblems = [];
+let modLog = [];
+
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'Just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return new Date(ts).toLocaleDateString();}
+function reasonLabel(r){const map={false_info:'❌ False Information',harassment:'😡 Harassment',hate_speech:'🚫 Hate Speech',harmful:'⚠️ Harmful Content',privacy:'🔒 Privacy Violation',spam:'📢 Spam',other:'📋 Other'};return map[r]||r;}
+function statusBadge(s){const map={pending:'rs-pending',reviewed:'rs-reviewed',removed:'rs-removed',escalated:'rs-escalated'};return '<span class="rc-status '+(map[s]||'rs-pending')+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</span>';}
+
+// ── AUTH ──
+function modLogin(){
+  const email=document.getElementById('mod-email').value.trim();
+  const code=document.getElementById('mod-code').value.trim();
+  const err=document.getElementById('login-error');
+  if(!email||!code){err.textContent='Please enter email and code.';err.classList.add('show');return;}
+  if(code!==MOD_CODE){err.textContent='❌ Invalid access code.';err.classList.add('show');return;}
+  localStorage.setItem('nv_mod_session',JSON.stringify({email,time:Date.now()}));
+  document.getElementById('login-wall').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  loadAll();
+}
+
+function modLogout(){
+  localStorage.removeItem('nv_mod_session');
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('login-wall').style.display='flex';
+  document.getElementById('mod-code').value='';
+}
+
+const session=JSON.parse(localStorage.getItem('nv_mod_session')||'null');
+if(session&&(Date.now()-session.time)<12*60*60*1000){
+  document.getElementById('login-wall').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  loadAll();
+}
+
+// ── LOAD ALL DATA ──
+async function loadAll(){
+  document.getElementById('last-refresh').textContent='Loading...';
+  const [reportsRes, problemsRes, logRes] = await Promise.all([
+    _sb.from('reports').select('*, problems(id,title,category,category_icon,state,lga,image_urls,report_count,moderation_status,hidden)').order('reported_at',{ascending:false}),
+    _sb.from('problems').select('*').order('created_at',{ascending:false}),
+    _sb.from('moderation_log').select('*, problems(title)').order('actioned_at',{ascending:false}).limit(100)
+  ]);
+  allReports=reportsRes.data||[];
+  allProblems=problemsRes.data||[];
+  modLog=logRes.data||[];
+  updateStats();
+  renderQueue();
+  renderLog();
+  document.getElementById('last-refresh').textContent='Updated: '+new Date().toLocaleTimeString();
+}
+
+// ── STATS ──
+function updateStats(){
+  const pending=allReports.filter(r=>r.status==='pending').length;
+  const reviewed=allReports.filter(r=>r.status==='reviewed').length;
+  const removed=allProblems.filter(p=>p.hidden).length;
+  document.getElementById('s-pending').textContent=pending;
+  document.getElementById('s-flagged').textContent=allReports.length;
+  document.getElementById('s-reviewed').textContent=reviewed;
+  document.getElementById('s-removed').textContent=removed;
+  document.getElementById('queue-badge').textContent=pending;
+}
+
+// ── RENDER QUEUE ──
+function renderQueue(){
+  const pending=allReports.filter(r=>r.status==='pending');
+  const el=document.getElementById('queue-list');
+  if(!pending.length){el.innerHTML='<div class="empty-state"><div class="ei">✅</div><p>No pending reports. Moderation queue is clear.</p></div>';return;}
+  el.innerHTML=pending.map((r,i)=>buildReportCard(r,i)).join('');
+}
+
+// ── RENDER ALL PROBLEMS ──
+function renderAllProblems(){
+  const visible=allProblems.filter(p=>!p.hidden);
+  const el=document.getElementById('all-list');
+  if(!visible.length){el.innerHTML='<div class="empty-state"><div class="ei">📭</div><p>No active problems.</p></div>';return;}
+  el.innerHTML=visible.map((p,i)=>{
+    const rc=p.report_count||0;
+    return '<div class="report-card" style="animation-delay:'+(i*0.03)+'s">'
+      +'<div class="rc-header">'
+      +'<span class="rc-rank">#'+(i+1)+'</span>'
+      +(rc>0?'<span class="rc-report-count">🚩 '+rc+' report'+(rc>1?'s':'')+'</span>':'')
+      +'<span style="font-size:0.75rem;color:var(--muted);">'+(p.category_icon||'📋')+' '+(p.category||'General')+' · '+timeAgo(p.created_at)+'</span>'
+      +'<span class="rc-time">📍 '+(p.state||'Nigeria')+'</span>'
+      +'</div>'
+      +'<div class="rc-body">'
+      +'<div>'
+      +'<div class="rc-problem-title" onclick="window.open(\'problem.html?id='+p.id+'\',\'_blank\')">'+(p.title||'Untitled')+'</div>'
+      +'<div class="rc-problem-meta">'+p.lga+' · '+p.state+'</div>'
+      +'</div>'
+      +(p.image_urls&&p.image_urls.length>0?'<img src="'+p.image_urls[0]+'" class="rc-img" onclick="window.open(this.src,\'_blank\')"/>':'')
+      +'</div>'
+      +'<div class="rc-actions">'
+      +'<a href="problem.html?id='+p.id+'" target="_blank" class="action-btn btn-view">👁️ View</a>'
+      +'<button class="action-btn btn-remove" onclick="removePost(\''+p.id+'\',null,this)">🗑️ Remove Post</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ── RENDER REMOVED ──
+function renderRemoved(){
+  const removed=allProblems.filter(p=>p.hidden);
+  const el=document.getElementById('removed-list');
+  if(!removed.length){el.innerHTML='<div class="empty-state"><div class="ei">🗑️</div><p>No removed posts.</p></div>';return;}
+  el.innerHTML=removed.map((p,i)=>`
+    <div class="report-card removed" style="animation-delay:${i*0.03}s">
+      <div class="rc-header">
+        <span class="rc-rank">Removed</span>
+        <span style="font-size:0.75rem;color:var(--muted);">${p.category_icon||'📋'} ${p.category||'General'}</span>
+        <span class="rc-time">📍 ${p.state||'Nigeria'}</span>
+      </div>
+      <div class="rc-body">
+        <div>
+          <div class="rc-problem-title">${p.title||'Untitled'}</div>
+          <div class="rc-problem-meta">${p.lga||''} · ${p.state||''}</div>
+        </div>
+      </div>
+      <div class="rc-actions">
+        <button class="action-btn btn-restore" onclick="restorePost('${p.id}',this)">🔄 Restore Post</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── BUILD REPORT CARD ──
+function buildReportCard(r,i){
+  const p=r.problems||{};
+  const imgs=p.image_urls||[];
+  return '<div class="report-card flagged" id="rc-'+r.id+'" style="animation-delay:'+(i*0.04)+'s">'
+    +'<div class="rc-header">'
+    +'<span class="rc-rank">Report #'+(i+1)+'</span>'
+    +'<span class="rc-reason reason-'+r.reason+'">'+reasonLabel(r.reason)+'</span>'
+    +statusBadge(r.status||'pending')
+    +'<span class="rc-time">'+timeAgo(r.reported_at)+'</span>'
+    +'</div>'
+    +'<div class="rc-body">'
+    +'<div>'
+    +'<div class="rc-problem-title" onclick="window.open(\'problem.html?id='+p.id+'\',\'_blank\')">'+(p.title||'Unknown Post')+'</div>'
+    +'<div class="rc-problem-meta">'+(p.category_icon||'📋')+' '+(p.category||'General')+' · 📍 '+(p.state||'Nigeria')+(p.lga?' · '+p.lga:'')+'</div>'
+    +(p.report_count>1?'<span class="rc-report-count">🚩 '+p.report_count+' total reports</span>':'')
+    +(r.details?'<div class="rc-report-details">💬 Reporter notes: '+r.details+'</div>':'')
+    +'</div>'
+    +(imgs.length>0?'<img src="'+imgs[0]+'" class="rc-img" onclick="window.open(this.src,\'_blank\')"/>':'')
+    +'</div>'
+    +'<div class="rc-actions">'
+    +'<a href="problem.html?id='+p.id+'" target="_blank" class="action-btn btn-view">👁️ View Post</a>'
+    +'<button class="action-btn btn-approve" onclick="approveReport(\''+r.id+'\',\''+p.id+'\',this)">✅ Keep Post</button>'
+    +'<button class="action-btn btn-remove" onclick="removePost(\''+p.id+'\',\''+r.id+'\',this)">🗑️ Remove Post</button>'
+    +'<button class="action-btn btn-escalate" onclick="escalateReport(\''+r.id+'\',\''+p.id+'\',this)">⚡ Escalate</button>'
+    +'</div>'
+    +'</div>';
+}
+
+// ── MODERATION ACTIONS ──
+async function approveReport(reportId, problemId, btn){
+  btn.disabled=true;btn.textContent='Processing...';
+  await _sb.from('reports').update({status:'reviewed'}).eq('id',reportId);
+  await _sb.from('moderation_log').insert({problem_id:problemId,report_id:reportId,action:'approved',notes:'Post reviewed and kept. No violation found.'});
+  const el=document.getElementById('rc-'+reportId);
+  if(el)el.style.opacity='0.5';
+  showToast('✅ Report reviewed — post kept.');
+  await loadAll();
+}
+
+async function removePost(problemId, reportId, btn){
+  if(!confirm('Remove this post? It will be hidden from public view but can be restored.'))return;
+  btn.disabled=true;btn.textContent='Removing...';
+  await _sb.from('problems').update({hidden:true,moderation_status:'removed'}).eq('id',problemId);
+  if(reportId)await _sb.from('reports').update({status:'reviewed'}).eq('id',reportId);
+  await _sb.from('moderation_log').insert({problem_id:problemId,report_id:reportId||null,action:'removed',notes:'Post removed by moderator after review.'});
+  showToast('🗑️ Post removed from public view.');
+  await loadAll();
+}
+
+async function restorePost(problemId, btn){
+  btn.disabled=true;btn.textContent='Restoring...';
+  await _sb.from('problems').update({hidden:false,moderation_status:'approved'}).eq('id',problemId);
+  await _sb.from('moderation_log').insert({problem_id:problemId,action:'restored',notes:'Post restored by moderator.'});
+  showToast('🔄 Post restored to public feed.');
+  await loadAll();
+}
+
+async function escalateReport(reportId, problemId, btn){
+  btn.disabled=true;btn.textContent='Escalating...';
+  await _sb.from('reports').update({status:'escalated'}).eq('id',reportId);
+  await _sb.from('moderation_log').insert({problem_id:problemId,report_id:reportId,action:'escalated',notes:'Flagged for further review.'});
+  showToast('⚡ Report escalated for further review.');
+  await loadAll();
+}
+
+// ── RENDER LOG ──
+function renderLog(){
+  const tbody=document.getElementById('log-tbody');
+  if(!modLog.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--muted);">No actions logged yet.</td></tr>';return;}
+  const tagMap={approved:'at-approved',removed:'at-removed',escalated:'at-escalated',restored:'at-restored'};
+  tbody.innerHTML=modLog.map(l=>`
+    <tr>
+      <td style="font-weight:600;color:var(--dark);max-width:200px;">${l.problems?.title||'Unknown'}</td>
+      <td><span class="action-tag ${tagMap[l.action]||'at-approved'}">${l.action.charAt(0).toUpperCase()+l.action.slice(1)}</span></td>
+      <td style="color:var(--muted);font-size:0.78rem;">${l.notes||'—'}</td>
+      <td style="color:var(--muted);font-size:0.75rem;white-space:nowrap;">${timeAgo(l.actioned_at)}</td>
+    </tr>`).join('');
+}
+
+// ── TAB SWITCHING ──
+function switchTab(tab, btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['queue','all','removed','log'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  if(tab==='all')renderAllProblems();
+  if(tab==='removed')renderRemoved();
+  if(tab==='log')renderLog();
+}
+
+async function logout(){await _sb.auth.signOut();}
+</script>
+</body>
+</html>

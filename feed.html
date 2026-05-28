@@ -185,7 +185,7 @@ async function init(){
 async function loadProblems(){
   const {data,error}=await _sb.from('problems').select('*, profiles(full_name)').order('votes',{ascending:false});
   if(error){document.getElementById('feed-list').innerHTML='<div class="loading">Error loading problems. Please refresh. ❌</div>';console.error(error);return;}
-  allProblems=(data||[]).map(p=>({...p,poster_name:p.profiles?.full_name||'Anonymous'}));
+  allProblems=(data||[]).filter(p=>!p.hidden).map(p=>({...p,poster_name:p.profiles?.full_name||'Anonymous'}));
   const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
   document.getElementById('total-votes').textContent=total.toLocaleString();
   renderFeed();renderSidebar();
