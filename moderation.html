@@ -152,6 +152,16 @@
 
   <div class="main">
 
+    <!-- PENDING ALERT BANNER -->
+    <div id="pending-alert" style="display:none;background:rgba(229,62,62,0.1);border:1px solid rgba(229,62,62,0.3);border-radius:12px;padding:1rem 1.3rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;">
+      <span style="font-size:1.3rem;">🚨</span>
+      <div>
+        <div style="font-family:Syne,sans-serif;font-size:0.88rem;font-weight:800;color:#c53030;">Reports Pending Review</div>
+        <div style="font-size:0.78rem;color:#c53030;margin-top:0.1rem;">Flagged content is awaiting moderation action.</div>
+      </div>
+      <button onclick="switchTab('queue',document.querySelector('.tab'))" style="margin-left:auto;background:var(--red);color:#fff;border:none;padding:0.45rem 1rem;border-radius:8px;font-family:Syne,sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;">Review Now</button>
+    </div>
+
     <!-- STATS -->
     <div class="stats-row">
       <div class="stat-card sc-red"><div class="sc-icon">🚩</div><div class="sc-num" id="s-pending">—</div><div class="sc-label">Pending Review</div></div>
@@ -276,6 +286,11 @@ function updateStats(){
   document.getElementById('s-reviewed').textContent=reviewed;
   document.getElementById('s-removed').textContent=removed;
   document.getElementById('queue-badge').textContent=pending;
+  // Show alert banner if pending reports exist
+  const alertBanner=document.getElementById('pending-alert');
+  if(alertBanner) alertBanner.style.display=pending>0?'flex':'none';
+  // Update page title
+  document.title=pending>0?'('+pending+') NaijaVoice Moderation':'NaijaVoice – Moderation Centre';
 }
 
 // ── RENDER QUEUE ──
@@ -432,6 +447,33 @@ function switchTab(tab, btn){
 }
 
 async function logout(){await _sb.auth.signOut();}
+
+// ── AUTO REFRESH PENDING COUNT ──
+async function refreshBadge(){
+  try {
+    const {data} = await _sb.from('reports').select('id').eq('status','pending');
+    const count = data?.length || 0;
+    const badge = document.getElementById('queue-badge');
+    if(badge) badge.textContent = count;
+    // Update page title with badge
+    document.title = count > 0 
+      ? '('+count+') NaijaVoice Moderation' 
+      : 'NaijaVoice – Moderation Centre';
+    // Flash top bar if urgent
+    const topBar = document.querySelector('.top-bar');
+    if(topBar && count > 0){
+      topBar.style.borderBottom = '2px solid #e53e3e';
+    } else if(topBar){
+      topBar.style.borderBottom = '';
+    }
+  } catch(e){}
+}
+
+// Auto refresh every 60 seconds
+setInterval(()=>{
+  const sess=JSON.parse(localStorage.getItem('nv_mod_session')||'null');
+  if(sess) refreshBadge();
+}, 60000);
 </script>
 </body>
 </html>

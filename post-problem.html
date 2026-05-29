@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#008751"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--error:#e53e3e;}
+    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;--error:#e53e3e;--orange:#dd6b20;}
     *{margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
     nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
@@ -16,84 +16,126 @@
     .logo-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
     .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--green);}
     .logo-text span{color:var(--gold);}
-    .back-link{font-size:0.88rem;color:var(--muted);text-decoration:none;}
+    .back-link{font-size:0.88rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:0.4rem;}
+    .back-link:hover{color:var(--green);}
     .auth-wall{max-width:500px;margin:5rem auto;padding:0 5%;text-align:center;}
     .auth-wall .aw-icon{font-size:4rem;margin-bottom:1.5rem;}
     .auth-wall h2{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
     .auth-wall p{color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:2rem;}
     .btn-go{display:inline-flex;align-items:center;gap:0.5rem;background:var(--green);color:#fff;padding:0.9rem 2rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 20px rgba(0,135,81,0.3);}
-    .page-header{background:var(--dark);padding:3rem 5% 2.5rem;position:relative;overflow:hidden;}
+    .page-header{background:var(--dark);padding:2.5rem 5% 2rem;position:relative;overflow:hidden;}
     .page-header::before{content:'';position:absolute;top:-100px;right:-100px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
     .header-inner{max-width:800px;margin:0 auto;}
-    .page-header h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;color:#fff;line-height:1.15;margin-bottom:0.8rem;}
+    .page-header h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800;color:#fff;line-height:1.15;margin-bottom:0.6rem;}
     .page-header h1 em{font-style:normal;color:var(--gold);}
-    .page-header p{color:rgba(255,255,255,0.55);font-size:0.95rem;line-height:1.7;max-width:520px;}
-    .progress-wrap{background:var(--card);border-bottom:1px solid var(--border);padding:1.2rem 5%;}
+    .page-header p{color:rgba(255,255,255,0.55);font-size:0.9rem;line-height:1.7;max-width:520px;}
+    .page-header .disclaimer{margin-top:0.8rem;font-size:0.78rem;color:rgba(255,255,255,0.35);}
+    .page-header .disclaimer a{color:rgba(255,255,255,0.5);text-decoration:none;}
+    .progress-wrap{background:var(--card);border-bottom:1px solid var(--border);padding:1rem 5%;}
     .progress-inner{max-width:800px;margin:0 auto;display:flex;align-items:center;}
-    .prog-step{display:flex;align-items:center;gap:0.6rem;flex:1;}
-    .prog-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0;background:var(--border);color:var(--muted);transition:background 0.3s;}
+    .prog-step{display:flex;align-items:center;gap:0.5rem;flex:1;}
+    .prog-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;flex-shrink:0;background:var(--border);color:var(--muted);transition:background 0.3s;}
     .prog-step.active .prog-dot{background:var(--green);color:#fff;}
     .prog-step.done .prog-dot{background:var(--green-dark);color:#fff;}
-    .prog-label{font-size:0.78rem;font-weight:500;color:var(--muted);}
+    .prog-label{font-size:0.75rem;font-weight:500;color:var(--muted);}
     .prog-step.active .prog-label{color:var(--green);font-weight:600;}
-    .prog-line{flex:1;height:2px;background:var(--border);margin:0 0.5rem;border-radius:2px;max-width:60px;transition:background 0.3s;}
+    .prog-line{flex:1;height:2px;background:var(--border);margin:0 0.4rem;border-radius:2px;max-width:50px;transition:background 0.3s;}
     .prog-line.done{background:var(--green-dark);}
-    .form-wrapper{max-width:800px;margin:2.5rem auto 4rem;padding:0 5%;}
+    .form-wrapper{max-width:800px;margin:2rem auto 4rem;padding:0 5%;}
     .step-panel{display:none;}
     .step-panel.active{display:block;animation:fadeUp 0.4s ease both;}
-    .form-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1.2rem;}
-    .card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--dark);margin-bottom:0.4rem;}
-    .card-sub{font-size:0.85rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.5;}
-    .field{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.2rem;}
+    .form-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.8rem;margin-bottom:1.2rem;}
+    .card-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--dark);margin-bottom:0.3rem;}
+    .card-sub{font-size:0.84rem;color:var(--muted);margin-bottom:1.4rem;line-height:1.5;}
+    .field{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.1rem;}
     label{font-size:0.82rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:0.4rem;}
     .input-wrap{position:relative;}
     .input-icon{position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
-    input[type="text"],select,textarea{width:100%;padding:0.78rem 0.9rem 0.78rem 2.5rem;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--text);transition:border-color 0.2s;outline:none;appearance:none;}
-    textarea{padding:0.78rem 0.9rem;resize:vertical;min-height:130px;line-height:1.6;}
+    input[type="text"],select,textarea{width:100%;padding:0.75rem 0.9rem 0.75rem 2.5rem;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--text);transition:border-color 0.2s;outline:none;appearance:none;}
+    textarea{padding:0.75rem 0.9rem;resize:vertical;min-height:120px;line-height:1.6;}
     input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,135,81,0.1);}
-    .char-count{font-size:0.75rem;color:var(--muted);text-align:right;margin-top:0.3rem;}
-    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.8rem;margin-top:0.5rem;}
-    .cat-option{border:1.5px solid var(--border);border-radius:12px;padding:0.9rem 0.8rem;text-align:center;cursor:pointer;transition:all 0.2s;}
+    .char-count{font-size:0.73rem;color:var(--muted);text-align:right;margin-top:0.2rem;}
+    /* WARNING SYSTEM */
+    .mention-warning{display:none;background:rgba(221,107,32,0.08);border:1px solid rgba(221,107,32,0.3);border-radius:10px;padding:0.9rem 1rem;margin-top:0.5rem;font-size:0.82rem;color:var(--orange);line-height:1.5;}
+    .mention-warning.show{display:block;}
+    .mention-warning strong{display:block;margin-bottom:0.2rem;font-weight:700;}
+    .civic-tip{background:rgba(0,135,81,0.05);border:1px solid rgba(0,135,81,0.2);border-radius:10px;padding:0.9rem 1rem;margin-top:0.5rem;font-size:0.82rem;color:var(--green-dark);line-height:1.5;}
+    .civic-tip strong{display:block;margin-bottom:0.3rem;font-weight:700;}
+    /* CATEGORIES */
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:0.7rem;margin-top:0.5rem;}
+    .cat-option{border:1.5px solid var(--border);border-radius:12px;padding:0.85rem 0.7rem;text-align:center;cursor:pointer;transition:all 0.2s;}
     .cat-option:hover{border-color:var(--green);background:rgba(0,135,81,0.04);}
-    .cat-option.selected{border-color:var(--green);background:rgba(0,135,81,0.08);box-shadow:0 0 0 3px rgba(0,135,81,0.12);}
-    .cat-option .ci{font-size:1.8rem;margin-bottom:0.4rem;}
-    .cat-option .cn{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--dark);}
+    .cat-option.selected{border-color:var(--green);background:rgba(0,135,81,0.08);box-shadow:0 0 0 3px rgba(0,135,81,0.1);}
+    .cat-option .ci{font-size:1.7rem;margin-bottom:0.3rem;}
+    .cat-option .cn{font-family:'Syne',sans-serif;font-size:0.72rem;font-weight:700;color:var(--dark);}
+    /* URGENCY */
     .urgency-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-top:0.5rem;}
     .urgency-opt{border:1.5px solid var(--border);border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s;}
-    .urgency-opt .ui{font-size:1.5rem;margin-bottom:0.3rem;}
+    .urgency-opt .ui{font-size:1.4rem;margin-bottom:0.3rem;}
     .urgency-opt .un{font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;color:var(--dark);}
-    .urgency-opt .ud{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;}
+    .urgency-opt .ud{font-size:0.7rem;color:var(--muted);margin-top:0.15rem;}
     .urgency-opt.selected-low{border-color:#38a169;background:rgba(56,161,105,0.07);}
     .urgency-opt.selected-medium{border-color:var(--gold);background:rgba(245,166,35,0.07);}
     .urgency-opt.selected-high{border-color:var(--error);background:rgba(229,62,62,0.07);}
     .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    /* IMAGE UPLOAD */
+    .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.8rem;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;background:#fafef8;}
+    .upload-zone:hover{border-color:var(--green);background:rgba(0,135,81,0.03);}
+    .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .upload-zone .uz-icon{font-size:2.2rem;margin-bottom:0.5rem;}
+    .upload-zone h4{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;color:var(--dark);margin-bottom:0.2rem;}
+    .upload-zone p{font-size:0.78rem;color:var(--muted);}
+    .upload-rec{background:rgba(0,135,81,0.05);border:1px solid rgba(0,135,81,0.15);border-radius:8px;padding:0.7rem 0.9rem;margin-top:0.7rem;font-size:0.78rem;color:var(--green-dark);line-height:1.5;}
+    .upload-previews{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:0.8rem;}
+    .preview-wrap{position:relative;width:75px;height:75px;}
+    .preview-thumb{width:75px;height:75px;border-radius:8px;object-fit:cover;border:2px solid var(--border);}
+    .remove-img{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--error);color:#fff;border:none;cursor:pointer;font-size:0.65rem;display:flex;align-items:center;justify-content:center;font-weight:700;}
+    .upload-progress{margin-top:0.6rem;display:none;}
+    .upload-progress.show{display:block;}
+    .up-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+    .up-fill{height:100%;background:var(--green);border-radius:3px;transition:width 0.3s;width:0%;}
+    .up-label{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;}
+    /* BUTTONS */
     .btn-row{display:flex;align-items:center;justify-content:space-between;margin-top:1.5rem;gap:1rem;}
-    .btn-back{background:transparent;color:var(--muted);padding:0.85rem 1.6rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;border:1.5px solid var(--border);cursor:pointer;}
-    .btn-next{background:var(--green);color:#fff;padding:0.85rem 2rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,135,81,0.28);}
+    .btn-back{background:transparent;color:var(--muted);padding:0.8rem 1.5rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:500;border:1.5px solid var(--border);cursor:pointer;}
+    .btn-next{background:var(--green);color:#fff;padding:0.8rem 1.8rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(0,135,81,0.28);}
     .btn-next:disabled{opacity:0.6;cursor:not-allowed;}
-    .btn-submit{background:var(--gold);color:var(--dark);padding:0.85rem 2rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;border:none;cursor:pointer;}
+    .btn-submit{background:var(--gold);color:var(--dark);padding:0.8rem 1.8rem;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:800;border:none;cursor:pointer;}
     .btn-submit:disabled{opacity:0.6;cursor:not-allowed;}
-    .preview-card{background:var(--dark);border-radius:16px;padding:1.5rem;border:1px solid rgba(255,255,255,0.08);}
-    .preview-card .pc-state{font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;}
-    .preview-card .pc-cat{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.35);color:var(--green-light);font-size:0.72rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:50px;margin-bottom:0.7rem;}
-    .preview-card h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;margin-bottom:0.6rem;line-height:1.4;}
-    .preview-card p{font-size:0.85rem;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:1rem;}
+    /* PREVIEW */
+    .preview-card{background:var(--dark);border-radius:14px;padding:1.4rem;border:1px solid rgba(255,255,255,0.08);}
+    .pc-state{font-size:0.7rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;}
+    .pc-cat{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.35);color:var(--green-light);font-size:0.7rem;font-weight:600;padding:0.18rem 0.6rem;border-radius:50px;margin-bottom:0.6rem;}
+    .preview-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff;margin-bottom:0.5rem;line-height:1.4;}
+    .preview-card p{font-size:0.83rem;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:0.9rem;}
     .pc-footer{display:flex;align-items:center;justify-content:space-between;}
-    .pc-votes{font-size:0.78rem;color:rgba(255,255,255,0.35);}
-    .pc-urgency{font-size:0.72rem;font-weight:600;padding:0.2rem 0.7rem;border-radius:50px;}
+    .pc-votes{font-size:0.75rem;color:rgba(255,255,255,0.35);}
+    .pc-urgency{font-size:0.7rem;font-weight:600;padding:0.18rem 0.6rem;border-radius:50px;}
     .urg-low{background:rgba(56,161,105,0.2);color:#68d391;}
     .urg-medium{background:rgba(245,166,35,0.2);color:var(--gold);}
     .urg-high{background:rgba(229,62,62,0.2);color:#fc8181;}
+    /* EDUCATION BOX */
+    .edu-box{background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.25);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1rem;}
+    .edu-box h4{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:800;color:var(--dark);margin-bottom:0.4rem;}
+    .edu-box ul{list-style:none;display:flex;flex-direction:column;gap:0.3rem;}
+    .edu-box ul li{font-size:0.8rem;color:var(--muted);padding-left:1rem;position:relative;line-height:1.5;}
+    .edu-box ul li::before{content:'•';position:absolute;left:0;color:var(--orange);}
+    /* AGREE */
+    .agree-wrap{display:flex;align-items:flex-start;gap:0.7rem;margin-bottom:1rem;}
+    .agree-wrap input[type="checkbox"]{width:16px;height:16px;margin-top:3px;accent-color:var(--green);flex-shrink:0;cursor:pointer;}
+    .agree-wrap label{font-size:0.82rem;color:var(--muted);line-height:1.5;cursor:pointer;}
+    .agree-wrap a{color:var(--green);font-weight:600;text-decoration:none;}
+    /* SUCCESS */
     .success-screen{display:none;text-align:center;padding:4rem 2rem;}
     .success-screen.show{display:block;animation:fadeUp 0.5s ease both;}
     .success-icon{font-size:5rem;margin-bottom:1.5rem;}
-    .success-screen h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
-    .success-screen p{color:var(--muted);font-size:0.95rem;line-height:1.7;max-width:440px;margin:0 auto 2rem;}
+    .success-screen h2{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
+    .success-screen p{color:var(--muted);font-size:0.92rem;line-height:1.7;max-width:420px;margin:0 auto 2rem;}
     .success-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-    @media(max-width:600px){.two-col{grid-template-columns:1fr;}.urgency-grid{grid-template-columns:1fr;}.form-card{padding:1.2rem;}.prog-label{display:none;}.btn-row{flex-direction:column;}.btn-next,.btn-back,.btn-submit{width:100%;}}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}.urgency-grid{grid-template-columns:1fr;}.form-card{padding:1.2rem;}.prog-label{display:none;}.btn-row{flex-direction:column;}.btn-next,.btn-back,.btn-submit{width:100%;justify-content:center;}.cat-grid{grid-template-columns:repeat(3,1fr);}}
   </style>
 </head>
 <body>
@@ -102,25 +144,28 @@
     <div class="logo-icon">🗳️</div>
     <div class="logo-text">Naija<span>Voice</span></div>
   </a>
-  <a href="index.html" class="back-link">← Back to Home</a>
+  <a href="index.html" class="back-link">⬅️ Back to Home</a>
 </nav>
+
 <div class="auth-wall" id="auth-wall" style="display:none;">
   <div class="aw-icon">🔐</div>
   <h2>Login Required to Post</h2>
-  <p>You need a free NajaVoice account to post a problem.</p>
+  <p>You need a free NaijaVoice account to post a community problem.</p>
   <a href="auth.html" class="btn-go">👤 Create Free Account →</a>
 </div>
+
 <div id="main-form" style="display:none;">
   <div class="page-header">
     <div class="header-inner">
-      <h1>Post a <em>Real Problem</em><br/>That Affects People</h1>
-      <p>Describe the issue clearly. The more detail you give, the more people will relate and vote.</p>
-      <p style="margin-top:0.8rem;font-size:0.8rem;color:rgba(255,255,255,0.35);">📢 NaijaVoice is a civic reporting platform. Focus on community problems and locations, not individuals. <a href="guidelines.html" style="color:rgba(255,255,255,0.5);">Guidelines</a></p>
+      <h1>Post a <em>Real Community Problem</em></h1>
+      <p>Describe the issue clearly. Focus on the problem, location and community impact. The more detail you give, the more people will relate and vote.</p>
+      <p class="disclaimer">📢 NaijaVoice is a civic reporting platform. Focus on community problems and locations. <a href="guidelines.html">Community Guidelines</a> · <a href="terms.html">Terms of Use</a></p>
     </div>
   </div>
+
   <div class="progress-wrap">
     <div class="progress-inner">
-      <div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div class="prog-label">The Problem</div></div>
+      <div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div class="prog-label">Problem</div></div>
       <div class="prog-line" id="pl1"></div>
       <div class="prog-step" id="ps2"><div class="prog-dot">2</div><div class="prog-label">Location</div></div>
       <div class="prog-line" id="pl2"></div>
@@ -129,22 +174,36 @@
       <div class="prog-step" id="ps4"><div class="prog-dot">4</div><div class="prog-label">Preview</div></div>
     </div>
   </div>
+
   <div class="form-wrapper">
-    <!-- STEP 1 -->
+
+    <!-- STEP 1: PROBLEM -->
     <div class="step-panel active" id="step1">
       <div class="form-card">
         <div class="card-title">What is the Problem? 🔍</div>
-        <div class="card-sub">Give a clear title and description so others can understand and relate.</div>
+        <div class="card-sub">Give a clear title and description focused on the community issue — not individuals.</div>
+
         <div class="field">
           <label>Problem Title *</label>
-          <div class="input-wrap"><span class="input-icon">📢</span><input type="text" id="p-title" placeholder="e.g. No clean water supply for 2 years" maxlength="100" oninput="countChars('p-title','title-count',100)"/></div>
+          <div class="input-wrap">
+            <span class="input-icon">📢</span>
+            <input type="text" id="p-title" placeholder="e.g. No clean water supply for 2 years in Mushin" maxlength="100" oninput="countChars('p-title','title-count',100);checkMentions('p-title','title-warning')"/>
+          </div>
           <div class="char-count" id="title-count">0 / 100</div>
+          <div class="mention-warning" id="title-warning"></div>
         </div>
+
         <div class="field">
           <label>Full Description *</label>
-          <textarea id="p-desc" placeholder="Describe the problem in detail..." maxlength="800" oninput="countChars('p-desc','desc-count',800)" style="padding:0.78rem 0.9rem;"></textarea>
+          <textarea id="p-desc" placeholder="Describe the problem in detail. Focus on the issue, its impact on the community, and how long it has persisted..." maxlength="800" oninput="countChars('p-desc','desc-count',800);checkMentions('p-desc','desc-warning')" style="padding:0.75rem 0.9rem;"></textarea>
           <div class="char-count" id="desc-count">0 / 800</div>
+          <div class="mention-warning" id="desc-warning"></div>
+          <div class="civic-tip">
+            <strong>💡 Civic Reporting Tip</strong>
+            Focus on the problem and its impact. Example: "Residents say complaints submitted to the local government office remain unresolved after 2 years." This is more effective than personal accusations.
+          </div>
         </div>
+
         <div class="field">
           <label>Category *</label>
           <div class="cat-grid">
@@ -163,11 +222,12 @@
       </div>
       <div class="btn-row"><div></div><button class="btn-next" onclick="goStep(2)">Next: Location →</button></div>
     </div>
-    <!-- STEP 2 -->
+
+    <!-- STEP 2: LOCATION -->
     <div class="step-panel" id="step2">
       <div class="form-card">
         <div class="card-title">Where is this Problem? 📍</div>
-        <div class="card-sub">Tell us the location so people in the same area can find and vote.</div>
+        <div class="card-sub">Tell us the location so people in the same area can find and vote. Be as specific as possible.</div>
         <div class="two-col">
           <div class="field">
             <label>State *</label>
@@ -184,29 +244,31 @@
           </div>
         </div>
         <div class="field">
-          <label>Community / Street</label>
-          <div class="input-wrap"><span class="input-icon">🏘️</span><input type="text" id="p-community" placeholder="e.g. Ajegunle Street"/></div>
+          <label>Community / Neighbourhood</label>
+          <div class="input-wrap"><span class="input-icon">🏘️</span><input type="text" id="p-community" placeholder="e.g. Ajegunle, Surulere, Kano Road area"/></div>
         </div>
         <div class="field">
-          <label>How many people affected? *</label>
+          <label>How many people are affected? *</label>
           <div class="input-wrap"><span class="input-icon">👥</span>
             <select id="p-affected">
               <option value="">-- Select range --</option>
               <option>A few households (under 50 people)</option>
-              <option>A street or block (50-500 people)</option>
-              <option>A whole community (500-5,000 people)</option>
+              <option>A street or block (50–500 people)</option>
+              <option>A whole community (500–5,000 people)</option>
               <option>An entire LGA or more (5,000+ people)</option>
             </select>
           </div>
         </div>
       </div>
-      <div class="btn-row"><button class="btn-back" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Next: More Details →</button></div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Next: Details →</button></div>
     </div>
-    <!-- STEP 3 -->
+
+    <!-- STEP 3: DETAILS + IMAGE -->
     <div class="step-panel" id="step3">
       <div class="form-card">
         <div class="card-title">More Details 📋</div>
-        <div class="card-sub">Help others understand the seriousness of this problem.</div>
+        <div class="card-sub">Help others understand the seriousness and history of this problem.</div>
+
         <div class="field">
           <label>Urgency Level *</label>
           <div class="urgency-grid">
@@ -215,15 +277,21 @@
             <div class="urgency-opt" id="urg-high" onclick="selectUrgency('high')"><div class="ui">🔴</div><div class="un">Critical</div><div class="ud">Lives at risk</div></div>
           </div>
         </div>
-        <div class="field" style="margin-top:1.2rem">
-          <label>How long has this existed?</label>
+
+        <div class="field" style="margin-top:1rem;">
+          <label>How long has this problem existed?</label>
           <div class="input-wrap"><span class="input-icon">📅</span>
             <select id="p-duration">
               <option value="">-- Select --</option>
-              <option>Less than 1 month</option><option>1-6 months</option><option>6 months - 1 year</option><option>1-3 years</option><option>More than 3 years</option>
+              <option>Less than 1 month</option>
+              <option>1–6 months</option>
+              <option>6 months – 1 year</option>
+              <option>1–3 years</option>
+              <option>More than 3 years</option>
             </select>
           </div>
         </div>
+
         <div class="field">
           <label>Has this issue been reported to relevant authorities?</label>
           <div class="input-wrap"><span class="input-icon">🏛️</span>
@@ -236,77 +304,130 @@
             </select>
           </div>
         </div>
+
+        <!-- IMAGE UPLOAD -->
+        <div class="field" style="margin-top:1rem;">
+          <label>📸 Attach Image Evidence <span style="font-weight:400;color:var(--muted);">(Recommended)</span></label>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" accept="image/*" multiple onchange="handleImageSelect(this)"/>
+            <div class="uz-icon">📷</div>
+            <h4>Tap to attach photos</h4>
+            <p>JPG or PNG · Up to 3 photos · Max 5MB each</p>
+          </div>
+          <div class="upload-rec">
+            📌 <strong>Attach an image where available</strong> to improve clarity and civic visibility. Images of infrastructure, roads, flooding, or facilities help make your report more credible and impactful. Do not upload images of individuals or private documents.
+          </div>
+          <div class="upload-previews" id="upload-previews"></div>
+          <div class="upload-progress" id="upload-progress">
+            <div class="up-track"><div class="up-fill" id="up-fill"></div></div>
+            <div class="up-label" id="up-label">Uploading photos...</div>
+          </div>
+        </div>
       </div>
       <div class="btn-row"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="goStep(4)">Preview My Post →</button></div>
     </div>
-    <!-- STEP 4 -->
+
+    <!-- STEP 4: PREVIEW + SUBMIT -->
     <div class="step-panel" id="step4">
       <div class="form-card">
         <div class="card-title">Preview Your Post 👀</div>
-        <div class="card-sub">This is how your problem will appear on NajaVoice.</div>
+        <div class="card-sub">This is how your problem will appear on NaijaVoice. Review carefully before submitting.</div>
         <div class="preview-card">
           <div class="pc-state" id="prev-location">State · LGA</div>
           <div class="pc-cat" id="prev-cat">🏷️ Category</div>
           <h3 id="prev-title">Your title here</h3>
           <p id="prev-desc">Your description here...</p>
-          <div class="pc-footer"><div class="pc-votes">0 votes · Just posted</div><div class="pc-urgency" id="prev-urgency">Urgency</div></div>
-        </div>
-      </div>
-      <div class="form-card" style="background:rgba(245,166,35,0.05);border-color:rgba(245,166,35,0.3);">
-        <div style="display:flex;align-items:flex-start;gap:0.8rem;">
-          <div style="font-size:1.5rem;flex-shrink:0;">⚠️</div>
-          <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--dark);margin-bottom:0.4rem;">Post Responsibly</div>
-            <div style="font-size:0.85rem;color:var(--muted);line-height:1.6;">Please report responsibly. Avoid false claims, personal attacks or sharing private information. You are legally responsible for content you submit.</div>
-            <div style="margin-top:0.6rem;font-size:0.78rem;"><a href="guidelines.html" style="color:var(--green);font-weight:600;text-decoration:none;">📋 Read Community Guidelines →</a></div>
+          <div class="pc-footer">
+            <div class="pc-votes">0 votes · Just posted</div>
+            <div class="pc-urgency" id="prev-urgency">Urgency</div>
           </div>
         </div>
       </div>
-      <div class="form-card" style="background:rgba(0,135,81,0.04);border-color:rgba(0,135,81,0.2);">
-        <div style="display:flex;align-items:flex-start;gap:0.8rem;">
-          <div style="font-size:1.5rem;flex-shrink:0;">✅</div>
-          <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--dark);margin-bottom:0.3rem;">Ready to submit?</div><div style="font-size:0.85rem;color:var(--muted);line-height:1.6;">Once posted, your problem will be visible to all Nigerians.</div></div>
-        </div>
+
+      <!-- EDUCATION PROMPT -->
+      <div class="edu-box">
+        <h4>⚠️ Post Responsibly — Final Reminder</h4>
+        <ul>
+          <li>Please report responsibly. Avoid false claims and personal attacks.</li>
+          <li>Focus on the problem and community impact — not individuals.</li>
+          <li>Do not share private personal information about anyone.</li>
+          <li>You are legally responsible for content you submit.</li>
+          <li>Posts may be reviewed by our moderation team.</li>
+        </ul>
       </div>
-      <div style="margin-bottom:1rem;">
-        <label style="display:flex;align-items:flex-start;gap:0.8rem;cursor:pointer;">
-          <input type="checkbox" id="agree-guidelines" style="width:16px;height:16px;margin-top:3px;accent-color:var(--green);flex-shrink:0;cursor:pointer;"/>
-          <span style="font-size:0.83rem;color:var(--muted);line-height:1.5;">I confirm this report is truthful and I agree to the <a href="guidelines.html" style="color:var(--green);font-weight:600;">Community Guidelines</a> and <a href="terms.html" style="color:var(--green);font-weight:600;">Terms of Use</a>.</span>
-        </label>
+
+      <div class="agree-wrap">
+        <input type="checkbox" id="agree-guidelines"/>
+        <label for="agree-guidelines">I confirm this report is truthful, focused on a real community problem, and I agree to the <a href="guidelines.html">Community Guidelines</a> and <a href="terms.html">Terms of Use</a>.</label>
       </div>
+
       <div class="btn-row">
-        <button class="btn-back" onclick="goStep(3)">← Go Back & Edit</button>
+        <button class="btn-back" onclick="goStep(3)">← Edit Report</button>
         <button class="btn-submit" id="submit-btn" onclick="submitProblem()">🚀 Submit Problem Now</button>
       </div>
     </div>
+
     <!-- SUCCESS -->
     <div class="success-screen" id="success-screen">
       <div class="success-icon">🎉</div>
-      <h2>Problem Posted Successfully!</h2>
-      <p>Your problem is now live on NajaVoice! Share it so people can vote.</p>
+      <h2>Problem Posted!</h2>
+      <p>Your civic report is now live on NaijaVoice. Share it so more Nigerians can vote and amplify the issue.</p>
       <div class="success-btns">
         <a href="feed.html" style="text-decoration:none;"><button class="btn-next">🗳️ See Live Feed</button></a>
-        <a href="index.html" style="text-decoration:none;"><button class="btn-back">🏠 Home</button></a>
+        <a href="post-problem.html" style="text-decoration:none;"><button class="btn-back">✍️ Post Another</button></a>
       </div>
     </div>
+
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const _sb = supabase.createClient(
   'https://zszcmrbbgchafoydqoqb.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
 );
-let selectedCat='',selectedCatIcon='',selectedUrgency='',currentUser=null,currentStep=1;
-function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+let selectedCat='', selectedCatIcon='', selectedUrgency='', currentUser=null, currentStep=1, selectedImages=[];
+
+// ── RESPONSIBLE MENTION FRAMEWORK ──
+const HIGH_RISK_PATTERNS = [
+  /\b(stole|stealing|thief|corrupt|fraud|criminal|arrested|bribed|bribery|killed|murderer|rapist|kidnapper)\b/gi
+];
+const CONDITIONAL_PATTERNS = [
+  /\b(governor|minister|commissioner|chairman|senator|representative|councillor|official|LGA boss)\b/gi
+];
+
+function checkMentions(inputId, warningId) {
+  const val = document.getElementById(inputId)?.value || '';
+  const warningEl = document.getElementById(warningId);
+  if (!warningEl) return;
+
+  const hasHighRisk = HIGH_RISK_PATTERNS.some(p => { p.lastIndex=0; return p.test(val); });
+  const hasConditional = CONDITIONAL_PATTERNS.some(p => { p.lastIndex=0; return p.test(val); });
+
+  if (hasHighRisk) {
+    warningEl.innerHTML = '<strong>⚠️ High-Risk Language Detected</strong>Your text contains language that could be interpreted as a direct accusation. NaijaVoice recommends civic framing: Instead of "X stole money", try "Residents report funds allocated for this project appear unaccounted for." Posts with unverified accusations may be flagged for review.';
+    warningEl.classList.add('show');
+  } else if (hasConditional) {
+    warningEl.innerHTML = '<strong>📋 Public Official Mentioned</strong>You may mention public officials in civic context. Please ensure statements are framed as observations or community reports rather than direct accusations. Example: "Complaints submitted to the chairman\'s office remain unresolved."';
+    warningEl.classList.add('show');
+  } else {
+    warningEl.classList.remove('show');
+  }
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 function countChars(inputId,countId,max){const v=document.getElementById(inputId).value.length;document.getElementById(countId).textContent=v+' / '+max;}
 function selectCat(el,name,icon){document.querySelectorAll('.cat-option').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedCat=name;selectedCatIcon=icon;}
 function selectUrgency(level){['low','medium','high'].forEach(l=>{document.getElementById('urg-'+l).className='urgency-opt';});document.getElementById('urg-'+level).classList.add('selected-'+level);selectedUrgency=level;}
+
 function validateStep(step){
   if(step===1){
     if(!document.getElementById('p-title').value.trim()){showToast('Please enter a problem title.');return false;}
-    if(document.getElementById('p-desc').value.trim().length<30){showToast('Please write a description (at least 30 characters).');return false;}
+    if(document.getElementById('p-desc').value.trim().length<20){showToast('Please write a description (at least 20 characters).');return false;}
     if(!selectedCat){showToast('Please select a category.');return false;}
   }
   if(step===2){
@@ -317,32 +438,99 @@ function validateStep(step){
   if(step===3){if(!selectedUrgency){showToast('Please select an urgency level.');return false;}}
   return true;
 }
+
 function goStep(n){
   if(n>currentStep&&!validateStep(currentStep))return;
   if(n===4)buildPreview();
   document.getElementById('step'+currentStep).classList.remove('active');
   document.getElementById('step'+n).classList.add('active');
-  for(let i=1;i<=4;i++){const ps=document.getElementById('ps'+i);ps.classList.remove('active','done');if(i<n)ps.classList.add('done');else if(i===n)ps.classList.add('active');}
-  for(let i=1;i<=3;i++){const pl=document.getElementById('pl'+i);if(pl)pl.classList.toggle('done',i<n);}
+  for(let i=1;i<=4;i++){
+    const ps=document.getElementById('ps'+i);
+    if(ps){ps.classList.remove('active','done');if(i<n)ps.classList.add('done');else if(i===n)ps.classList.add('active');}
+    const pl=document.getElementById('pl'+i);
+    if(pl)pl.classList.toggle('done',i<n);
+  }
   currentStep=n;window.scrollTo({top:0,behavior:'smooth'});
 }
+
 function buildPreview(){
   document.getElementById('prev-title').textContent=document.getElementById('p-title').value;
   const desc=document.getElementById('p-desc').value;
   document.getElementById('prev-desc').textContent=desc.length>160?desc.slice(0,160)+'…':desc;
   document.getElementById('prev-location').textContent=document.getElementById('p-state').value+' · '+document.getElementById('p-lga').value+' LGA';
   document.getElementById('prev-cat').textContent=selectedCatIcon+' '+selectedCat;
-  const urgLabels={low:'Low Urgency',medium:'Medium Urgency',high:'🔴 Critical'};
+  const urgLabels={low:'🟡 Low Urgency',medium:'🟠 Medium Urgency',high:'🔴 Critical'};
   const urgClasses={low:'urg-low',medium:'urg-medium',high:'urg-high'};
   const urgEl=document.getElementById('prev-urgency');
   urgEl.textContent=urgLabels[selectedUrgency]||'—';
   urgEl.className='pc-urgency '+(urgClasses[selectedUrgency]||'urg-low');
 }
+
+// ── IMAGE HANDLING ──
+function handleImageSelect(input){
+  const files=Array.from(input.files).slice(0,3);
+  selectedImages=files;
+  const previews=document.getElementById('upload-previews');
+  previews.innerHTML='';
+  files.forEach((file,i)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const wrap=document.createElement('div');
+      wrap.className='preview-wrap';
+      wrap.innerHTML='<img src="'+e.target.result+'" class="preview-thumb"/><button class="remove-img" onclick="removeImage('+i+')">✕</button>';
+      previews.appendChild(wrap);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeImage(index){
+  selectedImages.splice(index,1);
+  const previews=document.getElementById('upload-previews');
+  previews.innerHTML='';
+  selectedImages.forEach((file,i)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const wrap=document.createElement('div');
+      wrap.className='preview-wrap';
+      wrap.innerHTML='<img src="'+e.target.result+'" class="preview-thumb"/><button class="remove-img" onclick="removeImage('+i+')">✕</button>';
+      previews.appendChild(wrap);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImages(problemId){
+  if(!selectedImages.length)return[];
+  const urls=[];
+  const progressEl=document.getElementById('upload-progress');
+  const fillEl=document.getElementById('up-fill');
+  const labelEl=document.getElementById('up-label');
+  progressEl.classList.add('show');
+  for(let i=0;i<selectedImages.length;i++){
+    const file=selectedImages[i];
+    const ext=file.name.split('.').pop();
+    const path=currentUser.id+'/'+problemId+'-'+i+'.'+ext;
+    labelEl.textContent='Uploading photo '+(i+1)+' of '+selectedImages.length+'...';
+    fillEl.style.width=Math.round(((i+0.5)/selectedImages.length)*100)+'%';
+    const {data,error}=await _sb.storage.from('problem-images').upload(path,file,{upsert:true});
+    if(!error){
+      const {data:urlData}=_sb.storage.from('problem-images').getPublicUrl(path);
+      urls.push(urlData.publicUrl);
+    }
+    fillEl.style.width=Math.round(((i+1)/selectedImages.length)*100)+'%';
+  }
+  labelEl.textContent='✅ Photos uploaded!';
+  return urls;
+}
+
 async function submitProblem(){
   const agreed=document.getElementById('agree-guidelines')?.checked;
   if(!agreed){showToast('⚠️ Please agree to the Community Guidelines before posting.');return;}
   const btn=document.getElementById('submit-btn');
-  btn.disabled=true;btn.textContent='Posting...';
+  btn.disabled=true;
+  btn.textContent=selectedImages.length>0?'📸 Uploading...':'Posting...';
+
   const problem={
     user_id:currentUser.id,
     title:document.getElementById('p-title').value.trim(),
@@ -355,14 +543,26 @@ async function submitProblem(){
     urgency:selectedUrgency,
     duration:document.getElementById('p-duration').value,
     govt_reported:document.getElementById('p-govt').value,
-    votes:0,status:'pending'
+    votes:0,status:'pending',
+    image_urls:[],hidden:false,moderation_status:'approved'
   };
-  const {error}=await _sb.from('problems').insert([problem]);
-  if(error){showToast('Error posting. Please try again.');btn.disabled=false;btn.textContent='🚀 Submit Problem Now';console.error(error);return;}
+
+  const {data:inserted,error}=await _sb.from('problems').insert([problem]).select();
+  if(error){showToast('❌ Error posting. Please try again.');btn.disabled=false;btn.textContent='🚀 Submit Problem Now';console.error(error);return;}
+
+  if(selectedImages.length>0&&inserted?.[0]?.id){
+    btn.textContent='📸 Uploading images...';
+    const imageUrls=await uploadImages(inserted[0].id);
+    if(imageUrls.length>0){
+      await _sb.from('problems').update({image_urls:imageUrls}).eq('id',inserted[0].id);
+    }
+  }
+
   document.getElementById('step4').classList.remove('active');
   document.getElementById('success-screen').classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
 async function init(){
   try{
     const {data:{user}}=await _sb.auth.getUser();
