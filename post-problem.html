@@ -531,10 +531,26 @@ async function submitProblem(){
   btn.disabled=true;
   btn.textContent=selectedImages.length>0?'📸 Uploading...':'Posting...';
 
+  // ── CHECK FOR HIGH RISK CONTENT ──
+  const title=document.getElementById('p-title').value.trim();
+  const desc=document.getElementById('p-desc').value.trim();
+  const fullText=title+' '+desc;
+  
+  const HIGH_RISK=[
+    /(stole|stealing|thief|corrupt|fraud|criminal|arrested|bribed|bribery|killed|murderer|rapist|kidnapper|looted|embezzled|terrorist|liar|bastard|fool|idiot)/gi
+  ];
+  
+  const isHighRisk=HIGH_RISK.some(p=>{p.lastIndex=0;return p.test(fullText);});
+  
+  // High risk = held for moderation review (hidden until reviewed)
+  // Normal = published immediately
+  const moderationStatus = isHighRisk ? 'pending_review' : 'approved';
+  const isHidden = false; // Always visible but flagged for review
+
   const problem={
     user_id:currentUser.id,
-    title:document.getElementById('p-title').value.trim(),
-    description:document.getElementById('p-desc').value.trim(),
+    title,
+    description:desc,
     category:selectedCat,category_icon:selectedCatIcon,
     state:document.getElementById('p-state').value,
     lga:document.getElementById('p-lga').value.trim(),
@@ -544,7 +560,7 @@ async function submitProblem(){
     duration:document.getElementById('p-duration').value,
     govt_reported:document.getElementById('p-govt').value,
     votes:0,status:'pending',
-    image_urls:[],hidden:false,moderation_status:'approved'
+    image_urls:[],hidden:isHidden,moderation_status:moderationStatus
   };
 
   const {data:inserted,error}=await _sb.from('problems').insert([problem]).select();
@@ -558,8 +574,33 @@ async function submitProblem(){
     }
   }
 
+  // Auto-flag high-risk posts into moderation queue
+  if(isHighRisk && inserted?.[0]?.id){
+    await _sb.from('reports').insert({
+      problem_id: inserted[0].id,
+      reason: 'auto_flagged',
+      details: 'Post automatically flagged by NaijaVoice content detection system for review.',
+      status: 'pending',
+      reported_at: new Date().toISOString()
+    });
+    // Increment report count
+    await _sb.rpc('increment_report_count', {problem_id: inserted[0].id});
+  }
+
+  // Show appropriate success message
+  const successScreen = document.getElementById('success-screen');
+  const successIcon = successScreen.querySelector('.success-icon');
+  const successTitle = successScreen.querySelector('h2');
+  const successDesc = successScreen.querySelector('p');
+  
+  if(isHighRisk){
+    successIcon.textContent = '🛡️';
+    successTitle.textContent = 'Post Submitted for Review';
+    successDesc.textContent = 'Your post contains language that requires moderation review before it goes live. Our team will review it shortly. Thank you for reporting responsibly.';
+  }
+
   document.getElementById('step4').classList.remove('active');
-  document.getElementById('success-screen').classList.add('show');
+  successScreen.classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 

@@ -262,18 +262,54 @@ if(session&&(Date.now()-session.time)<12*60*60*1000){
 // ── LOAD ALL DATA ──
 async function loadAll(){
   document.getElementById('last-refresh').textContent='Loading...';
-  const [reportsRes, problemsRes, logRes] = await Promise.all([
-    _sb.from('reports').select('*, problems(id,title,category,category_icon,state,lga,image_urls,report_count,moderation_status,hidden)').order('reported_at',{ascending:false}),
-    _sb.from('problems').select('*').order('created_at',{ascending:false}),
-    _sb.from('moderation_log').select('*, problems(title)').order('actioned_at',{ascending:false}).limit(100)
-  ]);
-  allReports=reportsRes.data||[];
-  allProblems=problemsRes.data||[];
-  modLog=logRes.data||[];
-  updateStats();
-  renderQueue();
-  renderLog();
-  document.getElementById('last-refresh').textContent='Updated: '+new Date().toLocaleTimeString();
+  try {
+    // Load reports with problem details
+    const reportsRes = await _sb.from('reports')
+      .select('*, problems(id,title,category,category_icon,state,lga,image_urls,report_count,moderation_status,hidden)')
+      .order('reported_at',{ascending:false});
+    
+    // Load all problems
+    const problemsRes = await _sb.from('problems')
+      .select('*')
+      .order('created_at',{ascending:false});
+    
+    // Load moderation log  
+    const logRes = await _sb.from('moderation_log')
+      .select('*, problems(title)')
+      .order('actioned_at',{ascending:false})
+      .limit(100);
+
+    allReports = reportsRes.data||[];
+    allProblems = problemsRes.data||[];
+    modLog = logRes.data||[];
+    
+    // Also catch auto-flagged posts that may not have reports yet
+    const autoFlagged = allProblems.filter(p => 
+      p.moderation_status === 'pending_review' && 
+      !allReports.find(r => r.problem_id === p.id)
+    );
+    
+    // Create synthetic report entries for auto-flagged posts
+    autoFlagged.forEach(p => {
+      allReports.push({
+        id: 'auto_'+p.id,
+        problem_id: p.id,
+        reason: 'auto_flagged',
+        details: 'Auto-flagged by content detection system',
+        status: 'pending',
+        reported_at: p.created_at,
+        problems: p
+      });
+    });
+
+    updateStats();
+    renderQueue();
+    renderLog();
+    document.getElementById('last-refresh').textContent='Updated: '+new Date().toLocaleTimeString();
+  } catch(e) {
+    console.error('Load error:', e);
+    document.getElementById('last-refresh').textContent='Error loading. Retry.';
+  }
 }
 
 // ── STATS ──
