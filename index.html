@@ -14,17 +14,39 @@
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
 
     /* ── NAV ── */
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 5%;background:rgba(253,246,236,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
     .logo-wrap{display:flex;align-items:center;gap:0.5rem;text-decoration:none;}
     .logo-icon{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
     .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--green);}
     .logo-text span{color:var(--gold);}
+
+    /* Desktop nav links */
     .nav-links{display:flex;gap:1.2rem;list-style:none;align-items:center;}
     .nav-links a{font-size:0.85rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.2s;}
     .nav-links a:hover{color:var(--green);}
     .nav-cta{background:var(--green);color:#fff!important;padding:0.45rem 1.1rem;border-radius:50px;font-weight:600!important;}
     .nav-user{font-size:0.85rem;color:var(--green);font-weight:600;text-decoration:none;}
     .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.78rem;padding:0.35rem 0.8rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+    /* Hamburger button */
+    .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:transparent;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;padding:8px;}
+    .hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all 0.3s ease;}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .hamburger.open span:nth-child(2){opacity:0;}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+    /* Mobile drawer */
+    .mobile-menu{display:none;position:fixed;top:65px;left:0;right:0;bottom:0;background:rgba(253,246,236,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;padding:1.5rem 5%;overflow-y:auto;transform:translateX(100%);transition:transform 0.3s ease;}
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-nav-links{list-style:none;display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.5rem;}
+    .mobile-nav-links li a{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1rem;border-radius:12px;font-size:1rem;font-weight:500;color:var(--text);text-decoration:none;transition:background 0.2s;}
+    .mobile-nav-links li a:hover{background:rgba(0,135,81,0.07);color:var(--green);}
+    .mobile-nav-links li a.active{background:rgba(0,135,81,0.1);color:var(--green);font-weight:600;}
+    .mobile-auth-area{border-top:1px solid var(--border);padding-top:1.2rem;display:flex;flex-direction:column;gap:0.8rem;}
+    .mobile-auth-area a,.mobile-auth-area button{display:block;text-align:center;padding:0.85rem;border-radius:12px;font-size:0.95rem;font-weight:600;text-decoration:none;}
+    .mobile-cta{background:var(--green);color:#fff!important;font-family:'Syne',sans-serif;}
+    .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.95rem;}
+    .mobile-user-name{font-size:0.85rem;color:var(--muted);text-align:center;padding:0.5rem 0;}
 
     /* ── HERO ── */
     .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 5% 4rem;position:relative;overflow:hidden;}
@@ -99,17 +121,36 @@
     footer p{font-size:0.8rem;color:var(--muted);}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
-    @media(max-width:768px){.descriptors{grid-template-columns:repeat(2,1fr);}.nav-links{display:none;}.steps{grid-template-columns:1fr 1fr;}.problems-grid{grid-template-columns:1fr;}}
-    @media(max-width:480px){.descriptors{grid-template-columns:repeat(2,1fr);}.steps{grid-template-columns:1fr;}.hero h1{font-size:2rem;}.hero-actions{flex-direction:column;align-items:center;}.btn-primary,.btn-secondary{width:100%;max-width:280px;justify-content:center;}footer{flex-direction:column;text-align:center;}}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .descriptors{grid-template-columns:repeat(2,1fr);}
+      .nav-links{display:none;}
+      .hamburger{display:flex;}
+      .mobile-menu{display:flex;}
+      .steps{grid-template-columns:1fr 1fr;}
+      .problems-grid{grid-template-columns:1fr;}
+    }
+    @media(max-width:480px){
+      .descriptors{grid-template-columns:repeat(2,1fr);}
+      .steps{grid-template-columns:1fr;}
+      .hero h1{font-size:2rem;}
+      .hero-actions{flex-direction:column;align-items:center;}
+      .btn-primary,.btn-secondary{width:100%;max-width:280px;justify-content:center;}
+      footer{flex-direction:column;text-align:center;}
+    }
   </style>
 </head>
 <body>
 
+<!-- DESKTOP + MOBILE NAV -->
 <nav>
   <a href="index.html" class="logo-wrap">
     <div class="logo-icon">🗳️</div>
     <div class="logo-text">Naija<span>Voice</span></div>
   </a>
+
+  <!-- Desktop links -->
   <ul class="nav-links">
     <li><a href="feed.html">Problems</a></li>
     <li><a href="search.html">🔍 Search</a></li>
@@ -118,7 +159,29 @@
     <li><a href="updates.html">📰 Updates</a></li>
     <li id="nav-auth-area"><a href="auth.html" class="nav-cta">Get Started</a></li>
   </ul>
+
+  <!-- Hamburger button (mobile only) -->
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </nav>
+
+<!-- Mobile drawer -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-nav-links">
+    <li><a href="feed.html">🗳️ Problems</a></li>
+    <li><a href="search.html">🔍 Search</a></li>
+    <li><a href="trending.html">📈 Trending</a></li>
+    <li><a href="leaderboard.html">🏆 Leaderboard</a></li>
+    <li><a href="updates.html">📰 Updates</a></li>
+    <li><a href="post-problem.html">✍️ Post a Problem</a></li>
+  </ul>
+  <div class="mobile-auth-area" id="mobile-auth-area">
+    <a href="auth.html" class="mobile-cta">🚀 Get Started — Free</a>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -131,8 +194,6 @@
     <a href="feed.html" class="btn-primary">🗳️ See Top Problems</a>
     <a href="auth.html" class="btn-secondary" id="hero-cta">Create Free Account →</a>
   </div>
-
-  <!-- 4 DESCRIPTOR TERMS -->
   <div class="descriptors">
     <div class="descriptor">
       <div class="descriptor-icon">✍️</div>
@@ -160,7 +221,7 @@
 <!-- HOW IT WORKS -->
 <div class="section">
   <div class="section-label">Simple Process</div>
-  <h2 class="section-title">How NajaVoice Works</h2>
+  <h2 class="section-title">How NaijaVoice Works</h2>
   <div class="steps">
     <div class="step-card"><div class="step-num">01</div><div class="step-icon">✍️</div><h3>Post a Problem</h3><p>Create a free account and describe a real issue affecting your community in detail.</p></div>
     <div class="step-card"><div class="step-num">02</div><div class="step-icon">🗳️</div><h3>Nigerians Vote</h3><p>Anyone can vote on problems that affect them too. Every vote counts and matters.</p></div>
@@ -194,46 +255,74 @@
     <div class="footer-logo-text">Naija<span>Voice</span></div>
   </a>
   <p>Built for the people of Nigeria 🇳🇬</p>
-  <p style="font-size:0.78rem;color:var(--muted);">© 2025 NajaVoice. Free forever.</p>
+  <p style="font-size:0.78rem;color:var(--muted);">© 2025 NaijaVoice. Free forever.</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
+// ── HAMBURGER MENU ──
+function toggleMenu(){
+  const menu=document.getElementById('mobile-menu');
+  const btn=document.getElementById('hamburger');
+  const isOpen=menu.classList.contains('open');
+  if(isOpen){
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+    document.body.style.overflow='';
+  } else {
+    menu.classList.add('open');
+    btn.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+}
+
+// Close menu when a link is tapped
+document.querySelectorAll('.mobile-nav-links a').forEach(link=>{
+  link.addEventListener('click',()=>{
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+
+// ── MAIN INIT ──
 async function init(){
-  try {
-    // Check user session
-    const {data:{user}} = await sb.auth.getUser();
+  try{
+    const {data:{user}}=await sb.auth.getUser();
     if(user){
-      const {data:profile} = await sb.from('profiles').select('full_name').eq('id',user.id).single();
-      const name = profile?.full_name?.split(' ')[0] || 'User';
-      document.getElementById('nav-auth-area').innerHTML =
+      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+      const name=profile?.full_name?.split(' ')[0]||'User';
+
+      // Update desktop nav
+      document.getElementById('nav-auth-area').innerHTML=
         `<a href="profile.html" class="nav-user">👤 ${name}</a>
          <button class="nav-logout" onclick="logout()">Logout</button>`;
-      document.getElementById('hero-cta').textContent = '✍️ Post a Problem';
-      document.getElementById('hero-cta').href = 'post-problem.html';
-      document.getElementById('cta-bottom').textContent = '✍️ Post a Problem';
-      document.getElementById('cta-bottom').href = 'post-problem.html';
+
+      // Update mobile nav
+      document.getElementById('mobile-auth-area').innerHTML=
+        `<div class="mobile-user-name">👤 ${name}</div>
+         <a href="profile.html" class="mobile-cta" style="background:rgba(0,135,81,0.1);color:var(--green);">My Profile</a>
+         <button class="mobile-logout" onclick="logout()">Logout</button>`;
+
+      // Update CTAs
+      document.getElementById('hero-cta').textContent='✍️ Post a Problem';
+      document.getElementById('hero-cta').href='post-problem.html';
+      document.getElementById('cta-bottom').textContent='✍️ Post a Problem';
+      document.getElementById('cta-bottom').href='post-problem.html';
     }
 
     // Load top 3 problems
-    const {data:problems, error} = await sb
-      .from('problems')
-      .select('*')
-      .order('votes', {ascending:false})
-      .limit(3);
-
-    const container = document.getElementById('top-problems');
-
-    if(error || !problems || problems.length === 0){
-      container.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;padding:2rem 0;text-align:center;">No problems posted yet. Be the first! 🇳🇬</div>';
+    const {data:problems,error}=await sb.from('problems').select('*').order('votes',{ascending:false}).limit(3);
+const container=document.getElementById('top-problems');
+    if(error||!problems||problems.length===0){
+      container.innerHTML='<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;padding:2rem 0;text-align:center;">No problems posted yet. Be the first! 🇳🇬</div>';
       return;
     }
-
-    const max = Math.max(...problems.map(p => p.votes||0), 1);
-    container.innerHTML = problems.map((p,i) => `
+    const max=Math.max(...problems.map(p=>p.votes||0),1);
+    container.innerHTML=problems.map((p,i)=>`
       <div class="p-card ${i===0?'top':''}" onclick="window.location.href='problem.html?id=${p.id}'">
-        ${i===0 ? '<div class="p-top-badge">🔥 #1 Most Voted</div>' : ''}
+        ${i===0?'<div class="p-top-badge">🔥 #1 Most Voted</div>':''}
         <div class="p-meta">📍 ${p.state||'Nigeria'} · ${p.lga||''} · ${p.category_icon||'📋'} ${p.category||'General'}</div>
         <h4>${p.title}</h4>
         <p class="p-desc">${(p.description||'').slice(0,100)}...</p>
@@ -243,10 +332,7 @@ async function init(){
         </div>
         <div class="vote-bar"><div class="vote-fill" style="width:${Math.round(((p.votes||0)/max)*100)}%"></div></div>
       </div>`).join('');
-
-  } catch(e) {
-    console.error('Init error:', e);
-  }
+  }catch(e){console.error('Init error:',e);}
 }
 
 async function logout(){
@@ -259,3 +345,4 @@ init();
 <script src="/pwa.js"></script>
 </body>
 </html>
+ 
