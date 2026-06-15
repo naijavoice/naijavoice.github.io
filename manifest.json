@@ -1,6 +1,6 @@
 {
-  "name": "NajaVoice — Nigeria's Voice",
-  "short_name": "NajaVoice",
+  "name": "NaijaVoice — Nigeria's Voice",
+  "short_name": "NaijaVoice",
   "description": "Post community problems. Vote. Make government act. Nigeria's civic platform.",
   "start_url": "/index.html",
   "display": "standalone",
@@ -11,19 +11,18 @@
   "lang": "en",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
   "categories": ["government", "social", "news"],
   "shortcuts": [
     {
