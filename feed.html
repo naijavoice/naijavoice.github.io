@@ -3,127 +3,235 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NaijaVoice – Live Voting Feed</title>
+  <title>NaijaVoice – Live Problems Feed</title>
   <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#008751"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <meta name="theme-color" content="#1a6b3c"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
-    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;--card:#ffffff;}
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
-    nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;}
-    .logo-wrap{display:flex;align-items:center;gap:0.5rem;text-decoration:none;}
-    .logo-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
-    .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--green);}
-    .logo-text span{color:var(--gold);}
-    .nav-links{display:flex;gap:1.2rem;list-style:none;align-items:center;}
-    .nav-links a{font-size:0.85rem;font-weight:500;color:var(--muted);text-decoration:none;}
-    .nav-links a:hover{color:var(--green);}
-    .nav-user{font-size:0.85rem;color:var(--green);font-weight:600;text-decoration:none;}
-    .nav-logout{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.78rem;padding:0.35rem 0.8rem;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-    .feed-header{background:var(--dark);padding:2.5rem 5% 2rem;position:relative;overflow:hidden;}
-    .feed-header::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,135,81,0.2) 0%,transparent 70%);pointer-events:none;}
+    *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
+    html{font-size:16px;}
+    :root{
+      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
+      --gold:#c48f00;--gold-lite:#fdf6e0;
+      --ink:#0f1a14;--ink-soft:#4a6355;
+      --bg:#f7faf8;--white:#ffffff;
+      --border:rgba(26,107,60,0.14);--radius:8px;
+      --error:#c53030;
+      --f-display:'Fraunces',Georgia,serif;
+      --f-body:'Inter',system-ui,sans-serif;
+      --f-mono:'Geist Mono',monospace;
+    }
+    body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+    /* ── BANNER ── */
+    .banner{position:sticky;top:0;z-index:200;height:54px;display:flex;align-items:center;background:var(--green);padding:0 5%;box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+    .banner__logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:10px;}
+    .banner__logo-img{width:30px;height:30px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+    .banner__logo-img img{width:100%;height:100%;object-fit:contain;}
+    .banner__logo-text{font-family:var(--f-display);font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:#fff;}
+    .banner__logo-text span{color:var(--gold);font-style:italic;}
+    .banner__ticker{font-family:var(--f-mono);font-size:10.5px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:2px 10px;margin-left:12px;display:flex;align-items:center;gap:6px;}
+    .ticker-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 2s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+    .banner__spacer{flex:1;}
+    .banner__nav{display:flex;align-items:center;gap:4px;}
+    .banner__nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 11px;border-radius:4px;transition:background 0.15s;white-space:nowrap;}
+    .banner__nav a:hover{background:rgba(255,255,255,0.12);color:#fff;}
+    .banner__nav a.active{color:#fff;font-weight:700;}
+    .banner__cta{background:var(--gold)!important;color:var(--ink)!important;font-weight:700!important;border-radius:5px!important;}
+    .banner__user{font-size:0.83rem;color:#fff;font-weight:600;text-decoration:none;}
+    .banner__logout{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.78rem;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--f-body);}
+    .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;padding:8px;flex-shrink:0;}
+    .hamburger span{display:block;width:17px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s ease;}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .hamburger.open span:nth-child(2){opacity:0;}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    .mobile-menu{display:none;position:fixed;top:54px;left:0;right:0;bottom:0;background:rgba(247,250,248,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;padding:1.5rem 5%;overflow-y:auto;transform:translateX(100%);transition:transform 0.3s ease;}
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-nav-links{list-style:none;display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.5rem;}
+    .mobile-nav-links li a{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1rem;border-radius:10px;font-size:0.95rem;font-weight:500;color:var(--ink);text-decoration:none;transition:background 0.2s;}
+    .mobile-nav-links li a:hover{background:var(--green-lite);color:var(--green);}
+    .mobile-auth-area{border-top:1px solid var(--border);padding-top:1.2rem;display:flex;flex-direction:column;gap:0.8rem;}
+    .mobile-auth-area a,.mobile-auth-area button{display:block;text-align:center;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:600;text-decoration:none;}
+    .mobile-cta{background:var(--green);color:#fff!important;}
+    .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);cursor:pointer;font-family:var(--f-body);font-size:0.95rem;}
+    .mobile-user-name{font-size:0.85rem;color:var(--ink-soft);text-align:center;padding:0.5rem 0;}
+
+    /* ── FEED HEADER ── */
+    .feed-header{background:var(--ink);padding:3rem 5% 2.5rem;position:relative;overflow:hidden;}
+    .feed-header::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,60,0.25) 0%,transparent 70%);pointer-events:none;}
     .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
-    .header-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,135,81,0.2);border:1px solid rgba(0,135,81,0.4);color:var(--green-light);font-size:0.73rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.35rem 0.9rem;border-radius:50px;margin-bottom:0.8rem;}
-    .live-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:4px;animation:pulse 1.4s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
-    .feed-header h1{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;color:#fff;margin-bottom:0.4rem;}
-    .feed-header h1 em{font-style:normal;color:var(--gold);}
-    .feed-header p{color:rgba(255,255,255,0.5);font-size:0.88rem;}
-    .live-counter{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:1rem 1.5rem;text-align:center;flex-shrink:0;}
-    .live-label{font-size:0.7rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.2rem;}
-    .live-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff;}
-    .disclaimer-bar{background:rgba(0,135,81,0.06);border-bottom:1px solid var(--border);padding:0.6rem 5%;text-align:center;}
-    .disclaimer-bar p{font-size:0.75rem;color:var(--muted);}
+    .header-eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4ade80;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+    .live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 1.6s ease-in-out infinite;}
+    .feed-header h1{font-family:var(--f-display);font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:900;color:#fff;line-height:1.08;letter-spacing:-0.025em;margin-bottom:0.5rem;}
+    .feed-header h1 em{font-style:italic;font-weight:400;color:var(--gold);}
+    .feed-header p{color:rgba(255,255,255,0.45);font-size:0.88rem;font-family:var(--f-body);}
+    .live-counter{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:1rem 1.5rem;text-align:center;flex-shrink:0;}
+    .live-label{font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+    .live-num{font-family:var(--f-display);font-size:2rem;font-weight:900;color:#fff;letter-spacing:-0.03em;}
+
+    /* ── DISCLAIMER ── */
+    .disclaimer-bar{background:var(--green-lite);border-bottom:1px solid var(--border);padding:0.6rem 5%;text-align:center;}
+    .disclaimer-bar p{font-size:0.75rem;color:var(--ink-soft);}
     .disclaimer-bar a{color:var(--green);font-weight:600;text-decoration:none;}
-    .filters-bar{background:var(--card);border-bottom:1px solid var(--border);padding:0.8rem 5%;position:sticky;top:63px;z-index:100;}
-    .filters-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;}
-    .filter-btn{padding:0.4rem 0.9rem;border-radius:50px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+
+    /* ── FILTERS ── */
+    .filters-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0.75rem 5%;position:sticky;top:54px;z-index:100;}
+    .filters-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;}
+    .filter-btn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-family:var(--f-body);font-size:0.78rem;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
     .filter-btn:hover{border-color:var(--green);color:var(--green);}
     .filter-btn.active{background:var(--green);color:#fff;border-color:var(--green);}
     .search-wrap{position:relative;margin-left:auto;}
-    .search-wrap input{padding:0.4rem 0.8rem 0.4rem 2rem;border-radius:50px;border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.8rem;color:var(--text);outline:none;width:180px;background:#fff;}
-    .search-icon{position:absolute;left:0.6rem;top:50%;transform:translateY(-50%);font-size:0.82rem;pointer-events:none;}
+    .search-wrap input{padding:6px 12px 6px 30px;border-radius:20px;border:1.5px solid var(--border);font-family:var(--f-body);font-size:0.78rem;color:var(--ink);outline:none;width:180px;background:var(--white);transition:border-color 0.15s;}
+    .search-wrap input:focus{border-color:var(--green);}
+    .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.78rem;pointer-events:none;}
+
+    /* ── MAIN LAYOUT ── */
     .main-layout{max-width:1100px;margin:1.5rem auto;padding:0 5%;display:grid;grid-template-columns:1fr 280px;gap:1.5rem;}
-    .feed-list{display:flex;flex-direction:column;gap:1rem;}
-    .problem-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:1.4rem;transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;animation:fadeUp 0.4s ease both;}
-    .problem-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.07);}
+
+    /* ── FEED LIST ── */
+    .feed-list{display:flex;flex-direction:column;gap:12px;}
+
+    /* ── PROBLEM CARD ── */
+    .problem-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;transition:transform 0.18s,box-shadow 0.18s,border-color 0.18s;position:relative;overflow:hidden;animation:fadeUp 0.4s ease both;}
+    .problem-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,107,60,0.1);border-color:rgba(26,107,60,0.3);}
     .problem-card.rank-1{border-color:var(--gold);}
-    .rank-ribbon{position:absolute;top:0;left:0;background:var(--gold);color:var(--dark);font-family:'Syne',sans-serif;font-size:0.68rem;font-weight:800;padding:0.22rem 0.7rem 0.22rem 0.55rem;border-bottom-right-radius:8px;}
-    .card-top{display:flex;align-items:flex-start;gap:1rem;}
-    .vote-col{display:flex;flex-direction:column;align-items:center;gap:0.3rem;flex-shrink:0;min-width:52px;}
-    .vote-btn-main{width:50px;height:50px;border-radius:12px;border:2px solid var(--border);background:var(--cream);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-    .vote-btn-main:hover{border-color:var(--green);background:rgba(0,135,81,0.06);transform:scale(1.08);}
-    .vote-btn-main.voted{background:var(--green);border-color:var(--green);box-shadow:0 4px 14px rgba(0,135,81,0.35);}
-    .vote-number{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:var(--dark);}
-    .vote-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;}
+    .rank-ribbon{position:absolute;top:0;left:0;font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:4px 10px 4px 8px;border-bottom-right-radius:8px;}
+    .ribbon-1{background:var(--gold);color:var(--ink);}
+    .ribbon-2{background:rgba(192,192,192,0.9);color:var(--ink);}
+    .ribbon-3{background:rgba(205,127,50,0.85);color:#fff;}
+    .card-top{display:flex;align-items:flex-start;gap:14px;}
+    .vote-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:52px;}
+    .vote-btn-main{width:48px;height:48px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;}
+    .vote-btn-main:hover{border-color:var(--green);background:var(--green-lite);transform:scale(1.06);}
+    .vote-btn-main.voted{background:var(--green);border-color:var(--green);box-shadow:0 4px 14px rgba(26,107,60,0.3);}
+    .vote-number{font-family:var(--f-display);font-size:1rem;font-weight:700;color:var(--ink);letter-spacing:-0.02em;}
+    .vote-label{font-family:var(--f-mono);font-size:9px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;}
     .card-body{flex:1;min-width:0;}
-    .card-meta{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem;}
-    .meta-cat{display:inline-flex;align-items:center;gap:0.2rem;background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.2);color:var(--green);font-size:0.68rem;font-weight:600;padding:0.15rem 0.55rem;border-radius:50px;}
-    .meta-loc{font-size:0.7rem;color:var(--muted);}
-    .meta-time{font-size:0.68rem;color:var(--muted);margin-left:auto;}
-    .urgency-badge{font-size:0.66rem;font-weight:600;padding:0.12rem 0.5rem;border-radius:50px;}
-    .ub-low{background:rgba(56,161,105,0.1);color:#276749;}
-    .ub-medium{background:rgba(245,166,35,0.15);color:#975a16;}
-    .ub-high{background:rgba(229,62,62,0.1);color:#c53030;}
-    .status-pill{font-size:0.66rem;font-weight:600;padding:0.12rem 0.5rem;border-radius:50px;}
-    .sp-pending{background:rgba(245,166,35,0.12);color:#975a16;}
-    .sp-inprogress{background:rgba(49,130,206,0.12);color:#2c5282;}
-    .sp-resolved{background:rgba(0,135,81,0.12);color:#005c37;}
-    .card-body h3{font-family:'Syne',sans-serif;font-size:0.98rem;font-weight:800;color:var(--dark);line-height:1.35;margin-bottom:0.25rem;cursor:pointer;}
+    .card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+    .meta-cat{display:inline-flex;align-items:center;gap:3px;background:var(--green-lite);border:1px solid rgba(26,107,60,0.15);color:var(--green);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;font-family:var(--f-mono);letter-spacing:0.03em;}
+    .meta-loc{font-size:0.72rem;color:var(--ink-soft);}
+    .meta-time{font-size:0.68rem;color:var(--ink-soft);margin-left:auto;font-family:var(--f-mono);}
+    .urgency-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;font-family:var(--f-mono);}
+    .ub-low{background:rgba(26,107,60,0.08);color:var(--green);}
+    .ub-medium{background:rgba(196,143,0,0.12);color:var(--gold);}
+    .ub-high{background:rgba(197,48,48,0.1);color:var(--error);}
+    .status-pill{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;font-family:var(--f-mono);}
+    .sp-pending{background:rgba(196,143,0,0.1);color:var(--gold);}
+    .sp-inprogress{background:rgba(59,130,246,0.1);color:#1d4ed8;}
+    .sp-resolved{background:rgba(26,107,60,0.1);color:var(--green);}
+    .card-body h3{font-family:var(--f-display);font-size:1.05rem;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:4px;cursor:pointer;letter-spacing:-0.015em;}
     .card-body h3:hover{color:var(--green);}
-    .poster{font-size:0.7rem;color:var(--muted);margin-bottom:0.45rem;}
-    .card-body p{font-size:0.83rem;color:var(--muted);line-height:1.55;margin-bottom:0.8rem;}
-    .progress-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:0.7rem;}
-    .progress-fill{height:100%;border-radius:2px;background:var(--green-light);}
+    .poster{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);margin-bottom:8px;}
+    .card-img{margin-bottom:10px;border-radius:8px;overflow:hidden;max-height:200px;}
+    .card-img img{width:100%;height:200px;object-fit:cover;display:block;}
+    .card-body p{font-size:0.84rem;color:var(--ink-soft);line-height:1.6;margin-bottom:10px;}
+    .progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:10px;}
+    .progress-fill{height:100%;border-radius:2px;background:var(--green-mid);}
     .problem-card.rank-1 .progress-fill{background:var(--gold);}
-    .card-footer{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;}
-    .footer-stat{font-size:0.72rem;color:var(--muted);}
-    .view-btn-small{font-size:0.76rem;color:var(--green);text-decoration:none;font-weight:600;background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.2);padding:0.28rem 0.7rem;border-radius:50px;}
-    .share-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.76rem;padding:0.3rem 0.7rem;border-radius:50px;cursor:pointer;}
-    .delete-btn{background:transparent;border:1px solid rgba(229,62,62,0.3);color:#e53e3e;font-family:'DM Sans',sans-serif;font-size:0.76rem;padding:0.3rem 0.7rem;border-radius:50px;cursor:pointer;margin-left:auto;}
-    .delete-btn:hover{background:rgba(229,62,62,0.08);}
-    .sidebar{display:flex;flex-direction:column;gap:1rem;}
-    .side-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.3rem;}
-    .side-title{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:800;color:var(--dark);margin-bottom:0.8rem;}
-    .state-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem;}
-    .state-rank{font-family:'Syne',sans-serif;font-size:0.72rem;font-weight:800;color:var(--muted);width:18px;}
+    .card-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .footer-stat{font-size:0.72rem;color:var(--ink-soft);}
+    .view-btn-small{font-size:0.75rem;color:var(--green);text-decoration:none;font-weight:600;background:var(--green-lite);border:1px solid rgba(26,107,60,0.2);padding:4px 12px;border-radius:20px;transition:all 0.15s;}
+    .view-btn-small:hover{background:var(--green);color:#fff;}
+    .share-btn{background:transparent;border:1px solid var(--border);color:var(--ink-soft);font-family:var(--f-body);font-size:0.75rem;padding:4px 12px;border-radius:20px;cursor:pointer;transition:all 0.15s;}
+    .share-btn:hover{border-color:var(--green);color:var(--green);}
+    .delete-btn{background:transparent;border:1px solid rgba(197,48,48,0.25);color:var(--error);font-family:var(--f-body);font-size:0.75rem;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:auto;transition:all 0.15s;}
+    .delete-btn:hover{background:rgba(197,48,48,0.06);}
+
+    /* ── SIDEBAR ── */
+    .sidebar{display:flex;flex-direction:column;gap:12px;}
+    .side-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;}
+    .side-title{font-family:var(--f-display);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:14px;letter-spacing:-0.015em;}
+    .state-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+    .state-rank{font-family:var(--f-mono);font-size:10px;font-weight:700;color:var(--ink-soft);width:18px;}
     .state-bar-wrap{flex:1;}
-    .state-name{font-size:0.78rem;font-weight:500;color:var(--text);margin-bottom:0.22rem;}
-    .state-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
-    .state-fill{height:100%;background:var(--green-light);border-radius:2px;}
-    .state-count{font-size:0.7rem;color:var(--muted);flex-shrink:0;}
-    .side-cta{background:var(--dark);border-radius:14px;padding:1.3rem;text-align:center;}
-    .side-cta h4{font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:800;color:#fff;margin-bottom:0.4rem;}
-    .side-cta p{font-size:0.78rem;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:0.9rem;}
-    .side-btn{display:block;width:100%;padding:0.65rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:none;}
-    .empty-state{text-align:center;padding:3rem 2rem;background:var(--card);border-radius:16px;border:1px solid var(--border);}
-    .loading{text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;}
-    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.9rem 1.6rem;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .state-name{font-size:0.78rem;font-weight:600;color:var(--ink);margin-bottom:3px;}
+    .state-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+    .state-fill{height:100%;background:var(--green-mid);border-radius:2px;}
+    .state-count{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);flex-shrink:0;}
+    .side-cta{background:var(--ink);border-radius:12px;padding:20px;text-align:center;}
+    .side-cta h4{font-family:var(--f-display);font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-0.015em;}
+    .side-cta p{font-size:0.78rem;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:14px;}
+    .side-btn{display:block;width:100%;padding:10px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:var(--f-display);font-size:0.88rem;font-weight:700;cursor:pointer;text-decoration:none;transition:background 0.15s;}
+    .side-btn:hover{background:var(--green-mid);}
+
+    /* ── STATES ── */
+    .empty-state{text-align:center;padding:3rem 2rem;background:var(--white);border-radius:12px;border:1px solid var(--border);}
+    .empty-state h3{font-family:var(--f-display);font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+    .empty-state p{font-size:0.85rem;color:var(--ink-soft);}
+    .loading{text-align:center;padding:3rem;color:var(--ink-soft);font-size:0.9rem;font-family:var(--f-mono);}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
     .toast.show{transform:translateX(-50%) translateY(0);}
+
     @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-    @media(max-width:768px){.main-layout{grid-template-columns:1fr;}.sidebar{display:none;}.nav-links{display:none;}.live-counter{display:none;}}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .main-layout{grid-template-columns:1fr;}
+      .sidebar{display:none;}
+      .banner__nav{display:none;}
+      .banner__ticker{display:none;}
+      .hamburger{display:flex;}
+      .mobile-menu{display:flex;}
+      .live-counter{display:none;}
+    }
+    @media(max-width:480px){
+      .filters-inner{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+      .filters-inner::-webkit-scrollbar{display:none;}
+      .search-wrap{display:none;}
+    }
   </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="logo-wrap">
-    <div class="logo-icon">🗳️</div>
-    <div class="logo-text">Naija<span>Voice</span></div>
+
+<!-- ── BANNER ── -->
+<header class="banner">
+  <a href="index.html" class="banner__logo">
+    <div class="banner__logo-img"><img src="/icon-192.png" alt="NaijaVoice"/></div>
+    <span class="banner__logo-text">Naija<span>Voice</span></span>
   </a>
-  <ul class="nav-links">
-    <li><a href="feed.html" style="color:var(--green);font-weight:600;">Problems</a></li>
+  <div class="banner__ticker">
+    <span class="ticker-dot"></span>
+    <span id="ticker-text">Loading...</span>
+  </div>
+  <span class="banner__spacer"></span>
+  <nav class="banner__nav">
+    <a href="feed.html" class="active">🗳️ Problems</a>
+    <a href="search.html">🔍 Search</a>
+    <a href="trending.html">📈 Trending</a>
+    <a href="leaderboard.html">🏆 Leaderboard</a>
+    <a href="updates.html">📰 Updates</a>
+    <span id="nav-auth-area"><a href="auth.html" class="banner__cta">Get Started</a></span>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ── MOBILE DRAWER ── -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-nav-links">
+    <li><a href="feed.html">🗳️ Problems</a></li>
     <li><a href="search.html">🔍 Search</a></li>
     <li><a href="trending.html">📈 Trending</a></li>
     <li><a href="leaderboard.html">🏆 Leaderboard</a></li>
     <li><a href="updates.html">📰 Updates</a></li>
-    <li id="nav-auth-area"><a href="auth.html" style="color:var(--green);font-weight:600;">Login</a></li>
+    <li><a href="post-problem.html">✍️ Post a Problem</a></li>
   </ul>
-</nav>
+  <div class="mobile-auth-area" id="mobile-auth-area">
+    <a href="auth.html" class="mobile-cta">🚀 Get Started — Free</a>
+  </div>
+</div>
+
+<!-- ── FEED HEADER ── -->
 <div class="feed-header">
   <div class="header-inner">
     <div>
-      <div class="header-badge"><span class="live-dot"></span> Live Feed</div>
+      <div class="header-eyebrow"><span class="live-dot"></span> Live Feed</div>
       <h1>Nigeria's <em>Most Voted</em> Problems</h1>
       <p>Vote on what matters. Highest voted problems rise to the top.</p>
     </div>
@@ -133,9 +241,13 @@
     </div>
   </div>
 </div>
+
+<!-- ── DISCLAIMER ── -->
 <div class="disclaimer-bar">
-  <p>📢 NaijaVoice is a civic reporting platform. Views are submitted by users and may undergo moderation review. <a href="guidelines.html">Community Guidelines</a></p>
+  <p>📢 NaijaVoice is an independent civic reporting platform. Views are submitted by users and may undergo moderation review. <a href="guidelines.html">Community Guidelines</a></p>
 </div>
+
+<!-- ── FILTERS ── -->
 <div class="filters-bar">
   <div class="filters-inner">
     <button class="filter-btn active" onclick="filterCat('all',this)">🇳🇬 All</button>
@@ -143,23 +255,37 @@
     <button class="filter-btn" onclick="filterCat('Roads & Transport',this)">🛣️ Roads</button>
     <button class="filter-btn" onclick="filterCat('Healthcare',this)">🏥 Health</button>
     <button class="filter-btn" onclick="filterCat('Education',this)">📚 Education</button>
-    <button class="filter-btn" onclick="filterCat('Electricity',this)">💡 Power</button>
+    <button class="filter-btn" onclick="filterCat('Electricity',this)">⚡ Power</button>
+    <button class="filter-btn" onclick="filterCat('Security',this)">👮 Security</button>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
       <input type="text" placeholder="Search problems..." oninput="searchFeed(this.value)"/>
     </div>
   </div>
 </div>
+
+<!-- ── MAIN LAYOUT ── -->
 <div class="main-layout">
   <div>
-    <div class="feed-list" id="feed-list"><div class="loading">Loading problems... 🇳🇬</div></div>
+    <div class="feed-list" id="feed-list">
+      <div class="loading">Loading problems... 🇳🇬</div>
+    </div>
   </div>
   <aside class="sidebar">
-    <div class="side-card"><div class="side-title">📍 Top States</div><div id="state-list"><div style="font-size:0.8rem;color:var(--muted);">Loading...</div></div></div>
-    <div class="side-cta"><h4>Have a Community Problem?</h4><p>Post it. Let Nigerians vote. Make government act.</p><a href="post-problem.html" class="side-btn">✍️ Post a Problem</a></div>
+    <div class="side-card">
+      <div class="side-title">📍 Top States</div>
+      <div id="state-list"><div style="font-size:0.8rem;color:var(--ink-soft);">Loading...</div></div>
+    </div>
+    <div class="side-cta">
+      <h4>Have a Community Problem?</h4>
+      <p>Post it. Let Nigerians vote. Make high-priority issues impossible to ignore.</p>
+      <a href="post-problem.html" class="side-btn">✍️ Post a Problem</a>
+    </div>
   </aside>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const _sb = supabase.createClient(
@@ -167,11 +293,32 @@ const _sb = supabase.createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
 );
 let allProblems=[],myVotedIds=[],activeFilter='all',searchTerm='',currentUser=null;
+
 function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 function urgencyClass(u){return u==='high'?'ub-high':u==='medium'?'ub-medium':'ub-low';}
 function urgencyLabel(u){return u==='high'?'🔴 Critical':u==='medium'?'🟠 Medium':'🟡 Low';}
-function statusPill(s){if(s==='resolved')return'<span class="status-pill sp-resolved">✅ Resolved</span>';if(s==='inprogress')return'<span class="status-pill sp-inprogress">🔄 Progress</span>';return'<span class="status-pill sp-pending">⏳ Pending</span>';}
-function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'Just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
+function statusPill(s){
+  if(s==='resolved')return'<span class="status-pill sp-resolved">🟢 Resolved</span>';
+  if(s==='inprogress')return'<span class="status-pill sp-inprogress">🔵 Escalated</span>';
+  return'<span class="status-pill sp-pending">🔴 Reported</span>';
+}
+function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
+
+function toggleMenu(){
+  const menu=document.getElementById('mobile-menu');
+  const btn=document.getElementById('hamburger');
+  const isOpen=menu.classList.contains('open');
+  if(isOpen){menu.classList.remove('open');btn.classList.remove('open');document.body.style.overflow='';}
+  else{menu.classList.add('open');btn.classList.add('open');document.body.style.overflow='hidden';}
+}
+document.querySelectorAll('.mobile-nav-links a').forEach(link=>{
+  link.addEventListener('click',()=>{
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+
 async function init(){
   try{
     const {data:{user}}=await _sb.auth.getUser();
@@ -179,13 +326,23 @@ async function init(){
     if(user){
       const {data:profile}=await _sb.from('profiles').select('full_name').eq('id',user.id).single();
       const name=profile?.full_name?.split(' ')[0]||'User';
-      document.getElementById('nav-auth-area').innerHTML='<a href="profile.html" class="nav-user">👤 '+name+'</a><button class="nav-logout" onclick="logout()">Logout</button>';
+      document.getElementById('nav-auth-area').innerHTML=
+        '<a href="profile.html" class="banner__user">👤 '+name+'</a>'+
+        '<button class="banner__logout" onclick="logout()">Logout</button>';
+      document.getElementById('mobile-auth-area').innerHTML=
+        '<div class="mobile-user-name">👤 '+name+'</div>'+
+        '<a href="profile.html" class="mobile-cta" style="background:rgba(26,107,60,0.1);color:var(--green);">My Profile</a>'+
+        '<button class="mobile-logout" onclick="logout()">Logout</button>';
       const {data:votes}=await _sb.from('votes').select('problem_id').eq('user_id',user.id);
       myVotedIds=votes?votes.map(v=>v.problem_id):[];
     }
     await loadProblems();
-  }catch(e){console.error(e);document.getElementById('feed-list').innerHTML='<div class="loading">Error loading. Please refresh.</div>';}
+  }catch(e){
+    console.error(e);
+    document.getElementById('feed-list').innerHTML='<div class="loading">Error loading. Please refresh.</div>';
+  }
 }
+
 async function loadProblems(){
   const {data,error}=await _sb.from('problems').select('*, profiles(full_name)').eq('hidden',false).order('votes',{ascending:false});
   if(error){
@@ -196,52 +353,76 @@ async function loadProblems(){
   }
   const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
   document.getElementById('total-votes').textContent=total.toLocaleString();
-  renderFeed();renderSidebar();
+  document.getElementById('ticker-text').textContent=
+    allProblems.length+' problems · '+total.toLocaleString()+' votes';
+  renderFeed();
+  renderSidebar();
 }
+
 function getFiltered(){
   let list=[...allProblems];
   if(activeFilter!=='all')list=list.filter(p=>p.category===activeFilter);
-  if(searchTerm)list=list.filter(p=>p.title?.toLowerCase().includes(searchTerm)||p.description?.toLowerCase().includes(searchTerm)||p.state?.toLowerCase().includes(searchTerm));
+  if(searchTerm)list=list.filter(p=>
+    p.title?.toLowerCase().includes(searchTerm)||
+    p.description?.toLowerCase().includes(searchTerm)||
+    p.state?.toLowerCase().includes(searchTerm)
+  );
   return list;
 }
+
 function renderFeed(){
   const list=getFiltered();
   const container=document.getElementById('feed-list');
-  if(!list.length){container.innerHTML='<div class="empty-state"><div style="font-size:3rem;margin-bottom:1rem;">📭</div><h3 style="font-family:Syne,sans-serif;font-size:1.1rem;font-weight:800;color:var(--dark);margin-bottom:0.5rem;">No problems found</h3><p style="font-size:0.85rem;color:var(--muted);">Try a different filter or be the first to post!</p></div>';return;}
+  if(!list.length){
+    container.innerHTML='<div class="empty-state"><div style="font-size:3rem;margin-bottom:1rem;">📭</div><h3>No problems found</h3><p>Try a different filter or be the first to post!</p></div>';
+    return;
+  }
   const max=Math.max(...list.map(p=>p.votes||0),1);
   container.innerHTML=list.map((p,i)=>{
-    const rank=i+1;const voted=myVotedIds.includes(p.id);const pct=Math.round(((p.votes||0)/max)*100);
-    return '<div class="problem-card '+(rank===1?'rank-1':'')+'" id="card-'+p.id+'" style="animation-delay:'+(i*0.04)+'s">'
-      +(rank===1?'<div class="rank-ribbon">🥇 #1 Most Voted</div>':'')
-      +(rank===2?'<div class="rank-ribbon" style="background:#c0c0c0;">🥈 #2</div>':'')
-      +(rank===3?'<div class="rank-ribbon" style="background:#cd7f32;color:#fff;">🥉 #3</div>':'')
+    const rank=i+1;
+    const voted=myVotedIds.includes(p.id);
+    const pct=Math.round(((p.votes||0)/max)*100);
+    let ribbon='';
+    if(rank===1)ribbon='<div class="rank-ribbon ribbon-1">🥇 #1 Most Voted</div>';
+    else if(rank===2)ribbon='<div class="rank-ribbon ribbon-2">🥈 #2</div>';
+    else if(rank===3)ribbon='<div class="rank-ribbon ribbon-3">🥉 #3</div>';
+    return(
+      '<div class="problem-card'+(rank===1?' rank-1':'')+'" id="card-'+p.id+'" style="animation-delay:'+(i*0.04)+'s">'
+      +ribbon
       +'<div class="card-top">'
       +'<div class="vote-col">'
-      +'<button class="vote-btn-main '+(voted?'voted':'')+'" onclick="castVote(\''+p.id+'\')">'+(voted?'✅':'👍')+'</button>'
+      +'<button class="vote-btn-main'+(voted?' voted':'')+'" onclick="castVote(\''+p.id+'\')">'+( voted?'✅':'▲')+'</button>'
       +'<div class="vote-number" id="vcount-'+p.id+'">'+(p.votes||0).toLocaleString()+'</div>'
       +'<div class="vote-label">votes</div>'
       +'</div>'
       +'<div class="card-body">'
       +'<div class="card-meta">'
       +'<span class="meta-cat">'+(p.category_icon||'📋')+' '+(p.category||'General')+'</span>'
-      +'<span class="meta-loc">📍 '+(p.state||'Nigeria')+' · '+(p.lga||'')+'</span>'
+      +'<span class="meta-loc">📍 '+(p.state||'Nigeria')+(p.lga?' · '+p.lga:'')+'</span>'
       +'<span class="urgency-badge '+urgencyClass(p.urgency)+'">'+urgencyLabel(p.urgency)+'</span>'
       +statusPill(p.status)
       +'<span class="meta-time">'+timeAgo(p.created_at)+'</span>'
       +'</div>'
       +'<h3 onclick="window.location.href=\'problem.html?id='+p.id+'\'">'+p.title+'</h3>'
-      +'<div class="poster">✍️ Posted by <strong>'+p.poster_name+'</strong></div>'
-      +(p.image_urls&&p.image_urls.length>0?'<div style="margin-bottom:0.7rem;border-radius:10px;overflow:hidden;max-height:180px;"><img src="'+p.image_urls[0]+'" style="width:100%;height:180px;object-fit:cover;border-radius:10px;display:block;" loading="lazy" onerror="this.style.display=\'none\'"/></div>':'')
-+'<p>'+(p.description||'').slice(0,130)+((p.description||'').length>130?'…':'')+'</p>'
+      +'<div class="poster">Posted by <strong>'+p.poster_name+'</strong></div>'
+      +(p.image_urls&&p.image_urls.length>0
+        ?'<div class="card-img"><img src="'+p.image_urls[0]+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"/></div>'
+        :'')
+      +'<p>'+(p.description||'').slice(0,140)+((p.description||'').length>140?'…':'')+'</p>'
       +'<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>'
       +'<div class="card-footer">'
       +'<span class="footer-stat">👥 '+(p.affected||'')+'</span>'
       +'<a href="problem.html?id='+p.id+'" class="view-btn-small">💬 View & Comment</a>'
       +'<button class="share-btn" onclick="shareProblem(\''+p.id+'\',\''+p.title.replace(/'/g,"\\'")+'\')" >🔗 Share</button>'
-      +(currentUser&&p.user_id===currentUser.id?'<button class="delete-btn" onclick="deleteProblem(\''+p.id+'\')">🗑️ Delete</button>':'')
-      +'</div></div></div></div>';
+      +(currentUser&&p.user_id===currentUser.id
+        ?'<button class="delete-btn" onclick="deleteProblem(\''+p.id+'\')">🗑️ Delete</button>'
+        :'')
+      +'</div>'
+      +'</div></div></div>'
+    );
   }).join('');
 }
+
 async function castVote(id){
   if(myVotedIds.includes(id)){showToast('⚠️ You already voted on this!');return;}
   if(!currentUser){showToast('👋 Please login to vote!');setTimeout(()=>window.location.href='auth.html',1500);return;}
@@ -258,51 +439,67 @@ async function castVote(id){
   showToast('✅ Vote cast! Thank you 🇳🇬');
   setTimeout(()=>{allProblems.sort((a,b)=>(b.votes||0)-(a.votes||0));renderFeed();},800);
 }
+
 async function deleteProblem(id){
   if(!currentUser){showToast('Please login first.');return;}
   const overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem;';
-  overlay.innerHTML='<div style="background:#fff;border-radius:20px;padding:2rem;max-width:300px;width:100%;text-align:center;"><div style="font-size:2.5rem;margin-bottom:0.8rem;">🗑️</div><h3 style="font-family:Syne,sans-serif;font-size:1.1rem;font-weight:800;color:#0d1f0f;margin-bottom:0.5rem;">Delete This Post?</h3><p style="font-size:0.85rem;color:#5a7a5e;margin-bottom:1.5rem;">This will be permanently removed and cannot be undone.</p><div style="display:flex;gap:0.8rem;"><button id="del-cancel" style="flex:1;padding:0.8rem;border:2px solid #d4e8d6;border-radius:10px;background:transparent;font-size:0.9rem;cursor:pointer;color:#5a7a5e;">Cancel</button><button id="del-confirm" style="flex:1;padding:0.8rem;border:none;border-radius:10px;background:#e53e3e;color:#fff;font-family:Syne,sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;">Yes, Delete</button></div></div>';
+  overlay.innerHTML='<div style="background:#fff;border-radius:16px;padding:2rem;max-width:300px;width:100%;text-align:center;"><div style="font-size:2.5rem;margin-bottom:0.8rem;">🗑️</div><h3 style="font-family:Fraunces,serif;font-size:1.1rem;font-weight:700;color:#0f1a14;margin-bottom:0.5rem;">Delete This Post?</h3><p style="font-size:0.85rem;color:#4a6355;margin-bottom:1.5rem;">This will be permanently removed and cannot be undone.</p><div style="display:flex;gap:0.8rem;"><button id="del-cancel" style="flex:1;padding:0.8rem;border:1.5px solid rgba(26,107,60,0.2);border-radius:8px;background:transparent;font-size:0.9rem;cursor:pointer;color:#4a6355;">Cancel</button><button id="del-confirm" style="flex:1;padding:0.8rem;border:none;border-radius:8px;background:#c53030;color:#fff;font-family:Fraunces,serif;font-size:0.9rem;font-weight:700;cursor:pointer;">Yes, Delete</button></div></div>';
   document.body.appendChild(overlay);
   document.getElementById('del-cancel').onclick=()=>overlay.remove();
   document.getElementById('del-confirm').onclick=async()=>{
     overlay.remove();
-    showToast('⏳ Deleting permanently...');
-    // Use force_delete_problem to handle all cascades
+    showToast('⏳ Deleting...');
     const {error}=await _sb.rpc('force_delete_problem',{pid:id});
     if(error){
-      // Fallback: manual cascade delete
       await _sb.from('votes').delete().eq('problem_id',id);
       await _sb.from('comments').delete().eq('problem_id',id);
       await _sb.from('reports').delete().eq('problem_id',id);
-      const {error:e2}=await _sb.from('problems').delete().eq('id',id).eq('user_id',currentUser.id);
-      if(e2){showToast('❌ Delete failed. Please try again.');return;}
+      await _sb.from('problems').delete().eq('id',id).eq('user_id',currentUser.id);
     }
-    // Remove from local array immediately
     allProblems=allProblems.filter(p=>p.id!==id);
-    // Remove card from DOM immediately
     const card=document.getElementById('card-'+id);
     if(card)card.remove();
-    // Update vote count
     const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
     document.getElementById('total-votes').textContent=total.toLocaleString();
     showToast('✅ Problem permanently deleted!');
     renderSidebar();
   };
 }
-function filterCat(cat,btn){activeFilter=cat;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderFeed();}
-function searchFeed(val){searchTerm=val.toLowerCase().trim();renderFeed();}
-function renderSidebar(){
-  const counts={};allProblems.forEach(p=>{if(p.state)counts[p.state]=(counts[p.state]||0)+1;});
-  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);const max=top[0]?.[1]||1;
-  document.getElementById('state-list').innerHTML=top.map(([state,count],i)=>'<div class="state-row"><div class="state-rank">'+(i+1)+'</div><div class="state-bar-wrap"><div class="state-name">'+state+'</div><div class="state-track"><div class="state-fill" style="width:'+Math.round(count/max*100)+'%"></div></div></div><div class="state-count">'+count+'</div></div>').join('')||'<div style="font-size:0.8rem;color:var(--muted);">No data yet.</div>';
+
+function filterCat(cat,btn){
+  activeFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
 }
+
+function searchFeed(val){searchTerm=val.toLowerCase().trim();renderFeed();}
+
+function renderSidebar(){
+  const counts={};
+  allProblems.forEach(p=>{if(p.state)counts[p.state]=(counts[p.state]||0)+1;});
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max=top[0]?.[1]||1;
+  document.getElementById('state-list').innerHTML=top.map(([state,count],i)=>
+    '<div class="state-row">'
+    +'<div class="state-rank">'+(i+1)+'</div>'
+    +'<div class="state-bar-wrap">'
+    +'<div class="state-name">'+state+'</div>'
+    +'<div class="state-track"><div class="state-fill" style="width:'+Math.round(count/max*100)+'%"></div></div>'
+    +'</div>'
+    +'<div class="state-count">'+count+'</div>'
+    +'</div>'
+  ).join('')||'<div style="font-size:0.8rem;color:var(--ink-soft);">No data yet.</div>';
+}
+
 function shareProblem(id,title){
   const url=window.location.origin+'/problem.html?id='+id;
   const text='🇳🇬 "'+title+'"\n\nVote on NaijaVoice 👇\n'+url+'\n\n#NaijaVoice #Nigeria';
   if(navigator.share)navigator.share({title:'NaijaVoice',text,url});
   else navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied!'));
 }
+
 async function logout(){await _sb.auth.signOut();window.location.reload();}
 init();
 </script>
