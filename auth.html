@@ -5,72 +5,150 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NaijaVoice – Login / Register</title>
   <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#008751"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <meta name="theme-color" content="#1a6b3c"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
-    :root{--green:#008751;--green-light:#00a863;--green-dark:#005c37;--gold:#f5a623;--cream:#fdf6ec;--dark:#0d1f0f;--text:#1a2e1c;--muted:#5a7a5e;--border:#d4e8d6;}
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
-    nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5%;background:rgba(253,246,236,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
-    .logo-wrap{display:flex;align-items:center;gap:0.5rem;text-decoration:none;}
-    .logo-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
-    .logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--green);}
-    .logo-text span{color:var(--gold);}
-    .back-link{font-size:0.88rem;color:var(--muted);text-decoration:none;}
-    .page-wrap{max-width:460px;margin:2.5rem auto;padding:0 5%;}
-    .auth-tabs{display:flex;background:#fff;border:1px solid var(--border);border-radius:14px;padding:5px;margin-bottom:1.5rem;}
-    .tab-btn{flex:1;padding:0.7rem;border:none;background:transparent;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--muted);border-radius:10px;cursor:pointer;transition:all 0.2s;}
-    .tab-btn.active{background:var(--green);color:#fff;box-shadow:0 2px 10px rgba(0,135,81,0.3);}
-    .form-panel{display:none;background:#fff;border:1px solid var(--border);border-radius:20px;padding:2rem;}
+    *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
+      --gold:#c48f00;--gold-lite:#fdf6e0;
+      --ink:#0f1a14;--ink-soft:#4a6355;
+      --bg:#f7faf8;--white:#ffffff;
+      --border:rgba(26,107,60,0.14);--radius:8px;
+      --error:#c53030;--error-lite:rgba(197,48,48,0.08);
+      --f-display:'Fraunces',Georgia,serif;
+      --f-body:'Inter',system-ui,sans-serif;
+      --f-mono:'Geist Mono',monospace;
+    }
+    body{font-family:var(--f-body);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+    /* ── BANNER ── */
+    .banner{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;background:var(--green);box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+    .banner__logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+    .banner__logo-img{width:30px;height:30px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+    .banner__logo-img img{width:100%;height:100%;object-fit:contain;}
+    .banner__logo-text{font-family:var(--f-display);font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:#fff;}
+    .banner__logo-text span{color:var(--gold);font-style:italic;}
+    .banner__back{font-family:var(--f-mono);font-size:11px;color:rgba(255,255,255,0.65);text-decoration:none;letter-spacing:0.04em;transition:color 0.15s;}
+    .banner__back:hover{color:#fff;}
+
+    /* ── HERO STRIP ── */
+    .auth-hero{background:var(--ink);padding:2.5rem 5%;text-align:center;}
+    .auth-hero__eyebrow{font-family:var(--f-mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#4ade80;margin-bottom:10px;}
+    .auth-hero__title{font-family:var(--f-display);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;color:#fff;letter-spacing:-0.025em;line-height:1.1;margin-bottom:6px;}
+    .auth-hero__title em{font-style:italic;font-weight:400;color:var(--gold);}
+    .auth-hero__sub{font-size:0.85rem;color:rgba(255,255,255,0.45);max-width:360px;margin:0 auto;}
+
+    /* ── PAGE WRAP ── */
+    .page-wrap{max-width:480px;margin:2rem auto 4rem;padding:0 5%;}
+
+    /* ── TABS ── */
+    .auth-tabs{display:flex;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:1.5rem;gap:4px;}
+    .tab-btn{flex:1;padding:9px;border:none;background:transparent;font-family:var(--f-display);font-size:0.92rem;font-weight:700;color:var(--ink-soft);border-radius:7px;cursor:pointer;transition:all 0.2s;letter-spacing:-0.01em;}
+    .tab-btn.active{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(26,107,60,0.25);}
+
+    /* ── FORM PANEL ── */
+    .form-panel{display:none;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:2rem;}
     .form-panel.active{display:block;}
-    .form-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--dark);margin-bottom:0.3rem;}
-    .form-sub{font-size:0.86rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.5;}
-    .msg{padding:0.8rem 1rem;border-radius:10px;font-size:0.85rem;margin-bottom:1rem;display:none;line-height:1.5;}
+    .form-title{font-family:var(--f-display);font-size:1.4rem;font-weight:900;color:var(--ink);margin-bottom:4px;letter-spacing:-0.025em;}
+    .form-sub{font-size:0.84rem;color:var(--ink-soft);margin-bottom:1.5rem;line-height:1.6;}
+
+    /* ── MESSAGES ── */
+    .msg{padding:10px 14px;border-radius:var(--radius);font-size:0.83rem;margin-bottom:1rem;display:none;line-height:1.6;font-family:var(--f-body);}
     .msg.show{display:block;}
-    .msg-error{background:rgba(229,62,62,0.08);border:1px solid rgba(229,62,62,0.3);color:#c53030;}
-    .msg-success{background:rgba(0,135,81,0.08);border:1px solid rgba(0,135,81,0.3);color:var(--green-dark);}
-    .field{margin-bottom:1rem;}
-    .field label{font-size:0.82rem;font-weight:600;color:var(--text);display:block;margin-bottom:0.4rem;}
-    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+    .msg-error{background:var(--error-lite);border:1px solid rgba(197,48,48,0.25);color:var(--error);}
+    .msg-success{background:var(--green-lite);border:1px solid rgba(26,107,60,0.2);color:var(--green);}
+
+    /* ── FIELDS ── */
+    .field{margin-bottom:14px;}
+    .field label{font-size:0.8rem;font-weight:600;color:var(--ink);display:block;margin-bottom:5px;font-family:var(--f-body);}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
     .input-wrap{position:relative;}
-    .input-icon{position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
-    .input-wrap input,.input-wrap select{width:100%;padding:0.75rem 0.9rem 0.75rem 2.6rem;background:#fff;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--text);outline:none;appearance:none;transition:border-color 0.2s,box-shadow 0.2s;}
-    .input-wrap input:focus,.input-wrap select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,135,81,0.1);}
-    .pwd-toggle{position:absolute;right:0.9rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted);padding:0;}
-    .forgot-wrap{text-align:right;margin-top:0.3rem;}
-    .forgot-wrap a{font-size:0.78rem;color:var(--muted);cursor:pointer;text-decoration:none;}
-    .terms-wrap{display:flex;align-items:flex-start;gap:0.7rem;margin-bottom:1.2rem;}
-    .terms-wrap input[type="checkbox"]{width:16px;height:16px;margin-top:3px;accent-color:var(--green);flex-shrink:0;cursor:pointer;}
-    .terms-wrap label{font-size:0.82rem;color:var(--muted);line-height:1.5;cursor:pointer;}
-    .terms-wrap a{color:var(--green);text-decoration:none;}
-    .submit-btn{width:100%;padding:0.9rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;box-shadow:0 4px 16px rgba(0,135,81,0.28);}
-    .submit-btn:hover{background:var(--green-dark);}
-    .submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
-    .switch-row{text-align:center;margin-top:1.2rem;font-size:0.85rem;color:var(--muted);}
+    .input-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.95rem;pointer-events:none;}
+    .input-wrap input,.input-wrap select{
+      width:100%;padding:11px 12px 11px 36px;
+      background:var(--white);border:1.5px solid var(--border);
+      border-radius:var(--radius);font-family:var(--f-body);
+      font-size:0.9rem;color:var(--ink);outline:none;
+      appearance:none;transition:border-color 0.15s,box-shadow 0.15s;
+    }
+    .input-wrap input:focus,.input-wrap select:focus{
+      border-color:var(--green);
+      box-shadow:0 0 0 3px rgba(26,107,60,0.1);
+    }
+    .pwd-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:0.95rem;color:var(--ink-soft);padding:0;}
+
+    /* ── PASSWORD STRENGTH ── */
+    .strength-bar{display:flex;gap:4px;margin-top:6px;margin-bottom:3px;}
+    .seg{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background 0.3s;}
+    .s-label{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);}
+
+    /* ── EXTRAS ── */
+    .forgot-wrap{text-align:right;margin-top:4px;}
+    .forgot-wrap a{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);cursor:pointer;text-decoration:none;letter-spacing:0.03em;}
+    .forgot-wrap a:hover{color:var(--green);}
+    .terms-wrap{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;}
+    .terms-wrap input[type="checkbox"]{width:15px;height:15px;margin-top:3px;accent-color:var(--green);flex-shrink:0;cursor:pointer;}
+    .terms-wrap label{font-size:0.8rem;color:var(--ink-soft);line-height:1.55;cursor:pointer;}
+    .terms-wrap a{color:var(--green);text-decoration:none;font-weight:600;}
+
+    /* ── SUBMIT ── */
+    .submit-btn{
+      width:100%;padding:13px;
+      background:var(--green);color:#fff;border:none;
+      border-radius:var(--radius);font-family:var(--f-display);
+      font-size:0.95rem;font-weight:700;cursor:pointer;
+      transition:background 0.15s,transform 0.15s;
+      box-shadow:0 4px 14px rgba(26,107,60,0.25);
+      letter-spacing:-0.01em;
+    }
+    .submit-btn:hover{background:var(--green-mid);transform:translateY(-1px);}
+    .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+    .switch-row{text-align:center;margin-top:16px;font-size:0.83rem;color:var(--ink-soft);}
     .switch-row a{color:var(--green);font-weight:600;cursor:pointer;}
-    .strength-bar{display:flex;gap:4px;margin-top:0.4rem;margin-bottom:0.2rem;}
-    .seg{height:4px;flex:1;border-radius:2px;background:var(--border);transition:background 0.3s;}
-    .s-label{font-size:0.72rem;color:var(--muted);}
-    @media(max-width:480px){.field-row{grid-template-columns:1fr;}.page-wrap{margin:1.5rem auto;}}
+
+    /* ── TRUST STRIP ── */
+    .trust-strip{display:flex;align-items:center;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin-top:1.5rem;padding:14px;background:var(--white);border:1px solid var(--border);border-radius:10px;}
+    .trust-item{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);letter-spacing:0.03em;}
+
+    @media(max-width:480px){
+      .field-row{grid-template-columns:1fr;}
+      .page-wrap{margin:1.5rem auto;}
+      .form-panel{padding:1.5rem;}
+    }
   </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="logo-wrap">
-    <div class="logo-icon">🗳️</div>
-    <div class="logo-text">Naija<span>Voice</span></div>
+
+<!-- ── BANNER ── -->
+<header class="banner">
+  <a href="index.html" class="banner__logo">
+    <div class="banner__logo-img"><img src="/icon-192.png" alt="NaijaVoice"/></div>
+    <span class="banner__logo-text">Naija<span>Voice</span></span>
   </a>
-  <a href="index.html" class="back-link">← Back to Home</a>
-</nav>
+  <a href="index.html" class="banner__back">← Back to Home</a>
+</header>
+
+<!-- ── HERO STRIP ── -->
+<div class="auth-hero">
+  <div class="auth-hero__eyebrow">🇳🇬 Nigeria's Civic Platform</div>
+  <h1 class="auth-hero__title">Your voice, <em>counted.</em></h1>
+  <p class="auth-hero__sub">Join thousands of Nigerians surfacing real community problems.</p>
+</div>
+
+<!-- ── MAIN FORM ── -->
 <div class="page-wrap">
   <div class="auth-tabs">
     <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
     <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
   </div>
+
   <!-- LOGIN -->
   <div class="form-panel active" id="panel-login">
-    <div class="form-title">Welcome Back 👋</div>
-    <div class="form-sub">Login to post problems and manage your account.</div>
+    <div class="form-title">Welcome back 👋</div>
+    <div class="form-sub">Login to post problems and vote on what matters.</div>
     <div class="msg msg-error" id="login-err"></div>
     <div class="msg msg-success" id="login-ok"></div>
     <div class="field">
@@ -89,13 +167,14 @@
       </div>
       <div class="forgot-wrap"><a onclick="switchTab('reset')">Forgot password?</a></div>
     </div>
-    <button class="submit-btn" id="login-btn" type="button" onclick="doLogin()">Login to NajaVoice →</button>
+    <button class="submit-btn" id="login-btn" type="button" onclick="doLogin()">Login to NaijaVoice →</button>
     <div class="switch-row">No account? <a onclick="switchTab('register')">Create one free</a></div>
   </div>
+
   <!-- REGISTER -->
   <div class="form-panel" id="panel-register">
-    <div class="form-title">Join NajaVoice 🇳🇬</div>
-    <div class="form-sub">Create your free account to start posting community problems.</div>
+    <div class="form-title">Join NaijaVoice 🇳🇬</div>
+    <div class="form-sub">Create your free account and start posting community problems today.</div>
     <div class="msg msg-error" id="reg-err"></div>
     <div class="msg msg-success" id="reg-ok"></div>
     <div class="field-row">
@@ -123,21 +202,26 @@
     </div>
     <div class="field">
       <label>Password</label>
-      <div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-pwd" placeholder="At least 6 characters" oninput="checkStrength(this.value)"/><button class="pwd-toggle" type="button" onclick="togglePwd('reg-pwd',this)">👁️</button></div>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="reg-pwd" placeholder="At least 6 characters" oninput="checkStrength(this.value)"/>
+        <button class="pwd-toggle" type="button" onclick="togglePwd('reg-pwd',this)">👁️</button>
+      </div>
       <div class="strength-bar"><div class="seg" id="s1"></div><div class="seg" id="s2"></div><div class="seg" id="s3"></div><div class="seg" id="s4"></div></div>
       <div class="s-label" id="s-label">Enter a password</div>
     </div>
     <div class="terms-wrap">
       <input type="checkbox" id="reg-agree"/>
-      <label for="reg-agree">I agree to the <a href="#">Terms of Use</a> and understand NajaVoice is a civic platform for real community issues only.</label>
+      <label for="reg-agree">I agree to the <a href="terms.html">Terms of Use</a> and understand NaijaVoice is a civic platform for real community issues only.</label>
     </div>
     <button class="submit-btn" id="reg-btn" type="button" onclick="doRegister()">🚀 Create My Free Account</button>
     <div class="switch-row">Already have an account? <a onclick="switchTab('login')">Login here</a></div>
   </div>
+
   <!-- RESET -->
   <div class="form-panel" id="panel-reset">
     <div class="form-title">Reset Password 🔑</div>
-    <div class="form-sub">Enter your email and we will send you a reset link.</div>
+    <div class="form-sub">Enter your email and we'll send you a reset link right away.</div>
     <div class="msg msg-error" id="reset-err"></div>
     <div class="msg msg-success" id="reset-ok"></div>
     <div class="field">
@@ -147,18 +231,56 @@
     <button class="submit-btn" id="reset-btn" type="button" onclick="doReset()">📧 Send Reset Link</button>
     <div class="switch-row"><a onclick="switchTab('login')">← Back to Login</a></div>
   </div>
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip">
+    <div class="trust-item"><span>🛡️</span> Independent</div>
+    <div class="trust-item"><span>🆓</span> Free Forever</div>
+    <div class="trust-item"><span>🔒</span> Secure</div>
+    <div class="trust-item"><span>🇳🇬</span> Built by Nigerians</div>
+  </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const _sb = supabase.createClient(
   'https://zszcmrbbgchafoydqoqb.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
 );
-function switchTab(t){['login','register','reset'].forEach(x=>{document.getElementById('panel-'+x).classList.toggle('active',x===t);const b=document.getElementById('tab-'+x);if(b)b.classList.toggle('active',x===t);});}
-function togglePwd(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁️':'🙈';}
-function checkStrength(v){let s=0;if(v.length>=6)s++;if(v.length>=10)s++;if(/[A-Z]/.test(v)&&/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;const c=['#e53e3e','#f5a623','#00a863','#005c37'],l=['Weak','Fair','Good','Strong 💪'];[1,2,3,4].forEach(i=>{document.getElementById('s'+i).style.background=i<=s?c[s-1]:'var(--border)';});const lb=document.getElementById('s-label');lb.textContent=v.length===0?'Enter a password':(l[s-1]||'Weak');lb.style.color=v.length===0?'var(--muted)':c[s-1];}
+
+function switchTab(t){
+  ['login','register','reset'].forEach(x=>{
+    document.getElementById('panel-'+x).classList.toggle('active',x===t);
+    const b=document.getElementById('tab-'+x);
+    if(b)b.classList.toggle('active',x===t);
+  });
+}
+
+function togglePwd(id,btn){
+  const el=document.getElementById(id);
+  el.type=el.type==='password'?'text':'password';
+  btn.textContent=el.type==='password'?'👁️':'🙈';
+}
+
+function checkStrength(v){
+  let s=0;
+  if(v.length>=6)s++;
+  if(v.length>=10)s++;
+  if(/[A-Z]/.test(v)&&/[0-9]/.test(v))s++;
+  if(/[^A-Za-z0-9]/.test(v))s++;
+  const c=['#c53030','#c48f00','#218a4e','#1a6b3c'];
+  const l=['Weak','Fair','Good','Strong 💪'];
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('s'+i).style.background=i<=s?c[s-1]:'var(--border)';
+  });
+  const lb=document.getElementById('s-label');
+  lb.textContent=v.length===0?'Enter a password':(l[s-1]||'Weak');
+  lb.style.color=v.length===0?'var(--ink-soft)':c[s-1];
+}
+
 function showMsg(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
 function hideMsg(id){document.getElementById(id).classList.remove('show');}
+
 async function doLogin(){
   hideMsg('login-err');hideMsg('login-ok');
   const email=document.getElementById('login-email').value.trim();
@@ -169,11 +291,15 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='Logging in...';
   try{
     const {error}=await _sb.auth.signInWithPassword({email,password:pwd});
-    if(error){showMsg('login-err','❌ '+error.message);btn.disabled=false;btn.textContent='Login to NajaVoice →';return;}
+    if(error){showMsg('login-err','❌ '+error.message);btn.disabled=false;btn.textContent='Login to NaijaVoice →';return;}
     showMsg('login-ok','✅ Login successful! Redirecting...');
     setTimeout(()=>window.location.href='index.html',1200);
-  }catch(e){showMsg('login-err','❌ Network error. Check your internet.');btn.disabled=false;btn.textContent='Login to NajaVoice →';}
+  }catch(e){
+    showMsg('login-err','❌ Network error. Check your connection.');
+    btn.disabled=false;btn.textContent='Login to NaijaVoice →';
+  }
 }
+
 async function doRegister(){
   hideMsg('reg-err');hideMsg('reg-ok');
   const fname=document.getElementById('reg-fname').value.trim();
@@ -186,7 +312,7 @@ async function doRegister(){
   if(!email||!email.includes('@')){showMsg('reg-err','Please enter a valid email address.');return;}
   if(!state){showMsg('reg-err','Please select your state in Nigeria.');return;}
   if(pwd.length<6){showMsg('reg-err','Password must be at least 6 characters.');return;}
-  if(!agreed){showMsg('reg-err','Please agree to the Terms of Use.');return;}
+  if(!agreed){showMsg('reg-err','Please agree to the Terms of Use to continue.');return;}
   const btn=document.getElementById('reg-btn');
   btn.disabled=true;btn.textContent='Creating account...';
   try{
@@ -194,22 +320,35 @@ async function doRegister(){
     if(error){showMsg('reg-err','❌ '+error.message);btn.disabled=false;btn.textContent='🚀 Create My Free Account';return;}
     if(data.user){await _sb.from('profiles').upsert({id:data.user.id,full_name:fname+' '+lname,state,email});}
     showMsg('reg-ok','🎉 Account created! Logging you in...');
-    setTimeout(async()=>{const {error:e}=await _sb.auth.signInWithPassword({email,password:pwd});if(!e)window.location.href='index.html';else{btn.disabled=false;btn.textContent='🚀 Create My Free Account';}},1200);
-  }catch(e){showMsg('reg-err','❌ Connection error. Try again.');btn.disabled=false;btn.textContent='🚀 Create My Free Account';}
+    setTimeout(async()=>{
+      const {error:e}=await _sb.auth.signInWithPassword({email,password:pwd});
+      if(!e)window.location.href='index.html';
+      else{btn.disabled=false;btn.textContent='🚀 Create My Free Account';}
+    },1200);
+  }catch(e){
+    showMsg('reg-err','❌ Connection error. Please try again.');
+    btn.disabled=false;btn.textContent='🚀 Create My Free Account';
+  }
 }
+
 async function doReset(){
   hideMsg('reset-err');hideMsg('reset-ok');
   const email=document.getElementById('reset-email').value.trim();
-  if(!email||!email.includes('@')){showMsg('reset-err','Please enter a valid email.');return;}
+  if(!email||!email.includes('@')){showMsg('reset-err','Please enter a valid email address.');return;}
   const btn=document.getElementById('reset-btn');
   btn.disabled=true;btn.textContent='Sending...';
   try{
     const {error}=await _sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/auth.html'});
     if(error){showMsg('reset-err','❌ '+error.message);btn.disabled=false;btn.textContent='📧 Send Reset Link';return;}
-    showMsg('reset-ok','✅ Check your email inbox and spam folder!');
+    showMsg('reset-ok','✅ Reset link sent! Check your inbox and spam folder.');
     btn.disabled=false;btn.textContent='📧 Send Reset Link';
-  }catch(e){showMsg('reset-err','❌ Network error. Try again.');btn.disabled=false;btn.textContent='📧 Send Reset Link';}
+  }catch(e){
+    showMsg('reset-err','❌ Network error. Please try again.');
+    btn.disabled=false;btn.textContent='📧 Send Reset Link';
+  }
 }
+
+// Redirect if already logged in
 _sb.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='index.html';});
 </script>
 <script src="/pwa.js"></script>
