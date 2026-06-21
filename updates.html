@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NaijaVoice – Updates & Civic Milestones</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#1a6b3c"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
+      --gold:#c48f00;--gold-lite:#fdf6e0;
+      --ink:#0f1a14;--ink-soft:#4a6355;
+      --bg:#f7faf8;--white:#ffffff;
+      --border:rgba(26,107,60,0.14);--radius:8px;
+      --error:#c53030;
+      --f-display:'Fraunces',Georgia,serif;
+      --f-body:'Inter',system-ui,sans-serif;
+      --f-mono:'Geist Mono',monospace;
+    }
+    body{font-family:var(--f-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;}
+
+    /* ── BANNER ── */
+    .banner{position:sticky;top:0;z-index:200;height:54px;display:flex;align-items:center;background:var(--green);padding:0 5%;box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+    .banner__logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:10px;}
+    .banner__logo-img{width:30px;height:30px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+    .banner__logo-img img{width:100%;height:100%;object-fit:contain;}
+    .banner__logo-text{font-family:var(--f-display);font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:#fff;}
+    .banner__logo-text span{color:var(--gold);font-style:italic;}
+    .banner__spacer{flex:1;}
+    .banner__nav{display:flex;align-items:center;gap:4px;}
+    .banner__nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 11px;border-radius:4px;transition:background 0.15s;white-space:nowrap;}
+    .banner__nav a:hover{background:rgba(255,255,255,0.12);color:#fff;}
+    .banner__nav a.active{color:#fff;font-weight:700;}
+    .banner__cta{background:var(--gold)!important;color:var(--ink)!important;font-weight:700!important;border-radius:5px!important;}
+    .banner__user{font-size:0.83rem;color:#fff;font-weight:600;text-decoration:none;}
+    .banner__logout{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.78rem;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--f-body);}
+    .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;padding:8px;flex-shrink:0;}
+    .hamburger span{display:block;width:17px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s ease;}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .hamburger.open span:nth-child(2){opacity:0;}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    .mobile-menu{display:none;position:fixed;top:54px;left:0;right:0;bottom:0;background:rgba(247,250,248,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;padding:1.5rem 5%;overflow-y:auto;transform:translateX(100%);transition:transform 0.3s ease;}
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-nav-links{list-style:none;display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.5rem;}
+    .mobile-nav-links li a{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1rem;border-radius:10px;font-size:0.95rem;font-weight:500;color:var(--ink);text-decoration:none;transition:background 0.2s;}
+    .mobile-nav-links li a:hover{background:var(--green-lite);color:var(--green);}
+    .mobile-auth-area{border-top:1px solid var(--border);padding-top:1.2rem;display:flex;flex-direction:column;gap:0.8rem;}
+    .mobile-auth-area a,.mobile-auth-area button{display:block;text-align:center;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:600;text-decoration:none;}
+    .mobile-cta{background:var(--green);color:#fff!important;}
+    .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);cursor:pointer;font-family:var(--f-body);font-size:0.95rem;}
+
+    /* ── PAGE HEADER ── */
+    .page-header{background:var(--ink);padding:3rem 5% 2.5rem;position:relative;overflow:hidden;}
+    .page-header::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,60,0.25) 0%,transparent 70%);pointer-events:none;}
+    .header-inner{max-width:800px;margin:0 auto;}
+    .header-eyebrow{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4ade80;margin-bottom:14px;}
+    .page-header h1{font-family:var(--f-display);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-0.025em;line-height:1.1;}
+    .page-header h1 em{font-style:italic;font-weight:400;color:var(--gold);}
+    .page-header p{color:rgba(255,255,255,0.45);font-size:0.9rem;max-width:480px;line-height:1.6;}
+
+    /* ── STATS STRIP ── */
+    .stats-strip{background:var(--white);border-bottom:1px solid var(--border);padding:1.2rem 5%;}
+    .stats-inner{max-width:800px;margin:0 auto;display:flex;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+    .stat-box{flex:1;padding:14px;text-align:center;border-right:1px solid var(--border);}
+    .stat-box:last-child{border-right:none;}
+    .stat-num{font-family:var(--f-display);font-size:1.4rem;font-weight:900;color:var(--green);letter-spacing:-0.03em;}
+    .stat-label{font-family:var(--f-mono);font-size:9px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;margin-top:3px;}
+
+    /* ── MAIN ── */
+    .main-wrap{max-width:800px;margin:0 auto;padding:2.5rem 5% 4rem;}
+
+    /* ── TIMELINE ── */
+    .timeline{position:relative;}
+    .update-item{position:relative;padding-left:36px;padding-bottom:2rem;border-left:2px solid var(--border);}
+    .update-item:last-child{border-left:2px solid transparent;padding-bottom:0;}
+    .update-dot{position:absolute;left:-7px;top:0;width:14px;height:14px;border-radius:50%;background:var(--green);border:3px solid var(--bg);}
+    .update-dot.milestone{background:var(--gold);}
+    .update-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-left:14px;animation:fadeUp 0.4s ease both;}
+    .update-card:hover{border-color:var(--green);}
+    .update-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+    .update-badge{font-family:var(--f-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:3px 9px;border-radius:20px;}
+    .badge-feature{background:var(--green-lite);color:var(--green);}
+    .badge-milestone{background:var(--gold-lite);color:var(--gold);}
+    .badge-design{background:rgba(59,130,246,0.1);color:#1d4ed8;}
+    .badge-fix{background:rgba(197,48,48,0.08);color:var(--error);}
+    .update-date{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);margin-left:auto;}
+    .update-title{font-family:var(--f-display);font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:-0.015em;}
+    .update-desc{font-size:0.86rem;color:var(--ink-soft);line-height:1.65;}
+    .update-desc ul{margin-top:8px;padding-left:18px;}
+    .update-desc li{margin-bottom:4px;}
+
+    /* ── FOOTER CTA ── */
+    .updates-cta{margin-top:2.5rem;background:var(--green-lite);border:1px solid rgba(26,107,60,0.15);border-radius:12px;padding:1.6rem;text-align:center;}
+    .updates-cta h3{font-family:var(--f-display);font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:-0.015em;}
+    .updates-cta p{font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;}
+    .btn-go{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;padding:11px 22px;border-radius:var(--radius);font-family:var(--f-display);font-size:0.9rem;font-weight:700;text-decoration:none;transition:background 0.15s;}
+    .btn-go:hover{background:var(--green-mid);}
+
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:768px){
+      .banner__nav{display:none;}
+      .hamburger{display:flex;}
+      .mobile-menu{display:flex;}
+    }
+    @media(max-width:480px){
+      .stats-inner{flex-wrap:wrap;}
+      .stat-box{flex:1 1 50%;border-bottom:1px solid var(--border);}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── BANNER ── -->
+<header class="banner">
+  <a href="index.html" class="banner__logo">
+    <div class="banner__logo-img"><img src="/icon-192.png" alt="NaijaVoice"/></div>
+    <span class="banner__logo-text">Naija<span>Voice</span></span>
+  </a>
+  <span class="banner__spacer"></span>
+  <nav class="banner__nav">
+    <a href="feed.html">Problems</a>
+    <a href="search.html">🔍 Search</a>
+    <a href="trending.html">📈 Trending</a>
+    <a href="leaderboard.html">🏆 Leaderboard</a>
+    <a href="updates.html" class="active">📰 Updates</a>
+    <span id="nav-auth-area"><a href="auth.html" class="banner__cta">Get Started</a></span>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ── MOBILE DRAWER ── -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-nav-links">
+    <li><a href="feed.html">🗳️ Problems</a></li>
+    <li><a href="search.html">🔍 Search</a></li>
+    <li><a href="trending.html">📈 Trending</a></li>
+    <li><a href="leaderboard.html">🏆 Leaderboard</a></li>
+    <li><a href="updates.html">📰 Updates</a></li>
+    <li><a href="post-problem.html">✍️ Post a Problem</a></li>
+  </ul>
+  <div class="mobile-auth-area" id="mobile-auth-area">
+    <a href="auth.html" class="mobile-cta">🚀 Get Started — Free</a>
+  </div>
+</div>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="header-inner">
+    <div class="header-eyebrow">📰 Platform Journal</div>
+    <h1>NaijaVoice <em>Updates</em></h1>
+    <p>What's new on the platform — features, milestones and improvements as we build NaijaVoice in public.</p>
+  </div>
+</div>
+
+<!-- ── STATS STRIP ── -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-box"><div class="stat-num" id="stat-problems">—</div><div class="stat-label">Problems</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-votes">—</div><div class="stat-label">Votes Cast</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-states">—</div><div class="stat-label">States</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-days">—</div><div class="stat-label">Days Live</div></div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main-wrap">
+  <div class="timeline">
+
+    <div class="update-item">
+      <div class="update-dot milestone"></div>
+      <div class="update-card">
+        <div class="update-meta">
+          <span class="update-badge badge-design">Design</span>
+          <span class="update-date">June 2026</span>
+        </div>
+        <div class="update-title">A New Look for NaijaVoice</div>
+        <div class="update-desc">
+          Every page on NaijaVoice has been redesigned with a new editorial identity — Fraunces, Inter and Geist Mono typography, a deep green and gold civic colour system, and a calmer, more confident visual language across the homepage, feed, profile, posting flow and problem pages.
+        </div>
+      </div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-dot"></div>
+      <div class="update-card">
+        <div class="update-meta">
+          <span class="update-badge badge-feature">New Pages</span>
+          <span class="update-date">June 2026</span>
+        </div>
+        <div class="update-title">Trending & Leaderboard Pages Launched</div>
+        <div class="update-desc">
+          Two new pages are now live:
+          <ul>
+            <li><strong>Trending</strong> — see which problems are gaining votes fastest right now, separate from all-time top problems.</li>
+            <li><strong>Leaderboard</strong> — top voters, top posters, most-supported citizens and the states leading the movement.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-dot"></div>
+      <div class="update-card">
+        <div class="update-meta">
+          <span class="update-badge badge-feature">Feature</span>
+          <span class="update-date">June 2026</span>
+        </div>
+        <div class="update-title">Threaded Replies & Comment Editing</div>
+        <div class="update-desc">
+          Community discussions just got richer. You can now reply to a reply, edit your own comments and replies after posting, and follow conversations more naturally — Comment → Reply → Reply.
+        </div>
+      </div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-dot"></div>
+      <div class="update-card">
+        <div class="update-meta">
+          <span class="update-badge badge-fix">Improvement</span>
+          <span class="update-date">June 2026</span>
+        </div>
+        <div class="update-title">Mobile Navigation Overhaul</div>
+        <div class="update-desc">
+          A full mobile menu now gives instant access to every part of NaijaVoice — Problems, Search, Trending, Leaderboard, Updates, and posting — without needing to switch to desktop mode.
+        </div>
+      </div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-dot"></div>
+      <div class="update-card">
+        <div class="update-meta">
+          <span class="update-badge badge-fix">Fix</span>
+          <span class="update-date">June 2026</span>
+        </div>
+        <div class="update-title">Image Uploads Now Display Correctly</div>
+        <div class="update-desc">
+          Photos attached to community problems now appear properly on the feed and problem detail pages — giving every report stronger visual evidence and credibility.
+        </div>
+      </div>
+    </div>
+
+    <div class="update-item">
+      <div class="update-dot milestone"></div>
+      <div class="update-card">
+        <div class="update-meta">
+          <span class="update-badge badge-milestone">Milestone</span>
+          <span class="update-date">March 2026</span>
+        </div>
+        <div class="update-title">NaijaVoice Goes Live</div>
+        <div class="update-desc">
+          NaijaVoice launched as a full civic platform — citizens can post community problems, vote on what matters most, and watch the highest-priority issues rise to the top. Built from scratch, for Nigeria.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="updates-cta">
+    <h3>Have feedback or a feature request?</h3>
+    <p>NaijaVoice is built in public, for the people who use it.</p>
+    <a href="feed.html" class="btn-go">🗳️ Explore the Platform</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+function toggleMenu(){
+  const menu=document.getElementById('mobile-menu');
+  const btn=document.getElementById('hamburger');
+  const isOpen=menu.classList.contains('open');
+  if(isOpen){menu.classList.remove('open');btn.classList.remove('open');document.body.style.overflow='';}
+  else{menu.classList.add('open');btn.classList.add('open');document.body.style.overflow='hidden';}
+}
+document.querySelectorAll('.mobile-nav-links a').forEach(link=>{
+  link.addEventListener('click',()=>{
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+
+async function init(){
+  try{
+    const {data:{user}}=await sb.auth.getUser();
+    if(user){
+      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+      const name=profile?.full_name?.split(' ')[0]||'User';
+      document.getElementById('nav-auth-area').innerHTML=
+        '<a href="profile.html" class="banner__user">👤 '+name+'</a>'+
+        '<button class="banner__logout" onclick="logout()">Logout</button>';
+      document.getElementById('mobile-auth-area').innerHTML=
+        '<div style="font-size:0.85rem;color:var(--ink-soft);text-align:center;padding:0.5rem 0;">👤 '+name+'</div>'+
+        '<a href="profile.html" class="mobile-cta" style="background:rgba(26,107,60,0.1);color:var(--green);">My Profile</a>'+
+        '<button class="mobile-logout" onclick="logout()">Logout</button>';
+    }
+
+    const {data:problems}=await sb.from('problems').select('votes,state,created_at').eq('hidden',false);
+    const all=problems||[];
+    const totalProblems=all.length;
+    const totalVotes=all.reduce((a,p)=>a+(p.votes||0),0);
+    const states=[...new Set(all.map(p=>p.state).filter(Boolean))].length;
+
+    document.getElementById('stat-problems').textContent=totalProblems.toLocaleString();
+    document.getElementById('stat-votes').textContent=totalVotes.toLocaleString();
+    document.getElementById('stat-states').textContent=states||'—';
+
+    // Days live since launch (March 29 2026)
+    const launchDate=new Date('2026-03-29');
+    const daysLive=Math.max(Math.floor((Date.now()-launchDate)/86400000),1);
+    document.getElementById('stat-days').textContent=daysLive;
+
+  }catch(e){console.error(e);}
+}
+
+async function logout(){await sb.auth.signOut();window.location.reload();}
+init();
+</script>
+<script src="/pwa.js"></script>
+</body>
+</html>
