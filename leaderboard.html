@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NaijaVoice – Leaderboard</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#1a6b3c"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
+      --gold:#c48f00;--gold-lite:#fdf6e0;
+      --ink:#0f1a14;--ink-soft:#4a6355;
+      --bg:#f7faf8;--white:#ffffff;
+      --border:rgba(26,107,60,0.14);--radius:8px;
+      --error:#c53030;
+      --f-display:'Fraunces',Georgia,serif;
+      --f-body:'Inter',system-ui,sans-serif;
+      --f-mono:'Geist Mono',monospace;
+    }
+    body{font-family:var(--f-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;}
+
+    /* ── BANNER ── */
+    .banner{position:sticky;top:0;z-index:200;height:54px;display:flex;align-items:center;background:var(--green);padding:0 5%;box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+    .banner__logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:10px;}
+    .banner__logo-img{width:30px;height:30px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+    .banner__logo-img img{width:100%;height:100%;object-fit:contain;}
+    .banner__logo-text{font-family:var(--f-display);font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:#fff;}
+    .banner__logo-text span{color:var(--gold);font-style:italic;}
+    .banner__spacer{flex:1;}
+    .banner__nav{display:flex;align-items:center;gap:4px;}
+    .banner__nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 11px;border-radius:4px;transition:background 0.15s;white-space:nowrap;}
+    .banner__nav a:hover{background:rgba(255,255,255,0.12);color:#fff;}
+    .banner__nav a.active{color:#fff;font-weight:700;}
+    .banner__cta{background:var(--gold)!important;color:var(--ink)!important;font-weight:700!important;border-radius:5px!important;}
+    .banner__user{font-size:0.83rem;color:#fff;font-weight:600;text-decoration:none;}
+    .banner__logout{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.78rem;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--f-body);}
+    .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;padding:8px;flex-shrink:0;}
+    .hamburger span{display:block;width:17px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s ease;}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .hamburger.open span:nth-child(2){opacity:0;}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    .mobile-menu{display:none;position:fixed;top:54px;left:0;right:0;bottom:0;background:rgba(247,250,248,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;padding:1.5rem 5%;overflow-y:auto;transform:translateX(100%);transition:transform 0.3s ease;}
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-nav-links{list-style:none;display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.5rem;}
+    .mobile-nav-links li a{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1rem;border-radius:10px;font-size:0.95rem;font-weight:500;color:var(--ink);text-decoration:none;transition:background 0.2s;}
+    .mobile-nav-links li a:hover{background:var(--green-lite);color:var(--green);}
+    .mobile-auth-area{border-top:1px solid var(--border);padding-top:1.2rem;display:flex;flex-direction:column;gap:0.8rem;}
+    .mobile-auth-area a,.mobile-auth-area button{display:block;text-align:center;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:600;text-decoration:none;}
+    .mobile-cta{background:var(--green);color:#fff!important;}
+    .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);cursor:pointer;font-family:var(--f-body);font-size:0.95rem;}
+
+    /* ── PAGE HEADER ── */
+    .page-header{background:var(--ink);padding:3rem 5% 2.5rem;position:relative;overflow:hidden;}
+    .page-header::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,60,0.25) 0%,transparent 70%);pointer-events:none;}
+    .header-inner{max-width:1000px;margin:0 auto;}
+    .header-eyebrow{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:#4ade80;margin-bottom:14px;}
+    .page-header h1{font-family:var(--f-display);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-0.025em;line-height:1.1;}
+    .page-header h1 em{font-style:italic;font-weight:400;color:var(--gold);}
+    .page-header p{color:rgba(255,255,255,0.45);font-size:0.9rem;max-width:480px;line-height:1.6;}
+
+    /* ── MAIN ── */
+    .main-wrap{max-width:1000px;margin:0 auto;padding:2rem 5% 4rem;}
+
+    /* ── TABS ── */
+    .lb-tabs{display:flex;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:1.5rem;gap:4px;overflow-x:auto;}
+    .lb-tab{flex:1;padding:9px 10px;border:none;background:transparent;font-family:var(--f-display);font-size:0.85rem;font-weight:700;color:var(--ink-soft);border-radius:7px;cursor:pointer;transition:all 0.2s;white-space:nowrap;letter-spacing:-0.01em;}
+    .lb-tab.active{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(26,107,60,0.25);}
+
+    /* ── TOP 3 PODIUM ── */
+    .podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.5rem;}
+    .podium-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1rem;text-align:center;position:relative;transition:transform 0.18s;}
+    .podium-card:hover{transform:translateY(-3px);}
+    .podium-card.gold{border-color:var(--gold);background:var(--gold-lite);order:2;padding-top:1.8rem;}
+    .podium-card.silver{border-color:rgba(192,192,192,0.5);order:1;}
+    .podium-card.bronze{border-color:rgba(205,127,50,0.5);order:3;}
+    .podium-medal{font-size:1.8rem;margin-bottom:8px;}
+    .podium-avatar{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:1.1rem;font-weight:900;color:#fff;margin:0 auto 8px;}
+    .podium-card.gold .podium-avatar{width:60px;height:60px;font-size:1.3rem;}
+    .podium-name{font-family:var(--f-display);font-size:0.92rem;font-weight:700;color:var(--ink);margin-bottom:2px;letter-spacing:-0.015em;}
+    .podium-stat{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);}
+    .podium-num{font-family:var(--f-display);font-size:1.3rem;font-weight:900;color:var(--green);letter-spacing:-0.02em;margin-top:6px;}
+    .podium-card.gold .podium-num{color:var(--gold);}
+
+    /* ── LIST ── */
+    .lb-list{display:flex;flex-direction:column;gap:8px;}
+    .lb-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:all 0.15s;animation:fadeUp 0.4s ease both;}
+    .lb-item:hover{border-color:var(--green);transform:translateX(3px);}
+    .lb-rank{font-family:var(--f-display);font-size:1rem;font-weight:900;color:var(--ink-soft);width:24px;flex-shrink:0;text-align:center;}
+    .lb-avatar{width:38px;height:38px;border-radius:50%;background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:0.85rem;font-weight:700;color:#fff;flex-shrink:0;}
+    .lb-body{flex:1;min-width:0;}
+    .lb-name{font-family:var(--f-display);font-size:0.92rem;font-weight:700;color:var(--ink);letter-spacing:-0.01em;}
+    .lb-sub{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);margin-top:2px;}
+    .lb-value{font-family:var(--f-display);font-size:1.05rem;font-weight:900;color:var(--green);flex-shrink:0;letter-spacing:-0.02em;}
+
+    /* ── STATES VIEW ── */
+    .state-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+    .state-row:last-child{border-bottom:none;}
+    .state-rank{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--ink-soft);width:20px;}
+    .state-info{flex:1;}
+    .state-name{font-family:var(--f-display);font-size:0.92rem;font-weight:700;color:var(--ink);margin-bottom:5px;}
+    .state-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+    .state-fill{height:100%;background:var(--green-mid);border-radius:3px;}
+    .state-count{font-family:var(--f-display);font-size:0.92rem;font-weight:800;color:var(--green);flex-shrink:0;}
+
+    .lb-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.4rem;}
+
+    /* ── EMPTY ── */
+    .empty-state{text-align:center;padding:4rem 2rem;background:var(--white);border-radius:12px;border:1px solid var(--border);}
+    .empty-state .ei{font-size:3.2rem;margin-bottom:1rem;}
+    .empty-state h3{font-family:var(--f-display);font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+    .empty-state p{font-size:0.88rem;color:var(--ink-soft);line-height:1.6;}
+    .loading{text-align:center;padding:3rem;color:var(--ink-soft);font-family:var(--f-mono);font-size:11px;}
+
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:50px;font-size:0.88rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.25);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:9999;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:768px){
+      .banner__nav{display:none;}
+      .hamburger{display:flex;}
+      .mobile-menu{display:flex;}
+    }
+    @media(max-width:560px){
+      .podium{grid-template-columns:1fr;gap:10px;}
+      .podium-card.gold,.podium-card.silver,.podium-card.bronze{order:0;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── BANNER ── -->
+<header class="banner">
+  <a href="index.html" class="banner__logo">
+    <div class="banner__logo-img"><img src="/icon-192.png" alt="NaijaVoice"/></div>
+    <span class="banner__logo-text">Naija<span>Voice</span></span>
+  </a>
+  <span class="banner__spacer"></span>
+  <nav class="banner__nav">
+    <a href="feed.html">Problems</a>
+    <a href="search.html">🔍 Search</a>
+    <a href="trending.html">📈 Trending</a>
+    <a href="leaderboard.html" class="active">🏆 Leaderboard</a>
+    <a href="updates.html">📰 Updates</a>
+    <span id="nav-auth-area"><a href="auth.html" class="banner__cta">Get Started</a></span>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ── MOBILE DRAWER ── -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-nav-links">
+    <li><a href="feed.html">🗳️ Problems</a></li>
+    <li><a href="search.html">🔍 Search</a></li>
+    <li><a href="trending.html">📈 Trending</a></li>
+    <li><a href="leaderboard.html">🏆 Leaderboard</a></li>
+    <li><a href="updates.html">📰 Updates</a></li>
+    <li><a href="post-problem.html">✍️ Post a Problem</a></li>
+  </ul>
+  <div class="mobile-auth-area" id="mobile-auth-area">
+    <a href="auth.html" class="mobile-cta">🚀 Get Started — Free</a>
+  </div>
+</div>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="header-inner">
+    <div class="header-eyebrow">🏆 Civic Recognition</div>
+    <h1>The <em>Leaderboard</em></h1>
+    <p>Citizens and states leading Nigeria's civic voice movement.</p>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main-wrap">
+  <div class="lb-tabs">
+    <button class="lb-tab active" onclick="switchView('voters',this)">🗳️ Top Voters</button>
+    <button class="lb-tab" onclick="switchView('posters',this)">✍️ Top Posters</button>
+    <button class="lb-tab" onclick="switchView('received',this)">⭐ Most Supported</button>
+    <button class="lb-tab" onclick="switchView('states',this)">📍 Top States</button>
+  </div>
+
+  <div id="lb-content">
+    <div class="loading">Loading leaderboard... 🇳🇬</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+let allProblems=[],allVotes=[],allProfiles=[],currentView='voters';
+
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function getInitials(name){return(name||'??').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();}
+
+function toggleMenu(){
+  const menu=document.getElementById('mobile-menu');
+  const btn=document.getElementById('hamburger');
+  const isOpen=menu.classList.contains('open');
+  if(isOpen){menu.classList.remove('open');btn.classList.remove('open');document.body.style.overflow='';}
+  else{menu.classList.add('open');btn.classList.add('open');document.body.style.overflow='hidden';}
+}
+document.querySelectorAll('.mobile-nav-links a').forEach(link=>{
+  link.addEventListener('click',()=>{
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  });
+});
+
+async function init(){
+  try{
+    const {data:{user}}=await sb.auth.getUser();
+    if(user){
+      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+      const name=profile?.full_name?.split(' ')[0]||'User';
+      document.getElementById('nav-auth-area').innerHTML=
+        '<a href="profile.html" class="banner__user">👤 '+name+'</a>'+
+        '<button class="banner__logout" onclick="logout()">Logout</button>';
+      document.getElementById('mobile-auth-area').innerHTML=
+        '<div style="font-size:0.85rem;color:var(--ink-soft);text-align:center;padding:0.5rem 0;">👤 '+name+'</div>'+
+        '<a href="profile.html" class="mobile-cta" style="background:rgba(26,107,60,0.1);color:var(--green);">My Profile</a>'+
+        '<button class="mobile-logout" onclick="logout()">Logout</button>';
+    }
+
+    const [{data:problems},{data:votes},{data:profiles}]=await Promise.all([
+      sb.from('problems').select('*').eq('hidden',false),
+      sb.from('votes').select('user_id'),
+      sb.from('profiles').select('id,full_name,state')
+    ]);
+    allProblems=problems||[];
+    allVotes=votes||[];
+    allProfiles=profiles||[];
+    renderView();
+  }catch(e){
+    console.error(e);
+    document.getElementById('lb-content').innerHTML='<div class="loading">Error loading leaderboard. Please refresh.</div>';
+  }
+}
+
+function switchView(view,btn){
+  currentView=view;
+  document.querySelectorAll('.lb-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderView();
+}
+
+function profileName(id){
+  const p=allProfiles.find(pr=>pr.id===id);
+  return p?.full_name||'Anonymous Citizen';
+}
+
+function renderView(){
+  if(currentView==='voters')renderTopVoters();
+  if(currentView==='posters')renderTopPosters();
+  if(currentView==='received')renderMostSupported();
+  if(currentView==='states')renderTopStates();
+}
+
+function renderPodiumAndList(items,valueLabel){
+  if(!items.length){
+    document.getElementById('lb-content').innerHTML='<div class="empty-state"><div class="ei">🏆</div><h3>No Data Yet</h3><p>Be among the first to make the leaderboard.</p></div>';
+    return;
+  }
+  const top3=items.slice(0,3);
+  const rest=items.slice(3,15);
+
+  const medalClass=['gold','silver','bronze'];
+  const medalIcon=['🥇','🥈','🥉'];
+
+  let podiumHtml='<div class="podium">';
+  top3.forEach((item,i)=>{
+    podiumHtml+=
+      '<div class="podium-card '+medalClass[i]+'">'
+      +'<div class="podium-medal">'+medalIcon[i]+'</div>'
+      +'<div class="podium-avatar">'+getInitials(item.name)+'</div>'
+      +'<div class="podium-name">'+item.name+'</div>'
+      +'<div class="podium-stat">'+(item.sub||'')+'</div>'
+      +'<div class="podium-num">'+item.value.toLocaleString()+'</div>'
+      +'</div>';
+  });
+  podiumHtml+='</div>';
+
+  let listHtml=rest.length?'<div class="lb-card"><div class="lb-list">'+rest.map((item,i)=>
+    '<div class="lb-item" style="animation-delay:'+(i*0.03)+'s">'
+    +'<div class="lb-rank">'+(i+4)+'</div>'
+    +'<div class="lb-avatar">'+getInitials(item.name)+'</div>'
+    +'<div class="lb-body"><div class="lb-name">'+item.name+'</div><div class="lb-sub">'+(item.sub||'')+'</div></div>'
+    +'<div class="lb-value">'+item.value.toLocaleString()+'</div>'
+    +'</div>'
+  ).join('')+'</div></div>':'';
+
+  document.getElementById('lb-content').innerHTML=podiumHtml+listHtml;
+}
+
+function renderTopVoters(){
+  const counts={};
+  allVotes.forEach(v=>{if(v.user_id)counts[v.user_id]=(counts[v.user_id]||0)+1;});
+  const items=Object.entries(counts)
+    .map(([id,count])=>({name:profileName(id),value:count,sub:'votes cast'}))
+    .sort((a,b)=>b.value-a.value);
+  renderPodiumAndList(items);
+}
+
+function renderTopPosters(){
+  const counts={};
+  allProblems.forEach(p=>{if(p.user_id)counts[p.user_id]=(counts[p.user_id]||0)+1;});
+  const items=Object.entries(counts)
+    .map(([id,count])=>({name:profileName(id),value:count,sub:'problems posted'}))
+    .sort((a,b)=>b.value-a.value);
+  renderPodiumAndList(items);
+}
+
+function renderMostSupported(){
+  const totals={};
+  allProblems.forEach(p=>{if(p.user_id)totals[p.user_id]=(totals[p.user_id]||0)+(p.votes||0);});
+  const items=Object.entries(totals)
+    .map(([id,total])=>({name:profileName(id),value:total,sub:'votes received'}))
+    .sort((a,b)=>b.value-a.value);
+  renderPodiumAndList(items);
+}
+
+function renderTopStates(){
+  const counts={};
+  allProblems.forEach(p=>{if(p.state)counts[p.state]=(counts[p.state]||0)+1;});
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  if(!sorted.length){
+    document.getElementById('lb-content').innerHTML='<div class="empty-state"><div class="ei">📍</div><h3>No State Data Yet</h3><p>Post a problem to put your state on the map.</p></div>';
+    return;
+  }
+  const max=sorted[0][1];
+  document.getElementById('lb-content').innerHTML=
+    '<div class="lb-card">'+sorted.map(([state,count],i)=>
+      '<div class="state-row">'
+      +'<div class="state-rank">'+(i+1)+'</div>'
+      +'<div class="state-info"><div class="state-name">'+state+'</div><div class="state-track"><div class="state-fill" style="width:'+Math.round(count/max*100)+'%"></div></div></div>'
+      +'<div class="state-count">'+count+'</div>'
+      +'</div>'
+    ).join('')+'</div>';
+}
+
+async function logout(){await sb.auth.signOut();window.location.reload();}
+init();
+</script>
+<script src="/pwa.js"></script>
+</body>
+</html>
