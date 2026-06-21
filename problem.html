@@ -110,6 +110,17 @@
     .edit-problem-form input,.edit-problem-form textarea{width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.12);border-radius:var(--radius);font-family:var(--f-body);font-size:0.9rem;color:#fff;background:rgba(255,255,255,0.07);outline:none;margin-bottom:10px;resize:vertical;}
     .edit-problem-form input::placeholder,.edit-problem-form textarea::placeholder{color:rgba(255,255,255,0.3);}
     .edit-problem-form input:focus,.edit-problem-form textarea:focus{border-color:rgba(26,107,60,0.6);}
+    /* IMAGE EDIT */
+    .edit-images-label{font-family:var(--f-body);font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:8px;display:block;}
+    .edit-images-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+    .edit-img-wrap{position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:2px solid rgba(255,255,255,0.15);}
+    .edit-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+    .edit-img-remove{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:var(--error);color:#fff;border:none;cursor:pointer;font-size:0.6rem;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1;}
+    .edit-img-add{width:72px;height:72px;border:2px dashed rgba(255,255,255,0.2);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;background:rgba(255,255,255,0.04);transition:border-color 0.15s;flex-shrink:0;}
+    .edit-img-add:hover{border-color:var(--green-mid);}
+    .edit-img-add input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+    .edit-img-add span{font-size:1.3rem;color:rgba(255,255,255,0.4);}
+    .edit-img-note{font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:14px;letter-spacing:0.02em;}
     .edit-actions{display:flex;gap:10px;margin-top:4px;}
     .save-btn{background:var(--green);color:#fff;border:none;padding:9px 18px;border-radius:var(--radius);font-family:var(--f-display);font-size:0.85rem;font-weight:700;cursor:pointer;transition:background 0.15s;}
     .save-btn:hover{background:var(--green-mid);}
@@ -276,7 +287,7 @@
           <button class="share-platform" style="color:#fc8181;border-color:rgba(197,48,48,0.3);" onclick="showReportModal(problemId,problemData.title)">🚩 Report</button>
         </div>
       </div>
-      <div class="owner-actions" id="owner-actions" style="display:none;">
+ <div class="owner-actions" id="owner-actions" style="display:none;">
         <button class="owner-btn btn-edit-post" onclick="toggleEditProblem()">✏️ Edit Post</button>
         <button class="owner-btn btn-delete-post" onclick="deleteProblem()">🗑️ Delete Post</button>
       </div>
@@ -284,6 +295,9 @@
         <h4>✏️ Edit Your Post</h4>
         <input type="text" id="edit-title" placeholder="Problem title" maxlength="100"/>
         <textarea id="edit-desc" placeholder="Problem description..." rows="5" maxlength="800"></textarea>
+        <label class="edit-images-label">📸 Photos (up to 3)</label>
+        <div class="edit-images-grid" id="edit-images-grid"></div>
+        <div class="edit-img-note">New photos upload when you save. Removed photos are deleted permanently.</div>
         <div class="edit-actions">
           <button class="save-btn" onclick="saveEditProblem()">💾 Save Changes</button>
           <button class="cancel-edit-btn" onclick="toggleEditProblem()">Cancel</button>
@@ -324,6 +338,9 @@ const _sb = supabase.createClient(
 let problemData=null,currentUser=null,hasVoted=false;
 let likedComments=JSON.parse(localStorage.getItem('nv_liked_comments')||'[]');
 const problemId=new URLSearchParams(window.location.search).get('id');
+let editExistingImages=[];   // image_urls still kept (strings)
+let editRemovedImages=[];    // image_urls user removed (strings)
+let editNewImageFiles=[];    // new File objects to upload
 
 function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 function timeAgo(ts){if(!ts)return'';const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago';}
@@ -437,8 +454,56 @@ function toggleEditProblem(){
   if(form.classList.contains('show')){
     document.getElementById('edit-title').value=problemData.title;
     document.getElementById('edit-desc').value=problemData.description;
+    editExistingImages=[...(problemData.image_urls||[])];
+    editRemovedImages=[];
+    editNewImageFiles=[];
+    renderEditImagesGrid();
     document.getElementById('edit-title').focus();
   }
+}
+
+function renderEditImagesGrid(){
+  const grid=document.getElementById('edit-images-grid');
+  const totalCount=editExistingImages.length+editNewImageFiles.length;
+  let html='';
+
+  // existing images (already saved on this problem)
+  editExistingImages.forEach((url,i)=>{
+    html+='<div class="edit-img-wrap"><img src="'+url+'"/><button class="edit-img-remove" onclick="removeExistingImage('+i+')">✕</button></div>';
+  });
+
+  // newly added images (not yet uploaded)
+  editNewImageFiles.forEach((file,i)=>{
+    const tempUrl=URL.createObjectURL(file);
+    html+='<div class="edit-img-wrap"><img src="'+tempUrl+'"/><button class="edit-img-remove" onclick="removeNewImage('+i+')">✕</button></div>';
+  });
+
+  // add button — only show if under max of 3
+  if(totalCount<3){
+    html+='<div class="edit-img-add"><input type="file" accept="image/*" onchange="handleAddEditImage(this)"/><span>＋</span></div>';
+  }
+
+  grid.innerHTML=html||'<div style="font-family:var(--f-mono);font-size:10px;color:rgba(255,255,255,0.3);">No photos attached.</div>';
+}
+
+function removeExistingImage(index){
+  const removed=editExistingImages.splice(index,1)[0];
+  if(removed)editRemovedImages.push(removed);
+  renderEditImagesGrid();
+}
+
+function removeNewImage(index){
+  editNewImageFiles.splice(index,1);
+  renderEditImagesGrid();
+}
+
+function handleAddEditImage(input){
+  const file=input.files[0];
+  if(!file)return;
+  const totalCount=editExistingImages.length+editNewImageFiles.length;
+  if(totalCount>=3){showToast('⚠️ Maximum 3 photos allowed.');return;}
+  editNewImageFiles.push(file);
+  renderEditImagesGrid();
 }
 
 async function saveEditProblem(){
@@ -447,12 +512,52 @@ async function saveEditProblem(){
   if(!title||!desc){showToast('⚠️ Please fill in title and description.');return;}
   const btn=document.querySelector('.save-btn');
   btn.disabled=true;btn.textContent='Saving...';
-  const {error}=await _sb.from('problems').update({title,description:desc}).eq('id',problemId).eq('user_id',currentUser.id);
+
+  // Upload any new images first
+  let finalImageUrls=[...editExistingImages];
+  if(editNewImageFiles.length>0){
+    btn.textContent='📸 Uploading...';
+    for(let i=0;i<editNewImageFiles.length;i++){
+      const file=editNewImageFiles[i];
+      const ext=file.name.split('.').pop();
+      const path=currentUser.id+'/'+problemId+'-edit-'+Date.now()+'-'+i+'.'+ext;
+      const {error:upErr}=await _sb.storage.from('problem-images').upload(path,file,{upsert:true});
+      if(!upErr){
+        const {data:urlData}=_sb.storage.from('problem-images').getPublicUrl(path);
+        finalImageUrls.push(urlData.publicUrl);
+      }
+    }
+  }
+
+  // Delete removed images from storage (best-effort, non-blocking)
+  if(editRemovedImages.length>0){
+    editRemovedImages.forEach(url=>{
+      try{
+        const parts=url.split('/problem-images/');
+        if(parts[1])_sb.storage.from('problem-images').remove([parts[1]]);
+      }catch(e){}
+    });
+  }
+
+  btn.textContent='Saving...';
+  const {error}=await _sb.from('problems').update({title,description:desc,image_urls:finalImageUrls}).eq('id',problemId).eq('user_id',currentUser.id);
   if(error){showToast('❌ Could not save. Try again.');btn.disabled=false;btn.textContent='💾 Save Changes';return;}
-  problemData.title=title;problemData.description=desc;
+
+  problemData.title=title;
+  problemData.description=desc;
+  problemData.image_urls=finalImageUrls;
   document.getElementById('problem-title').textContent=title;
   document.getElementById('problem-desc').textContent=desc;
   document.title='NaijaVoice — '+title;
+
+  // Refresh the displayed image on the page
+  const imgArea=document.getElementById('problem-image-area');
+  if(finalImageUrls.length>0){
+    imgArea.innerHTML='<div class="problem-image-wrap"><img src="'+finalImageUrls[0]+'" alt="Problem image" onerror="this.parentElement.style.display=\'none\'"/></div>';
+  }else{
+    imgArea.innerHTML='';
+  }
+
   toggleEditProblem();btn.disabled=false;btn.textContent='💾 Save Changes';
   showToast('✅ Post updated successfully!');
 }
