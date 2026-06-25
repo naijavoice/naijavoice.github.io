@@ -427,15 +427,32 @@ async function castVote(id){
   if(myVotedIds.includes(id)){showToast('⚠️ You already voted on this!');return;}
   if(!currentUser){showToast('👋 Please login to vote!');setTimeout(()=>window.location.href='auth.html',1500);return;}
   const btn=document.querySelector('#card-'+id+' .vote-btn-main');
+  if(btn)btn.disabled=true;
+
+  // Insert the vote FIRST and check for errors before touching the UI
+  const {error}=await _sb.from('votes').insert({user_id:currentUser.id,problem_id:id});
+  if(error){
+    if(btn)btn.disabled=false;
+    if(error.code==='23505'){
+      // Duplicate vote rejected by the database constraint
+      myVotedIds.push(id);
+      if(btn){btn.classList.add('voted');btn.textContent='✅';}
+      showToast('⚠️ You already voted on this!');
+    }else{
+      showToast('❌ Could not cast vote. Try again.');
+    }
+    return;
+  }
+
+  // Insert succeeded — now safely update count and UI
+  await _sb.rpc('increment_vote',{problem_id:id});
   const count=document.getElementById('vcount-'+id);
   const problem=allProblems.find(p=>p.id==id);
   if(problem){problem.votes=(problem.votes||0)+1;if(count)count.textContent=problem.votes.toLocaleString();}
-  if(btn){btn.classList.add('voted');btn.textContent='✅';}
+  if(btn){btn.classList.add('voted');btn.textContent='✅';btn.disabled=false;}
   myVotedIds.push(id);
   const total=allProblems.reduce((a,p)=>a+(p.votes||0),0);
   document.getElementById('total-votes').textContent=total.toLocaleString();
-  await _sb.from('votes').insert({user_id:currentUser.id,problem_id:id});
-  await _sb.rpc('increment_vote',{problem_id:id});
   showToast('✅ Vote cast! Thank you 🇳🇬');
   setTimeout(()=>{allProblems.sort((a,b)=>(b.votes||0)-(a.votes||0));renderFeed();},800);
 }
@@ -468,7 +485,7 @@ async function deleteProblem(id){
 }
 
 function filterCat(cat,btn){
-  activeFilter=cat;
+    activeFilter=cat;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderFeed();
