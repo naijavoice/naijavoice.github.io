@@ -125,7 +125,8 @@
     .card-body h3{font-family:var(--f-display);font-size:1.05rem;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:4px;cursor:pointer;letter-spacing:-0.015em;}
     .card-body h3:hover{color:var(--green);}
     .poster{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);margin-bottom:8px;}
-    .card-img{margin-bottom:10px;border-radius:8px;overflow:hidden;max-height:200px;}
+    .card-img{margin-bottom:10px;border-radius:8px;overflow:hidden;max-height:200px;position:relative;}
+    .card-img-count{position:absolute;bottom:8px;right:8px;background:rgba(15,26,20,0.75);color:#fff;font-family:var(--f-mono);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;letter-spacing:0.02em;}
     .card-img img{width:100%;height:200px;object-fit:cover;display:block;}
     .card-body p{font-size:0.84rem;color:var(--ink-soft);line-height:1.6;margin-bottom:10px;}
     .progress-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:10px;}
@@ -406,7 +407,9 @@ function renderFeed(){
       +'<h3 onclick="window.location.href=\'problem.html?id='+p.id+'\'">'+p.title+'</h3>'
       +'<div class="poster">Posted by <strong>'+p.poster_name+'</strong></div>'
       +(p.image_urls&&p.image_urls.length>0
-        ?'<div class="card-img"><img src="'+p.image_urls[0]+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"/></div>'
+        ?'<div class="card-img"><img src="'+p.image_urls[0]+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"/>'
+        +(p.image_urls.length>1?'<span class="card-img-count">📷 +'+(p.image_urls.length-1)+' more</span>':'')
+        +'</div>'
         :'')
       +'<p>'+(p.description||'').slice(0,140)+((p.description||'').length>140?'…':'')+'</p>'
       +'<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>'
