@@ -304,7 +304,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="details-grid" id="details-grid"></div>
 
     <div class="comments-section">
@@ -403,7 +403,7 @@ async function init(){
 }
 
 function showNotFound(){
- document.getElementById('loading-screen').style.display='none';
+  document.getElementById('loading-screen').style.display='none';
   const nf=document.getElementById('not-found');nf.style.display='flex';
 }
 function showUnderReview(){
@@ -591,6 +591,7 @@ async function castVote(){
 
   const {error}=await _sb.from('votes').insert({user_id:currentUser.id,problem_id:problemId});
   if(error){
+    console.error('Vote insert error:',error);
     btn.disabled=false;
     if(error.code==='23505'){
       hasVoted=true;
@@ -598,7 +599,7 @@ async function castVote(){
       showToast('⚠️ You already voted on this!');
     }else{
       btn.innerHTML='▲ Vote for this Problem';
-      showToast('❌ Could not cast vote. Try again.');
+      showToast('❌ '+(error.message||'Could not cast vote')+' ('+(error.code||'no code')+')');
     }
     return;
   }
