@@ -432,6 +432,7 @@ async function castVote(id){
   // Insert the vote FIRST and check for errors before touching the UI
   const {error}=await _sb.from('votes').insert({user_id:currentUser.id,problem_id:id});
   if(error){
+    console.error('Vote insert error:',error);
     if(btn)btn.disabled=false;
     if(error.code==='23505'){
       // Duplicate vote rejected by the database constraint
@@ -439,7 +440,7 @@ async function castVote(id){
       if(btn){btn.classList.add('voted');btn.textContent='✅';}
       showToast('⚠️ You already voted on this!');
     }else{
-      showToast('❌ Could not cast vote. Try again.');
+      showToast('❌ '+(error.message||'Could not cast vote')+' ('+(error.code||'no code')+')');
     }
     return;
   }
@@ -485,7 +486,7 @@ async function deleteProblem(id){
 }
 
 function filterCat(cat,btn){
-    activeFilter=cat;
+  activeFilter=cat;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderFeed();
