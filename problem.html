@@ -50,7 +50,7 @@
     .mobile-cta{background:var(--green);color:#fff!important;}
     .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);cursor:pointer;font-family:var(--f-body);font-size:0.95rem;}
 
-/* ── LOADING ── */
+    /* ── LOADING ── */
     .loading-screen{min-height:60vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
     .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
@@ -95,7 +95,7 @@
     .share-platform{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.65);padding:8px 12px;border-radius:var(--radius);cursor:pointer;font-size:0.8rem;font-family:var(--f-body);transition:background 0.15s;}
     .share-platform:hover{background:rgba(255,255,255,0.12);color:#fff;}
 
-/* ── OWNER ACTIONS ── */
+    /* ── OWNER ACTIONS ── */
     .owner-actions{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
     .owner-btn{padding:7px 14px;border-radius:var(--radius);border:none;font-family:var(--f-body);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px;}
     .btn-edit-post{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);}
@@ -126,7 +126,7 @@
     .save-btn:hover{background:var(--green-mid);}
     .cancel-edit-btn{background:transparent;border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);padding:9px 14px;border-radius:var(--radius);font-family:var(--f-body);font-size:0.85rem;cursor:pointer;}
 
-/* ── DETAILS GRID ── */
+    /* ── DETAILS GRID ── */
     .details-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem;}
     .detail-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;}
     .detail-label{font-family:var(--f-mono);font-size:9px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;}
@@ -304,6 +304,21 @@
         </div>
       </div>
     </div>
+    
+    <div class="details-grid" id="details-grid"></div>
+
+    <div class="comments-section">
+      <div class="comments-header">
+        <h3>💬 Community Discussion</h3>
+        <span class="comment-count-badge" id="comment-count">0 comments</span>
+      </div>
+      <div id="comment-form-area"></div>
+      <div class="comments-list" id="comments-list">
+        <div class="no-comments"><p>No comments yet. Be the first!</p></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="not-found" style="display:none;min-height:60vh;align-items:center;justify-content:center;flex-direction:column;gap:1rem;text-align:center;padding:2rem;">
   <div style="font-size:4rem;">😕</div>
@@ -377,16 +392,18 @@ async function init(){
     document.getElementById('loading-screen').style.display='none';
     document.getElementById('page-content').style.display='block';
   }catch(e){
+    console.error('NaijaVoice problem.html crash:',e);
     document.getElementById('loading-screen').innerHTML=
       '<div style="text-align:center;padding:2rem;"><div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>'+
       '<h3 style="font-family:Fraunces,serif;color:var(--ink);margin-bottom:0.5rem;">Something went wrong</h3>'+
       '<p style="font-size:0.8rem;color:var(--ink-soft);margin-bottom:1rem;">'+e.message+'</p>'+
+      '<p style="font-size:0.7rem;color:#c53030;margin-bottom:1rem;font-family:monospace;word-break:break-all;">'+(e.stack||'').split('\n').slice(0,3).join('<br>')+'</p>'+
       '<a href="feed.html" style="color:var(--green);font-weight:600;font-size:0.88rem;">← Back to Feed</a></div>';
   }
 }
 
 function showNotFound(){
-  document.getElementById('loading-screen').style.display='none';
+ document.getElementById('loading-screen').style.display='none';
   const nf=document.getElementById('not-found');nf.style.display='flex';
 }
 function showUnderReview(){
@@ -464,7 +481,7 @@ function renderEditImagesGrid(){
   });
 
   // add button — only show if under max of 3
-   if(totalCount<3){
+  if(totalCount<3){
     html+='<div class="edit-img-add"><input type="file" accept="image/*" onchange="handleAddEditImage(this)"/><span>＋</span></div>';
   }
 
@@ -565,6 +582,7 @@ async function deleteProblem(){
     setTimeout(()=>window.location.href='feed.html',1200);
   };
 }
+
 async function castVote(){
   if(hasVoted){showToast('⚠️ You already voted on this!');return;}
   if(!currentUser){showToast('👋 Please login to vote!');setTimeout(()=>window.location.href='auth.html',1500);return;}
