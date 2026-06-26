@@ -81,6 +81,30 @@
 
     /* ── PROBLEM IMAGE ── */
     .problem-image-wrap{margin-bottom:1.2rem;border-radius:10px;overflow:hidden;}
+    .problem-image-wrap img{cursor:pointer;}
+    /* GALLERY */
+    .problem-gallery{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:1.2rem;height:280px;}
+    .problem-gallery .gallery-thumb:first-child{grid-row:span 2;}
+    .gallery-thumb{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;background:rgba(255,255,255,0.05);}
+    .gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.2s;}
+    .gallery-thumb:hover img{transform:scale(1.05);}
+    .problem-gallery[data-count="2"]{grid-template-columns:1fr 1fr;}
+    .problem-gallery[data-count="2"] .gallery-thumb:first-child{grid-row:span 1;}
+    /* LIGHTBOX */
+    .lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:100000;align-items:center;justify-content:center;padding:1.5rem;}
+    .lightbox-overlay.show{display:flex;}
+    .lightbox-img-wrap{position:relative;max-width:100%;max-height:100%;}
+    .lightbox-overlay img{max-width:100%;max-height:85vh;border-radius:8px;display:block;margin:0 auto;}
+    .lightbox-close{position:absolute;top:-44px;right:0;background:rgba(255,255,255,0.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .lightbox-prev{left:-50px;}
+    .lightbox-next{right:-50px;}
+    .lightbox-counter{position:absolute;bottom:-36px;left:50%;transform:translateX(-50%);font-family:var(--f-mono);font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:0.04em;}
+    @media(max-width:600px){
+      .lightbox-prev{left:8px;}
+      .lightbox-next{right:8px;}
+      .problem-gallery{height:220px;}
+    }
     .problem-image-wrap img{width:100%;max-height:320px;object-fit:cover;display:block;}
 
     /* ── VOTE SECTION ── */
@@ -186,7 +210,7 @@
     .reply-edit-form textarea{width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--f-body);font-size:0.8rem;resize:vertical;min-height:50px;outline:none;}
     .reply-edit-form textarea:focus{border-color:var(--green);}
     .reply-edit-actions{display:flex;gap:5px;margin-top:4px;}
-    .re-save{background:var(--green);color:#fff;border:none;padding:4px 10px;border-radius:6px;font-family:var(--f-display);font-size:0.74rem;font-weight:700;cursor:pointer;}
+        .re-save{background:var(--green);color:#fff;border:none;padding:4px 10px;border-radius:6px;font-family:var(--f-display);font-size:0.74rem;font-weight:700;cursor:pointer;}
     .re-cancel{background:transparent;border:1px solid var(--border);color:var(--ink-soft);padding:4px 8px;border-radius:6px;font-family:var(--f-body);font-size:0.74rem;cursor:pointer;}
     .reply-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px;}
     .reply-action-btn{background:none;border:none;color:var(--ink-soft);font-size:0.72rem;padding:3px 5px;cursor:pointer;font-family:var(--f-body);transition:color 0.15s;}
@@ -328,6 +352,16 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="lightbox-overlay" id="lightbox-overlay" onclick="if(event.target===this)closeLightbox()">
+  <div class="lightbox-img-wrap">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" onclick="navLightbox(-1)">‹</button>
+    <img id="lightbox-img" src="" alt="Problem photo"/>
+    <button class="lightbox-nav lightbox-next" id="lightbox-next" onclick="navLightbox(1)">›</button>
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const _sb = supabase.createClient(
@@ -429,7 +463,13 @@ async function renderProblem(){
   document.getElementById('problem-desc').textContent=p.description;
   const imgArea=document.getElementById('problem-image-area');
   if(p.image_urls&&p.image_urls.length>0){
-    imgArea.innerHTML='<div class="problem-image-wrap"><img src="'+p.image_urls[0]+'" alt="Problem image" onerror="this.parentElement.style.display=\'none\'"/></div>';
+    if(p.image_urls.length===1){
+      imgArea.innerHTML='<div class="problem-image-wrap"><img src="'+p.image_urls[0]+'" alt="Problem image" onclick="openLightbox(0)" onerror="this.parentElement.style.display=\'none\'"/></div>';
+    }else{
+      imgArea.innerHTML='<div class="problem-gallery" data-count="'+p.image_urls.length+'">'+p.image_urls.map((url,i)=>
+        '<div class="gallery-thumb" onclick="openLightbox('+i+')"><img src="'+url+'" alt="Problem image '+(i+1)+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"/></div>'
+      ).join('')+'</div>';
+    }
   }
   document.getElementById('posted-by').innerHTML='Posted by <strong>'+posterName+'</strong>';
   const voteBtn=document.getElementById('vote-btn');
@@ -449,6 +489,39 @@ async function renderProblem(){
     document.getElementById('edit-desc').value=p.description;
   }
 }
+
+// ── LIGHTBOX ──
+let lightboxIndex=0;
+function openLightbox(index){
+  if(!problemData?.image_urls?.length)return;
+  lightboxIndex=index;
+  updateLightboxImage();
+  document.getElementById('lightbox-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+function navLightbox(dir){
+  const total=problemData.image_urls.length;
+  lightboxIndex=(lightboxIndex+dir+total)%total;
+  updateLightboxImage();
+}
+function updateLightboxImage(){
+  const urls=problemData.image_urls;
+  document.getElementById('lightbox-img').src=urls[lightboxIndex];
+  document.getElementById('lightbox-counter').textContent=(lightboxIndex+1)+' / '+urls.length;
+  const showNav=urls.length>1;
+  document.getElementById('lightbox-prev').style.display=showNav?'flex':'none';
+  document.getElementById('lightbox-next').style.display=showNav?'flex':'none';
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox-overlay').classList.contains('show'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='ArrowLeft')navLightbox(-1);
+  if(e.key==='ArrowRight')navLightbox(1);
+});
 
 function toggleEditProblem(){
   const form=document.getElementById('edit-problem-form');
@@ -519,8 +592,8 @@ async function saveEditProblem(){
   let finalImageUrls=[...editExistingImages];
   if(editNewImageFiles.length>0){
     btn.textContent='📸 Uploading...';
-    for(let i=0;i<editNewImageFiles.length;i++){
-      const file=editNewImageFiles[i];
+    for(let i=0;i<editNewImageFil
+     const file=editNewImageFiles[i];
       const ext=file.name.split('.').pop();
       const path=currentUser.id+'/'+problemId+'-edit-'+Date.now()+'-'+i+'.'+ext;
       const {error:upErr}=await _sb.storage.from('problem-images').upload(path,file,{upsert:true});
@@ -552,10 +625,14 @@ async function saveEditProblem(){
   document.getElementById('problem-desc').textContent=desc;
   document.title='NaijaVoice — '+title;
 
-  // Refresh the displayed image on the page
+  // Refresh the displayed image gallery on the page
   const imgArea=document.getElementById('problem-image-area');
-  if(finalImageUrls.length>0){
-    imgArea.innerHTML='<div class="problem-image-wrap"><img src="'+finalImageUrls[0]+'" alt="Problem image" onerror="this.parentElement.style.display=\'none\'"/></div>';
+  if(finalImageUrls.length===1){
+    imgArea.innerHTML='<div class="problem-image-wrap"><img src="'+finalImageUrls[0]+'" alt="Problem image" onclick="openLightbox(0)" onerror="this.parentElement.style.display=\'none\'"/></div>';
+  }else if(finalImageUrls.length>1){
+    imgArea.innerHTML='<div class="problem-gallery" data-count="'+finalImageUrls.length+'">'+finalImageUrls.map((url,i)=>
+      '<div class="gallery-thumb" onclick="openLightbox('+i+')"><img src="'+url+'" alt="Problem image '+(i+1)+'" loading="lazy" onerror="this.parentElement.style.display=\'none\'"/></div>'
+    ).join('')+'</div>';
   }else{
     imgArea.innerHTML='';
   }
