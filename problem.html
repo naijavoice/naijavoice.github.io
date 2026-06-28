@@ -109,6 +109,9 @@
 
     /* ── VOTE SECTION ── */
     .vote-section{display:flex;align-items:center;gap:1.5rem;padding:1.2rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .follow-btn{background:rgba(196,143,0,0.12);border:1.5px solid rgba(196,143,0,0.4);color:var(--gold);padding:10px 18px;border-radius:var(--radius);font-family:var(--f-display);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:-0.01em;}
+    .follow-btn:hover{background:rgba(196,143,0,0.2);}
+    .follow-btn.following{background:var(--gold);color:var(--ink);border-color:var(--gold);}
     .vote-big-btn{display:flex;align-items:center;gap:8px;background:var(--green);color:#fff;border:none;padding:12px 22px;border-radius:var(--radius);font-family:var(--f-display);font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.18s;box-shadow:0 4px 16px rgba(26,107,60,0.35);letter-spacing:-0.01em;}
     .vote-big-btn:hover{background:var(--green-mid);transform:translateY(-1px);}
     .vote-big-btn.voted{background:rgba(26,107,60,0.15);border:1.5px solid rgba(26,107,60,0.4);color:#4ade80;box-shadow:none;}
@@ -304,6 +307,7 @@
           <div class="vote-count-big" id="vote-count">0</div>
           <div class="vote-count-label">Nigerians voted on this</div>
         </div>
+        <button class="follow-btn" id="follow-btn" onclick="toggleFollow()">⭐ Follow</button>
         <div class="share-row">
           <button class="share-platform" onclick="shareTwitter()">🐦 Tweet</button>
           <button class="share-platform" onclick="shareWhatsApp()">📱 WhatsApp</button>
@@ -369,7 +373,7 @@ const _sb = supabase.createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
 );
 
-let problemData=null,currentUser=null,hasVoted=false;
+let problemData=null,currentUser=null,hasVoted=false,isFollowing=false;
 let likedComments=JSON.parse(localStorage.getItem('nv_liked_comments')||'[]');
 const problemId=new URLSearchParams(window.location.search).get('id');
 let editExistingImages=[];   // image_urls still kept (strings)
@@ -422,6 +426,8 @@ async function init(){
           '<button class="mobile-logout" onclick="logout()">Logout</button>';
         const {data:vote}=await withTimeout(_sb.from('votes').select('id').eq('user_id',user.id).eq('problem_id',problemId).maybeSingle(),8000,'vote check');
         hasVoted=!!vote;
+        const {data:follow}=await withTimeout(_sb.from('follows').select('id').eq('user_id',user.id).eq('problem_id',problemId).maybeSingle(),8000,'follow check');
+        isFollowing=!!follow;
       }
     }catch(authErr){console.warn('Auth/profile step failed or timed out:',authErr);currentUser=null;}
 
@@ -483,6 +489,7 @@ async function renderProblem(){
   document.getElementById('posted-by').innerHTML='Posted by <strong>'+posterName+'</strong>';
   const voteBtn=document.getElementById('vote-btn');
   if(hasVoted){voteBtn.classList.add('voted');voteBtn.innerHTML='✅ You Voted on This';}
+  updateFollowButton();
   document.getElementById('vote-count').textContent=(p.votes||0).toLocaleString();
   document.getElementById('details-grid').innerHTML=[
     {label:'State',value:p.state||'—'},
@@ -697,6 +704,45 @@ async function castVote(){
   showToast('✅ Vote cast! Thank you 🇳🇬');
 }
 
+// ── FOLLOW / UNFOLLOW ──
+function updateFollowButton(){
+  const btn=document.getElementById('follow-btn');
+  if(!btn)return;
+  if(isFollowing){
+    btn.classList.add('following');
+    btn.innerHTML='⭐ Following';
+  }else{
+    btn.classList.remove('following');
+    btn.innerHTML='⭐ Follow';
+  }
+}
+
+async function toggleFollow(){
+  if(!currentUser){showToast('👋 Please login to follow this problem!');setTimeout(()=>window.location.href='auth.html',1500);return;}
+  const btn=document.getElementById('follow-btn');
+  btn.disabled=true;
+
+  if(isFollowing){
+    const {error}=await _sb.from('follows').delete().eq('user_id',currentUser.id).eq('problem_id',problemId);
+    if(error){showToast('❌ Could not unfollow. Try again.');btn.disabled=false;return;}
+    isFollowing=false;
+    updateFollowButton();
+    showToast('Unfollowed — you won\'t get updates on this anymore.');
+  }else{
+    const {error}=await _sb.from('follows').insert({user_id:currentUser.id,problem_id:problemId});
+    if(error){
+      if(error.code==='23505'){isFollowing=true;updateFollowButton();}
+      else showToast('❌ Could not follow. Try again.');
+      btn.disabled=false;
+      return;
+    }
+    isFollowing=true;
+    updateFollowButton();
+    showToast('⭐ Following! You\'ll be notified of new activity.');
+  }
+  btn.disabled=false;
+}
+
 function renderCommentForm(){
   const area=document.getElementById('comment-form-area');
   if(!currentUser){area.innerHTML='<div class="login-prompt">💬 Want to join the discussion? <a href="auth.html">Login or create a free account</a> to comment.</div>';return;}
@@ -789,7 +835,7 @@ async function deleteComment(id){
 }
 
 async function likeComment(id){
-  const btn=document.getElementById('like-'+id);
+ const btn=document.getElementById('like-'+id);
   if(likedComments.includes(id)){
     likedComments=likedComments.filter(x=>x!==id);localStorage.setItem('nv_liked_comments',JSON.stringify(likedComments));
     const {data:c}=await _sb.from('comments').select('likes').eq('id',id).single();
