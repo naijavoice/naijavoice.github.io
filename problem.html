@@ -33,6 +33,25 @@
     .banner__logo-text span{color:var(--gold);font-style:italic;}
     .banner__spacer{flex:1;}
     .banner__right{display:flex;align-items:center;gap:8px;}
+    /* NOTIFICATIONS */
+    .notif-wrap{position:relative;flex-shrink:0;}
+    .notif-bell{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
+    .notif-badge{position:absolute;top:-5px;right:-5px;background:var(--error);color:#fff;font-family:var(--f-mono);font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+    .notif-dropdown{display:none;position:absolute;top:46px;right:0;width:320px;max-width:90vw;max-height:420px;overflow-y:auto;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,0.18);z-index:300;}
+    .notif-dropdown.show{display:block;}
+    .notif-dropdown-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);font-family:var(--f-display);font-size:0.88rem;font-weight:700;color:var(--ink);}
+    .notif-mark-all{background:none;border:none;color:var(--green);font-family:var(--f-body);font-size:0.74rem;font-weight:600;cursor:pointer;}
+    .notif-list{display:flex;flex-direction:column;}
+    .notif-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(26,107,60,0.06);cursor:pointer;transition:background 0.15s;text-decoration:none;}
+    .notif-item:hover{background:var(--bg);}
+    .notif-item.unread{background:var(--green-lite);}
+    .notif-item:last-child{border-bottom:none;}
+    .notif-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px;}
+    .notif-dot.vote{background:var(--gold);}
+    .notif-body{flex:1;min-width:0;}
+    .notif-text{font-size:0.82rem;color:var(--ink);line-height:1.5;}
+    .notif-time{font-family:var(--f-mono);font-size:9px;color:var(--ink-soft);margin-top:3px;}
+    .notif-empty{padding:2rem;text-align:center;color:var(--ink-soft);font-family:var(--f-mono);font-size:11px;}
     .banner__user{font-size:0.83rem;color:#fff;font-weight:600;text-decoration:none;}
     .banner__logout{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.78rem;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--f-body);}
     .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;padding:8px;flex-shrink:0;}
@@ -264,6 +283,20 @@
     <span class="banner__logo-text">Naija<span>Voice</span></span>
   </a>
   <span class="banner__spacer"></span>
+  <div class="notif-wrap" id="notif-wrap" style="display:none;">
+    <button class="notif-bell" id="notif-bell" onclick="toggleNotifDropdown()">
+      🔔<span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+    </button>
+    <div class="notif-dropdown" id="notif-dropdown">
+      <div class="notif-dropdown-header">
+        <span>Notifications</span>
+        <button class="notif-mark-all" onclick="markAllNotifsRead()">Mark all read</button>
+      </div>
+      <div class="notif-list" id="notif-list">
+        <div class="notif-empty">No notifications yet.</div>
+      </div>
+    </div>
+  </div>
   <div class="banner__right" id="nav-auth-area"></div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -424,6 +457,8 @@ async function init(){
         document.getElementById('mobile-auth-area').innerHTML=
           '<a href="profile.html" class="mobile-cta" style="background:rgba(26,107,60,0.1);color:var(--green);">My Profile</a>'+
           '<button class="mobile-logout" onclick="logout()">Logout</button>';
+        document.getElementById('notif-wrap').style.display='block';
+        loadNotifications();
         const {data:vote}=await withTimeout(_sb.from('votes').select('id').eq('user_id',user.id).eq('problem_id',problemId).maybeSingle(),8000,'vote check');
         hasVoted=!!vote;
         const {data:follow}=await withTimeout(_sb.from('follows').select('id').eq('user_id',user.id).eq('problem_id',problemId).maybeSingle(),8000,'follow check');
@@ -704,6 +739,75 @@ async function castVote(){
   showToast('✅ Vote cast! Thank you 🇳🇬');
 }
 
+// ── NOTIFICATIONS ──
+function timeAgoShort(ts){
+  if(!ts)return'';
+  const d=Math.floor((Date.now()-new Date(ts))/1000);
+  if(d<60)return'just now';
+  if(d<3600)return Math.floor(d/60)+'m ago';
+  if(d<86400)return Math.floor(d/3600)+'h ago';
+  return Math.floor(d/86400)+'d ago';
+}
+
+async function loadNotifications(){
+  if(!currentUser)return;
+  const {data,error}=await _sb.from('notifications')
+    .select('*')
+    .eq('user_id',currentUser.id)
+    .order('created_at',{ascending:false})
+    .limit(20);
+  if(error){console.warn('Could not load notifications:',error);return;}
+  renderNotifications(data||[]);
+}
+
+function renderNotifications(notifs){
+  const unreadCount=notifs.filter(n=>!n.is_read).length;
+  const badge=document.getElementById('notif-badge');
+  if(unreadCount>0){
+    badge.style.display='flex';
+    badge.textContent=unreadCount>9?'9+':unreadCount;
+  }else{
+    badge.style.display='none';
+  }
+
+  const list=document.getElementById('notif-list');
+  if(!notifs.length){
+    list.innerHTML='<div class="notif-empty">No notifications yet. Follow a problem to get updates! ⭐</div>';
+    return;
+  }
+
+  list.innerHTML=notifs.map(n=>
+    '<a class="notif-item'+(n.is_read?'':' unread')+'" href="problem.html?id='+(n.problem_id||'')+'" onclick="markNotifRead(\''+n.id+'\')">'
+    +'<div class="notif-dot'+(n.type==='vote'?' vote':'')+'"></div>'
+    +'<div class="notif-body"><div class="notif-text">'+n.message+'</div><div class="notif-time">'+timeAgoShort(n.created_at)+'</div></div>'
+    +'</a>'
+  ).join('');
+}
+
+function toggleNotifDropdown(){
+  const dropdown=document.getElementById('notif-dropdown');
+  dropdown.classList.toggle('show');
+  if(dropdown.classList.contains('show'))loadNotifications();
+}
+
+async function markNotifRead(id){
+  await _sb.from('notifications').update({is_read:true}).eq('id',id);
+}
+
+async function markAllNotifsRead(){
+  if(!currentUser)return;
+  await _sb.from('notifications').update({is_read:true}).eq('user_id',currentUser.id).eq('is_read',false);
+  loadNotifications();
+}
+
+// Close dropdown when tapping outside
+document.addEventListener('click',e=>{
+  const wrap=document.getElementById('notif-wrap');
+  if(wrap&&!wrap.contains(e.target)){
+    document.getElementById('notif-dropdown')?.classList.remove('show');
+  }
+});
+
 // ── FOLLOW / UNFOLLOW ──
 function updateFollowButton(){
   const btn=document.getElementById('follow-btn');
@@ -835,7 +939,7 @@ async function deleteComment(id){
 }
 
 async function likeComment(id){
- const btn=document.getElementById('like-'+id);
+  const btn=document.getElementById('like-'+id);
   if(likedComments.includes(id)){
     likedComments=likedComments.filter(x=>x!==id);localStorage.setItem('nv_liked_comments',JSON.stringify(likedComments));
     const {data:c}=await _sb.from('comments').select('likes').eq('id',id).single();
