@@ -113,6 +113,10 @@
     .trust-strip{display:flex;align-items:center;justify-content:center;gap:1.2rem;flex-wrap:wrap;margin-top:1.5rem;padding:14px;background:var(--white);border:1px solid var(--border);border-radius:10px;}
     .trust-item{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);letter-spacing:0.03em;}
 
+    /* ── STATUS SCREEN (confirmation / recovery landing) ── */
+    .status-icon{font-size:2.6rem;text-align:center;margin-bottom:10px;}
+    .status-center{text-align:center;}
+
     @media(max-width:480px){
       .field-row{grid-template-columns:1fr;}
       .page-wrap{margin:1.5rem auto;}
@@ -132,7 +136,7 @@
 </header>
 
 <!-- ── HERO STRIP ── -->
-<div class="auth-hero">
+<div class="auth-hero" id="hero-block">
   <div class="auth-hero__eyebrow">🇳🇬 Nigeria's Civic Platform</div>
   <h1 class="auth-hero__title">Your voice, <em>counted.</em></h1>
   <p class="auth-hero__sub">Join thousands of Nigerians surfacing real community problems.</p>
@@ -140,7 +144,7 @@
 
 <!-- ── MAIN FORM ── -->
 <div class="page-wrap">
-  <div class="auth-tabs">
+  <div class="auth-tabs" id="auth-tabs">
     <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
     <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
   </div>
@@ -232,8 +236,44 @@
     <div class="switch-row"><a onclick="switchTab('login')">← Back to Login</a></div>
   </div>
 
+  <!-- NEW PASSWORD (shown only when arriving from a password-recovery email link) -->
+  <div class="form-panel" id="panel-newpassword">
+    <div class="form-title">Set a New Password 🔑</div>
+    <div class="form-sub">You're resetting your NaijaVoice password. Choose a new one below.</div>
+    <div class="msg msg-error" id="newpwd-err"></div>
+    <div class="msg msg-success" id="newpwd-ok"></div>
+    <div class="field">
+      <label>New Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="newpwd-1" placeholder="At least 6 characters" oninput="checkStrength(this.value)"/>
+        <button class="pwd-toggle" type="button" onclick="togglePwd('newpwd-1',this)">👁️</button>
+      </div>
+      <div class="strength-bar"><div class="seg" id="s1"></div><div class="seg" id="s2"></div><div class="seg" id="s3"></div><div class="seg" id="s4"></div></div>
+      <div class="s-label" id="s-label">Enter a password</div>
+    </div>
+    <div class="field">
+      <label>Confirm New Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="newpwd-2" placeholder="Re-enter your new password"/>
+        <button class="pwd-toggle" type="button" onclick="togglePwd('newpwd-2',this)">👁️</button>
+      </div>
+    </div>
+    <button class="submit-btn" id="newpwd-btn" type="button" onclick="doSetNewPassword()">✅ Update Password</button>
+  </div>
+
+  <!-- EMAIL CONFIRMED (shown only when arriving from a signup-confirmation email link) -->
+  <div class="form-panel" id="panel-confirmed">
+    <div class="status-center">
+      <div class="status-icon">✅</div>
+      <div class="form-title">Email Confirmed!</div>
+      <div class="form-sub" id="confirmed-sub">Your NaijaVoice account is now active. Taking you to the homepage…</div>
+    </div>
+  </div>
+
   <!-- TRUST STRIP -->
-  <div class="trust-strip">
+  <div class="trust-strip" id="trust-strip">
     <div class="trust-item"><span>🛡️</span> Independent</div>
     <div class="trust-item"><span>🆓</span> Free Forever</div>
     <div class="trust-item"><span>🔒</span> Secure</div>
@@ -243,6 +283,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// Capture the raw URL hash BEFORE Supabase's client processes and strips it.
+// Supabase tags password-recovery links with type=recovery and signup-confirmation
+// links with type=signup in this hash fragment — this is how we tell them apart.
+const _rawHash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+const _hashParams = new URLSearchParams(_rawHash);
+const _linkType = _hashParams.get('type'); // 'recovery' | 'signup' | null
+
 const _sb = supabase.createClient(
   'https://zszcmrbbgchafoydqoqb.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
@@ -253,6 +300,15 @@ function switchTab(t){
     document.getElementById('panel-'+x).classList.toggle('active',x===t);
     const b=document.getElementById('tab-'+x);
     if(b)b.classList.toggle('active',x===t);
+  });
+}
+
+// Shows one of the special full-screen states (recovery form / confirmed screen)
+// and hides the normal login/register tabs entirely, since neither applies here.
+function showSpecialPanel(id){
+  document.getElementById('auth-tabs').style.display='none';
+  ['login','register','reset','newpassword','confirmed'].forEach(x=>{
+    document.getElementById('panel-'+x).classList.toggle('active', x===id);
   });
 }
 
@@ -271,11 +327,14 @@ function checkStrength(v){
   const c=['#c53030','#c48f00','#218a4e','#1a6b3c'];
   const l=['Weak','Fair','Good','Strong 💪'];
   [1,2,3,4].forEach(i=>{
-    document.getElementById('s'+i).style.background=i<=s?c[s-1]:'var(--border)';
+    const seg=document.getElementById('s'+i);
+    if(seg) seg.style.background=i<=s?c[s-1]:'var(--border)';
   });
   const lb=document.getElementById('s-label');
-  lb.textContent=v.length===0?'Enter a password':(l[s-1]||'Weak');
-  lb.style.color=v.length===0?'var(--ink-soft)':c[s-1];
+  if(lb){
+    lb.textContent=v.length===0?'Enter a password':(l[s-1]||'Weak');
+    lb.style.color=v.length===0?'var(--ink-soft)':c[s-1];
+  }
 }
 
 function showMsg(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
@@ -292,8 +351,6 @@ async function doLogin(){
   try{
     const {error}=await _sb.auth.signInWithPassword({email,password:pwd});
     if(error){
-      // "Email not confirmed" is Supabase's exact wording when confirm-email is ON
-      // and the student hasn't clicked the link yet. Give a clearer message than the raw error.
       if(error.message && error.message.toLowerCase().includes('email not confirmed')){
         showMsg('login-err','📬 Please confirm your email first. Check your inbox (and spam folder) for the confirmation link.');
       }else{
@@ -319,19 +376,25 @@ async function doRegister(){
   const pwd=document.getElementById('reg-pwd').value;
   const agreed=document.getElementById('reg-agree').checked;
   if(!fname||!lname){showMsg('reg-err','Please enter your first and last name.');return;}
-  if(!email||!email.includes('@')){showMsg('reg-err','Please enter a valid email address.');return;}
+    if(!email||!email.includes('@')){showMsg('reg-err','Please enter a valid email address.');return;}
   if(!state){showMsg('reg-err','Please select your state in Nigeria.');return;}
   if(pwd.length<6){showMsg('reg-err','Password must be at least 6 characters.');return;}
   if(!agreed){showMsg('reg-err','Please agree to the Terms of Use to continue.');return;}
   const btn=document.getElementById('reg-btn');
   btn.disabled=true;btn.textContent='Creating account...';
   try{
-    const {data,error}=await _sb.auth.signUp({email,password:pwd,options:{data:{full_name:fname+' '+lname,state}}});
+    const {data,error}=await _sb.auth.signUp({
+      email,
+      password:pwd,
+      options:{
+        data:{full_name:fname+' '+lname,state},
+        // Send confirmation-link clicks back to this same page (instead of the homepage)
+        // so we can detect type=signup and show a proper confirmation screen.
+        emailRedirectTo: window.location.origin + window.location.pathname
+      }
+    });
     if(error){showMsg('reg-err','❌ '+error.message);btn.disabled=false;btn.textContent='🚀 Create My Free Account';return;}
 
-    // Supabase returns a fake "success" (no error) when the email is already registered
-    // and confirmed, to stop attackers probing which emails exist on the platform.
-    // The one reliable tell is an empty identities array on the returned user.
     const alreadyRegistered = data.user && Array.isArray(data.user.identities) && data.user.identities.length===0;
     if(alreadyRegistered){
       showMsg('reg-err','This email is already registered. Please log in instead.');
@@ -343,16 +406,21 @@ async function doRegister(){
       return;
     }
 
-    if(data.user){await _sb.from('profiles').upsert({id:data.user.id,full_name:fname+' '+lname,state,email});}
+    // NOTE: this insert only succeeds once the user is actually authenticated
+    // (i.e. after they confirm their email and get a real session). While
+    // confirmation is pending, this call would be silently blocked by the
+    // database's security rules — so we only attempt it here if a session
+    // already exists (confirmation off). Otherwise the profile row gets
+    // created for real in the onAuthStateChange handler below, right after
+    // a signup-confirmation link is detected and a real session exists.
+    if(data.session && data.user){
+      await _sb.from('profiles').upsert({id:data.user.id,full_name:fname+' '+lname,state,email});
+    }
 
     if(data.session){
-      // Email confirmation is off (or not required) — Supabase already gave us a session
-      // in the signUp response itself, so no separate login call is needed.
       showMsg('reg-ok','🎉 Account created! Logging you in...');
       setTimeout(()=>window.location.href='index.html',1200);
     }else{
-      // Email confirmation is required — there is no session yet, and trying to log in
-      // right now will just fail. Tell the student clearly what to do next instead.
       showMsg('reg-ok','🎉 Account created! Please check '+email+' (and your spam folder) for a confirmation link before logging in.');
       btn.disabled=false;btn.textContent='🚀 Create My Free Account';
     }
@@ -369,7 +437,7 @@ async function doReset(){
   const btn=document.getElementById('reset-btn');
   btn.disabled=true;btn.textContent='Sending...';
   try{
-    const {error}=await _sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/auth.html'});
+    const {error}=await _sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});
     if(error){showMsg('reset-err','❌ '+error.message);btn.disabled=false;btn.textContent='📧 Send Reset Link';return;}
     showMsg('reset-ok','✅ Reset link sent! Check your inbox and spam folder.');
     btn.disabled=false;btn.textContent='📧 Send Reset Link';
@@ -379,9 +447,66 @@ async function doReset(){
   }
 }
 
-// Redirect if already logged in
-_sb.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='index.html';});
+async function doSetNewPassword(){
+  hideMsg('newpwd-err');hideMsg('newpwd-ok');
+  const p1=document.getElementById('newpwd-1').value;
+  const p2=document.getElementById('newpwd-2').value;
+  if(p1.length<6){showMsg('newpwd-err','Password must be at least 6 characters.');return;}
+  if(p1!==p2){showMsg('newpwd-err','Passwords do not match.');return;}
+  const btn=document.getElementById('newpwd-btn');
+  btn.disabled=true;btn.textContent='Updating...';
+  try{
+    const {error}=await _sb.auth.updateUser({password:p1});
+    if(error){showMsg('newpwd-err','❌ '+error.message);btn.disabled=false;btn.textContent='✅ Update Password';return;}
+    showMsg('newpwd-ok','✅ Password updated! Redirecting you to NaijaVoice...');
+    setTimeout(()=>window.location.href='index.html',1500);
+  }catch(e){
+    showMsg('newpwd-err','❌ Network error. Please try again.');
+    btn.disabled=false;btn.textContent='✅ Update Password';
+  }
+}
+
+// ── Decide what to show on page load, based on what kind of link (if any) was clicked ──
+_sb.auth.onAuthStateChange(async (event, session)=>{
+  // Password recovery link: never auto-redirect. Force the Set New Password screen.
+  if(_linkType === 'recovery' || event === 'PASSWORD_RECOVERY'){
+    showSpecialPanel('newpassword');
+    return;
+  }
+
+  // Signup confirmation link: show a real confirmation screen, create the profile
+  // row now (this is the first moment the user actually has a valid session),
+  // then move on to the homepage after a short pause.
+  if(_linkType === 'signup' && session){
+    showSpecialPanel('confirmed');
+    try{
+      const meta = session.user.user_metadata || {};
+      await _sb.from('profiles').upsert({
+        id: session.user.id,
+        full_name: meta.full_name || '',
+        state: meta.state || '',
+        email: session.user.email
+      });
+    }catch(e){ /* profile creation failure shouldn't block the redirect */ }
+    setTimeout(()=>window.location.href='index.html',1800);
+    return;
+  }
+
+  // Normal case: no special link, but the user already has a session
+  // (e.g. they navigated to auth.html directly while logged in).
+  if(session && !_linkType){
+    window.location.href='index.html';
+  }
+});
+
+// Fallback check in case onAuthStateChange doesn't fire an initial event fast enough.
+_sb.auth.getSession().then(({data:{session}})=>{
+  if(session && !_linkType){
+    window.location.href='index.html';
+  }
+});
 </script>
 <script src="/pwa.js"></script>
 </body>
 </html>
+  
