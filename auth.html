@@ -291,7 +291,17 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='Logging in...';
   try{
     const {error}=await _sb.auth.signInWithPassword({email,password:pwd});
-    if(error){showMsg('login-err','❌ '+error.message);btn.disabled=false;btn.textContent='Login to NaijaVoice →';return;}
+    if(error){
+      // "Email not confirmed" is Supabase's exact wording when confirm-email is ON
+      // and the student hasn't clicked the link yet. Give a clearer message than the raw error.
+      if(error.message && error.message.toLowerCase().includes('email not confirmed')){
+        showMsg('login-err','📬 Please confirm your email first. Check your inbox (and spam folder) for the confirmation link.');
+      }else{
+        showMsg('login-err','❌ '+error.message);
+      }
+      btn.disabled=false;btn.textContent='Login to NaijaVoice →';
+      return;
+    }
     showMsg('login-ok','✅ Login successful! Redirecting...');
     setTimeout(()=>window.location.href='index.html',1200);
   }catch(e){
@@ -318,13 +328,34 @@ async function doRegister(){
   try{
     const {data,error}=await _sb.auth.signUp({email,password:pwd,options:{data:{full_name:fname+' '+lname,state}}});
     if(error){showMsg('reg-err','❌ '+error.message);btn.disabled=false;btn.textContent='🚀 Create My Free Account';return;}
+
+    // Supabase returns a fake "success" (no error) when the email is already registered
+    // and confirmed, to stop attackers probing which emails exist on the platform.
+    // The one reliable tell is an empty identities array on the returned user.
+    const alreadyRegistered = data.user && Array.isArray(data.user.identities) && data.user.identities.length===0;
+    if(alreadyRegistered){
+      showMsg('reg-err','This email is already registered. Please log in instead.');
+      btn.disabled=false;btn.textContent='🚀 Create My Free Account';
+      setTimeout(()=>{
+        switchTab('login');
+        document.getElementById('login-email').value=email;
+      },1500);
+      return;
+    }
+
     if(data.user){await _sb.from('profiles').upsert({id:data.user.id,full_name:fname+' '+lname,state,email});}
-    showMsg('reg-ok','🎉 Account created! Logging you in...');
-    setTimeout(async()=>{
-      const {error:e}=await _sb.auth.signInWithPassword({email,password:pwd});
-      if(!e)window.location.href='index.html';
-      else{btn.disabled=false;btn.textContent='🚀 Create My Free Account';}
-    },1200);
+
+    if(data.session){
+      // Email confirmation is off (or not required) — Supabase already gave us a session
+      // in the signUp response itself, so no separate login call is needed.
+      showMsg('reg-ok','🎉 Account created! Logging you in...');
+      setTimeout(()=>window.location.href='index.html',1200);
+    }else{
+      // Email confirmation is required — there is no session yet, and trying to log in
+      // right now will just fail. Tell the student clearly what to do next instead.
+      showMsg('reg-ok','🎉 Account created! Please check '+email+' (and your spam folder) for a confirmation link before logging in.');
+      btn.disabled=false;btn.textContent='🚀 Create My Free Account';
+    }
   }catch(e){
     showMsg('reg-err','❌ Connection error. Please try again.');
     btn.disabled=false;btn.textContent='🚀 Create My Free Account';
