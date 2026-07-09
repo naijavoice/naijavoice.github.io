@@ -236,19 +236,46 @@
   <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-inner">
-      <div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div class="prog-label">Problem</div></div>
+      <div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div class="prog-label">Photo</div></div>
       <div class="prog-line" id="pl1"></div>
-      <div class="prog-step" id="ps2"><div class="prog-dot">2</div><div class="prog-label">Location</div></div>
+      <div class="prog-step" id="ps2"><div class="prog-dot">2</div><div class="prog-label">Problem</div></div>
       <div class="prog-line" id="pl2"></div>
-      <div class="prog-step" id="ps3"><div class="prog-dot">3</div><div class="prog-label">Details</div></div>
+      <div class="prog-step" id="ps3"><div class="prog-dot">3</div><div class="prog-label">Location</div></div>
       <div class="prog-line" id="pl3"></div>
-      <div class="prog-step" id="ps4"><div class="prog-dot">4</div><div class="prog-label">Preview</div></div>
+      <div class="prog-step" id="ps4"><div class="prog-dot">4</div><div class="prog-label">Details</div></div>
+      <div class="prog-line" id="pl4"></div>
+      <div class="prog-step" id="ps5"><div class="prog-dot">5</div><div class="prog-label">Preview</div></div>
     </div>
   </div>
 
   <div class="form-wrapper">
-    <!-- STEP 1 -->
+    <!-- STEP 1: PHOTO EVIDENCE (moved to the front, per product decision — posters attach
+         evidence first, then describe what they photographed, instead of the reverse) -->
     <div class="step-panel active" id="step1">
+      <div class="form-card">
+        <div class="card-title">📸 Show Us the Problem</div>
+        <div class="card-sub">Start with a photo — it's the strongest evidence for your report, and it'll help you describe the issue accurately in the next step.</div>
+        <div class="field">
+          <label>Attach Image Evidence <span style="font-weight:400;color:var(--ink-soft);">(Recommended)</span></label>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" accept="image/*" multiple onchange="handleImageSelect(this)"/>
+            <div class="uz-icon">📷</div>
+            <h4>Tap to attach photos</h4>
+            <p>JPG or PNG · Up to 3 photos · Auto-compressed for faster upload on slow data</p>
+          </div>
+          <div class="upload-rec">📌 Attach an image where available to improve clarity and civic visibility. Do not upload images of individuals or private documents.</div>
+          <div class="upload-previews" id="upload-previews"></div>
+          <div class="upload-progress" id="upload-progress">
+            <div class="up-track"><div class="up-fill" id="up-fill"></div></div>
+            <div class="up-label" id="up-label">Uploading photos...</div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><div></div><button class="btn-next" onclick="goStep(2)">Next: Describe the Problem →</button></div>
+    </div>
+
+    <!-- STEP 2: PROBLEM (was step 1) -->
+    <div class="step-panel" id="step2">
       <div class="form-card">
         <div class="card-title">What is the Problem?</div>
         <div class="card-sub">Give a clear title and description focused on the community issue — not individuals.</div>
@@ -270,7 +297,7 @@
         </div>
         <div class="field">
           <label>Full Description *</label>
-          <textarea id="p-desc" placeholder="Describe the problem in detail. Focus on the issue, its impact on the community, and how long it has persisted..." maxlength="800" oninput="countChars('p-desc','desc-count',800);checkContent('p-desc','desc-block','desc-warn')"></textarea>
+                    <textarea id="p-desc" placeholder="Describe the problem in detail. Focus on the issue, its impact on the community, and how long it has persisted..." maxlength="800" oninput="countChars('p-desc','desc-count',800);checkContent('p-desc','desc-block','desc-warn')"></textarea>
           <div class="char-count" id="desc-count">0 / 800</div>
           <div class="block-message" id="desc-block">
             <div class="bm-title">🚫 Restricted Language Detected</div>
@@ -301,11 +328,11 @@
           </div>
         </div>
       </div>
-      <div class="btn-row"><div></div><button class="btn-next" id="next-btn-1" onclick="goStep(2)">Next: Location →</button></div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(1)">← Back to Photo</button><button class="btn-next" id="next-btn-1" onclick="goStep(3)">Next: Location →</button></div>
     </div>
 
-    <!-- STEP 2 -->
-    <div class="step-panel" id="step2">
+    <!-- STEP 3: LOCATION (was step 2) -->
+    <div class="step-panel" id="step3">
       <div class="form-card">
         <div class="card-title">Where is this Problem?</div>
         <div class="card-sub">Tell us the location so people in the same area can find and vote.</div>
@@ -341,11 +368,11 @@
           </div>
         </div>
       </div>
-      <div class="btn-row"><button class="btn-back" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Next: Details →</button></div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="goStep(4)">Next: Details →</button></div>
     </div>
 
-    <!-- STEP 3 -->
-    <div class="step-panel" id="step3">
+    <!-- STEP 4: MORE DETAILS (was step 3 — image upload removed from here, it now lives in step 1) -->
+    <div class="step-panel" id="step4">
       <div class="form-card">
         <div class="card-title">More Details</div>
         <div class="card-sub">Help others understand the seriousness and history of this problem.</div>
@@ -378,27 +405,12 @@
             </select>
           </div>
         </div>
-        <div class="field" style="margin-top:1rem;">
-          <label>📸 Attach Image Evidence <span style="font-weight:400;color:var(--ink-soft);">(Recommended)</span></label>
-          <div class="upload-zone" id="upload-zone">
-            <input type="file" accept="image/*" multiple onchange="handleImageSelect(this)"/>
-            <div class="uz-icon">📷</div>
-            <h4>Tap to attach photos</h4>
-            <p>JPG or PNG · Up to 3 photos · Max 5MB each</p>
-          </div>
-          <div class="upload-rec">📌 Attach an image where available to improve clarity and civic visibility. Do not upload images of individuals or private documents.</div>
-          <div class="upload-previews" id="upload-previews"></div>
-          <div class="upload-progress" id="upload-progress">
-            <div class="up-track"><div class="up-fill" id="up-fill"></div></div>
-            <div class="up-label" id="up-label">Uploading photos...</div>
-          </div>
-        </div>
       </div>
-      <div class="btn-row"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="goStep(4)">Preview My Post →</button></div>
+      <div class="btn-row"><button class="btn-back" onclick="goStep(3)">← Back</button><button class="btn-next" onclick="goStep(5)">Preview My Post →</button></div>
     </div>
 
-    <!-- STEP 4 -->
-    <div class="step-panel" id="step4">
+    <!-- STEP 5: PREVIEW (was step 4) -->
+    <div class="step-panel" id="step5">
       <div class="form-card">
         <div class="card-title">Preview Your Post</div>
         <div class="card-sub">This is how your problem will appear on NaijaVoice.</div>
@@ -424,7 +436,7 @@
         <label for="agree-guidelines">I confirm this report is truthful and I agree to the <a href="guidelines.html">Community Guidelines</a> and <a href="terms.html">Terms of Use</a>.</label>
       </div>
       <div class="btn-row">
-        <button class="btn-back" onclick="goStep(3)">← Edit Report</button>
+        <button class="btn-back" onclick="goStep(4)">← Edit Report</button>
         <button class="btn-submit" id="submit-btn" onclick="submitProblem()">🚀 Submit Problem Now</button>
       </div>
     </div>
@@ -488,27 +500,29 @@ function selectUrgency(level){
 }
 
 function validateStep(step){
-  if(step===1){
+  // Step 1 (photo) has no required fields — attaching a photo is recommended, not mandatory,
+  // so posters without a photo on hand can still move forward.
+  if(step===2){
     if(contentBlocked){showToast('🚫 Please remove restricted language before continuing.');return false;}
     if(!document.getElementById('p-title').value.trim()){showToast('Please enter a problem title.');return false;}
     if(document.getElementById('p-desc').value.trim().length<20){showToast('Please write a description (at least 20 characters).');return false;}
     if(!selectedCat){showToast('Please select a category.');return false;}
   }
-  if(step===2){
+  if(step===3){
     if(!document.getElementById('p-state').value){showToast('Please select your state.');return false;}
     if(!document.getElementById('p-lga').value.trim()){showToast('Please enter your LGA.');return false;}
     if(!document.getElementById('p-affected').value){showToast('Please select how many people are affected.');return false;}
   }
-  if(step===3){if(!selectedUrgency){showToast('Please select an urgency level.');return false;}}
+  if(step===4){if(!selectedUrgency){showToast('Please select an urgency level.');return false;}}
   return true;
 }
 
 function goStep(n){
   if(n>currentStep&&!validateStep(currentStep))return;
-  if(n===4)buildPreview();
+  if(n===5)buildPreview();
   document.getElementById('step'+currentStep).classList.remove('active');
   document.getElementById('step'+n).classList.add('active');
-  for(let i=1;i<=4;i++){
+  for(let i=1;i<=5;i++){
     const ps=document.getElementById('ps'+i);
     if(ps){ps.classList.remove('active','done');if(i<n)ps.classList.add('done');else if(i===n)ps.classList.add('active');}
     const pl=document.getElementById('pl'+i);
@@ -530,24 +544,53 @@ function buildPreview(){
   urgEl.className='pc-urgency '+(urgClasses[selectedUrgency]||'urg-low');
 }
 
-function handleImageSelect(input){
-  const files=Array.from(input.files).slice(0,3);
-  selectedImages=files;
-  const previews=document.getElementById('upload-previews');
-  previews.innerHTML='';
-  files.forEach((file,i)=>{
+// Resizes and re-compresses an image client-side before it ever reaches the network.
+// A typical phone photo (3-8MB) becomes ~150-400KB, which is the single biggest lever
+// for making uploads survive slow/unstable campus data. Falls back to the original
+// file if anything about the compression step fails, so a photo is never silently lost.
+function compressImage(file,maxDim,quality){
+  maxDim=maxDim||1600;quality=quality||0.72;
+  return new Promise(resolve=>{
+    if(!file.type||!file.type.startsWith('image/')){resolve(file);return;}
     const reader=new FileReader();
     reader.onload=e=>{
-      const wrap=document.createElement('div');wrap.className='preview-wrap';
-      wrap.innerHTML='<img src="'+e.target.result+'" class="preview-thumb"/><button class="remove-img" onclick="removeImage('+i+')">✕</button>';
-      previews.appendChild(wrap);
+      const img=new Image();
+      img.onload=()=>{
+        let width=img.width,height=img.height;
+        if(width>height&&width>maxDim){height=Math.round(height*(maxDim/width));width=maxDim;}
+        else if(height>maxDim){width=Math.round(width*(maxDim/height));height=maxDim;}
+        const canvas=document.createElement('canvas');
+        canvas.width=width;canvas.height=height;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,width,height);
+        canvas.toBlob(blob=>{
+          if(!blob){resolve(file);return;}
+          const newName=file.name.replace(/\.[^.]+$/,'')+'.jpg';
+          resolve(new File([blob],newName,{type:'image/jpeg'}));
+        },'image/jpeg',quality);
+      };
+      img.onerror=()=>resolve(file);
+      img.src=e.target.result;
     };
+    reader.onerror=()=>resolve(file);
     reader.readAsDataURL(file);
   });
 }
 
+async function handleImageSelect(input){
+  const rawFiles=Array.from(input.files).slice(0,3);
+  const previews=document.getElementById('upload-previews');
+  previews.innerHTML='<div style="font-family:var(--f-mono);font-size:11px;color:var(--ink-soft);padding:8px 0;">Preparing photos...</div>';
+  selectedImages=await Promise.all(rawFiles.map(f=>compressImage(f)));
+  renderImagePreviews();
+}
+
 function removeImage(index){
   selectedImages.splice(index,1);
+  renderImagePreviews();
+}
+
+function renderImagePreviews(){
   const previews=document.getElementById('upload-previews');
   previews.innerHTML='';
   selectedImages.forEach((file,i)=>{
@@ -561,28 +604,57 @@ function removeImage(index){
   });
 }
 
+// Races an upload against a timeout so a hung request on weak campus data can
+// never block the student forever — it just gets treated as a failed photo
+// and the flow moves on instead of freezing.
+function withTimeout(promise,ms){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('upload-timeout')),ms))
+  ]);
+}
+
 async function uploadImages(problemId){
-  if(!selectedImages.length)return[];
+  if(!selectedImages.length)return{urls:[],failedCount:0};
   const urls=[];
+  let failedCount=0;
   const progressEl=document.getElementById('upload-progress');
   const fillEl=document.getElementById('up-fill');
   const labelEl=document.getElementById('up-label');
   progressEl.classList.add('show');
   for(let i=0;i<selectedImages.length;i++){
     const file=selectedImages[i];
-    const ext=file.name.split('.').pop();
+    const ext=(file.name.split('.').pop())||'jpg';
     const path=currentUser.id+'/'+problemId+'-'+i+'.'+ext;
     labelEl.textContent='Uploading photo '+(i+1)+' of '+selectedImages.length+'...';
     fillEl.style.width=Math.round(((i+0.5)/selectedImages.length)*100)+'%';
-    const {data,error}=await _sb.storage.from('problem-images').upload(path,file,{upsert:true});
-    if(!error){
-      const {data:urlData}=_sb.storage.from('problem-images').getPublicUrl(path);
-      urls.push(urlData.publicUrl);
+    try{
+      // 25s per photo — enough room for slow 3G/campus data, short enough to never hang indefinitely
+      const {data,error}=await withTimeout(
+        _sb.storage.from('problem-images').upload(path,file,{upsert:true}),
+        25000
+      );
+      if(error){
+        failedCount++;
+      }else{
+        const {data:urlData}=_sb.storage.from('problem-images').getPublicUrl(path);
+        urls.push(urlData.publicUrl);
+      }
+    }catch(e){
+      // Timeout or network drop on this specific photo — count it as failed and
+      // keep going with the remaining photos instead of aborting everything.
+      failedCount++;
     }
     fillEl.style.width=Math.round(((i+1)/selectedImages.length)*100)+'%';
   }
-  labelEl.textContent='✅ Photos uploaded!';
-  return urls;
+  if(failedCount>0&&urls.length>0){
+    labelEl.textContent='⚠️ '+urls.length+' of '+selectedImages.length+' photos uploaded ('+failedCount+' failed — weak connection)';
+  }else if(failedCount>0){
+    labelEl.textContent='❌ Photos failed to upload (weak connection). Your report was still posted.';
+  }else{
+    labelEl.textContent='✅ Photos uploaded!';
+  }
+  return {urls,failedCount};
 }
 
 async function submitProblem(){
@@ -609,10 +681,23 @@ async function submitProblem(){
   if(error){showToast('❌ Error posting. Please try again.');btn.disabled=false;btn.textContent='🚀 Submit Problem Now';console.error(error);return;}
   if(selectedImages.length>0&&inserted?.[0]?.id){
     btn.textContent='📸 Uploading images...';
-    const imageUrls=await uploadImages(inserted[0].id);
-    if(imageUrls.length>0)await _sb.from('problems').update({image_urls:imageUrls}).eq('id',inserted[0].id);
+    try{
+      const {urls:imageUrls,failedCount}=await uploadImages(inserted[0].id);
+      if(imageUrls.length>0)await _sb.from('problems').update({image_urls:imageUrls}).eq('id',inserted[0].id);
+      if(failedCount>0){
+        showToast(imageUrls.length>0
+          ? '⚠️ Report posted — some photos failed to upload.'
+          : '⚠️ Report posted — photos failed to upload (weak connection).');
+      }
+    }catch(e){
+      // The problem report itself is already saved at this point (see the insert
+      // above) — no matter what goes wrong with the photos, the student's report
+      // is safe and they must never be left stuck on this screen.
+      console.error(e);
+      showToast('⚠️ Report posted, but photo upload failed. You can add photos later.');
+    }
   }
-  document.getElementById('step4').classList.remove('active');
+  document.getElementById('step5').classList.remove('active');
   document.getElementById('success-screen').classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
 }
