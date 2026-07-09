@@ -269,7 +269,7 @@
 
     <!-- TABS -->
     <div class="profile-tabs">
-      <button class="ptab active" onclick="switchTab('problems',this)">📋 My Problems</button>
+            <button class="ptab active" onclick="switchTab('problems',this)">📋 My Problems</button>
       <button class="ptab" onclick="switchTab('voted',this)">🗳️ Voted On</button>
       <button class="ptab" onclick="switchTab('comments',this)">💬 Comments</button>
       <button class="ptab" onclick="switchTab('achievements',this)">🏅 Achievements</button>
@@ -332,7 +332,7 @@ async function init(){
       '<button class="mobile-logout" onclick="logout()">Logout</button>';
 
     const [{data:profile},{data:problems},{data:votes},{data:comments}]=await Promise.all([
-      _sb.from('profiles').select('*').eq('id',user.id).single(),
+      _sb.from('profiles').select('*').eq('id',user.id).maybeSingle(),
       _sb.from('problems').select('*').eq('user_id',user.id).order('created_at',{ascending:false}),
       _sb.from('votes').select('problem_id, problems(id,title,votes,category_icon,category)').eq('user_id',user.id),
       _sb.from('comments').select('*, problems(id,title)').eq('user_id',user.id).is('parent_id',null).order('created_at',{ascending:false})
@@ -370,7 +370,15 @@ async function saveProfile(){
   const name=document.getElementById('edit-name').value.trim();
   const state=document.getElementById('edit-state').value;
   if(!name){showToast('⚠️ Please enter your name.');return;}
-  const {error}=await _sb.from('profiles').update({full_name:name,state}).eq('id',currentUser.id);
+  // upsert instead of update: if this account's profile row is missing
+  // (e.g. older accounts affected by the earlier signup-confirmation bug),
+  // this creates it. If the row already exists, it behaves exactly like update.
+  const {error}=await _sb.from('profiles').upsert({
+    id: currentUser.id,
+    full_name: name,
+    state: state,
+    email: currentUser.email
+  });
   if(error){showToast('❌ Failed to save.');return;}
   userProfile={...userProfile,full_name:name,state};
   renderProfile();toggleEdit();showToast('✅ Profile updated!');
@@ -495,3 +503,4 @@ init();
 <script src="/pwa.js"></script>
 </body>
 </html>
+      
