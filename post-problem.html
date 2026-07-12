@@ -616,11 +616,20 @@ function withTimeout(promise,ms){
 
 async function uploadImages(problemId){
   if(!selectedImages.length)return{urls:[],failedCount:0};
-  // The form has several steps and can sit open for a while — long enough on
-  // mobile for the login session to go stale (e.g. if the screen locks or the
-  // tab backgrounds). Refreshing right before upload avoids every photo
-  // silently failing an auth check with no real explanation shown.
-  try{ await _sb.auth.refreshSession(); }catch(e){ /* if this fails, the upload attempt below will surface the real reason */ }
+  // The form has several steps and can sit open long enough for the login
+  // session to genuinely expire, not just need a quick refresh. Check for
+  // real — if it's truly invalid, don't bother attempting uploads that are
+  // guaranteed to fail; tell the student clearly instead of a confusing
+  // database security error. The problem report itself is already saved at
+  // this point, so we don't redirect away — just skip the photo attempt.
+  const {data:sessionCheck,error:sessionErr}=await _sb.auth.refreshSession();
+  if(sessionErr||!sessionCheck?.session){
+    const progressEl=document.getElementById('upload-progress');
+    const labelEl=document.getElementById('up-label');
+    progressEl.classList.add('show');
+    labelEl.textContent='🔒 Session expired — photos not uploaded. Please log in again and add them from your profile.';
+    return{urls:[],failedCount:selectedImages.length};
+  }
   const urls=[];
   let failedCount=0;
   let lastErrorMsg='';
