@@ -616,8 +616,14 @@ function withTimeout(promise,ms){
 
 async function uploadImages(problemId){
   if(!selectedImages.length)return{urls:[],failedCount:0};
+  // The form has several steps and can sit open for a while — long enough on
+  // mobile for the login session to go stale (e.g. if the screen locks or the
+  // tab backgrounds). Refreshing right before upload avoids every photo
+  // silently failing an auth check with no real explanation shown.
+  try{ await _sb.auth.refreshSession(); }catch(e){ /* if this fails, the upload attempt below will surface the real reason */ }
   const urls=[];
   let failedCount=0;
+  let lastErrorMsg='';
   const progressEl=document.getElementById('upload-progress');
   const fillEl=document.getElementById('up-fill');
   const labelEl=document.getElementById('up-label');
@@ -636,6 +642,7 @@ async function uploadImages(problemId){
       );
       if(error){
         failedCount++;
+        lastErrorMsg=error.message||'unknown error';
       }else{
         const {data:urlData}=_sb.storage.from('problem-images').getPublicUrl(path);
         urls.push(urlData.publicUrl);
@@ -644,13 +651,14 @@ async function uploadImages(problemId){
       // Timeout or network drop on this specific photo — count it as failed and
       // keep going with the remaining photos instead of aborting everything.
       failedCount++;
+      lastErrorMsg=(e&&e.message)||'upload timed out';
     }
     fillEl.style.width=Math.round(((i+1)/selectedImages.length)*100)+'%';
   }
   if(failedCount>0&&urls.length>0){
-    labelEl.textContent='⚠️ '+urls.length+' of '+selectedImages.length+' photos uploaded ('+failedCount+' failed — weak connection)';
+    labelEl.textContent='⚠️ '+urls.length+' of '+selectedImages.length+' photos uploaded ('+failedCount+' failed: '+lastErrorMsg+')';
   }else if(failedCount>0){
-    labelEl.textContent='❌ Photos failed to upload (weak connection). Your report was still posted.';
+    labelEl.textContent='❌ Photos failed to upload ('+lastErrorMsg+'). Your report was still posted.';
   }else{
     labelEl.textContent='✅ Photos uploaded!';
   }
