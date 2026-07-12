@@ -677,7 +677,16 @@ async function saveEditProblem(){
     // Session can go stale if this edit form sits open a while (e.g. phone
     // screen locks) — refreshing first prevents every photo silently failing
     // an auth check with no real explanation shown.
-    try{ await _sb.auth.refreshSession(); }catch(e){ /* upload attempt below will surface the real reason if this didn't help */ }
+    // The edit form can sit open long enough for the login session to genuinely
+    // expire (not just need a quick refresh) — check for real, and send the
+    // student to log in again with a clear message instead of letting every
+    // photo silently fail with a confusing database security error.
+    const {data:sessionCheck,error:sessionErr}=await _sb.auth.refreshSession();
+    if(sessionErr||!sessionCheck?.session){
+      showToast('🔒 Your session has expired. Please log in again to save changes.');
+      setTimeout(()=>window.location.href='auth.html',1800);
+      return;
+    }
 
     let finalImageUrls=[...editExistingImages];
     let failedCount=0;
