@@ -511,7 +511,7 @@ async function renderProblem(){
     '<span class="meta-time">'+timeAgo(p.created_at)+'</span>';
   document.getElementById('problem-title').textContent=p.title;
   document.getElementById('problem-desc').textContent=p.description;
- const imgArea=document.getElementById('problem-image-area');
+  const imgArea=document.getElementById('problem-image-area');
   if(p.image_urls&&p.image_urls.length>0){
     if(p.image_urls.length===1){
       imgArea.innerHTML='<div class="problem-image-wrap"><img src="'+p.image_urls[0]+'" alt="Problem image" onclick="openLightbox(0)" onerror="this.parentElement.style.display=\'none\'"/></div>';
@@ -674,8 +674,14 @@ async function saveEditProblem(){
   // back to a usable state, even if something throws unexpectedly — the exact
   // failure mode that previously left this stuck on "Uploading..." forever.
   try{
+    // Session can go stale if this edit form sits open a while (e.g. phone
+    // screen locks) — refreshing first prevents every photo silently failing
+    // an auth check with no real explanation shown.
+    try{ await _sb.auth.refreshSession(); }catch(e){ /* upload attempt below will surface the real reason if this didn't help */ }
+
     let finalImageUrls=[...editExistingImages];
     let failedCount=0;
+    let lastErrorMsg='';
 
     if(editNewImageFiles.length>0){
       for(let i=0;i<editNewImageFiles.length;i++){
@@ -693,6 +699,7 @@ async function saveEditProblem(){
           );
           if(upErr){
             failedCount++;
+            lastErrorMsg=upErr.message||'unknown error';
           }else{
             const {data:urlData}=_sb.storage.from('problem-images').getPublicUrl(path);
             finalImageUrls.push(urlData.publicUrl);
@@ -701,6 +708,7 @@ async function saveEditProblem(){
           // Timeout or network drop on this specific photo — count it as failed
           // and keep going with the rest instead of freezing the whole save.
           failedCount++;
+          lastErrorMsg=(e&&e.message)||'upload timed out';
         }
       }
     }
@@ -727,7 +735,7 @@ async function saveEditProblem(){
     document.title='NaijaVoice — '+title;
 
     if(failedCount>0){
-      showToast('⚠️ Saved — but '+failedCount+' photo'+(failedCount>1?'s':'')+' failed to upload (weak connection). Try adding them again.');
+      showToast('⚠️ Saved — but '+failedCount+' photo'+(failedCount>1?'s':'')+' failed to upload ('+lastErrorMsg+'). Try adding them again.');
     }
 
     // Refresh the displayed image gallery on the page
