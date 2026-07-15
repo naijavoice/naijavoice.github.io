@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NaijaVoice – Nigeria's Civic Platform</title>
   <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#1a6b3c"/>
+  <meta name="theme-color" content="#134a2c"/>
   <meta name="description" content="Post community problems. Vote. Make government act. Nigeria's civic platform."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -14,69 +14,91 @@
     *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
     html{font-size:16px;scroll-behavior:smooth;}
     :root{
-      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
-      --gold:#c48f00;--gold-lite:#fdf6e0;
-      --ink:#0f1a14;--ink-soft:#4a6355;
-      --bg:#f7faf8;--bg-2:#edf4ef;--white:#ffffff;
-      --border:rgba(26,107,60,0.14);--radius:8px;
+      --green:#134a2c;--green-mid:#1c6b3f;--green-lite:#e9f1ec;
+      --gold:#9c7a1f;--gold-lite:#f6f0dd;
+      --ink:#12201a;--ink-soft:#54685d;
+      --bg:#f4f5f0;--bg-2:#eceee5;--white:#ffffff;
+      --border:rgba(18,32,26,0.13);--radius:8px;
       --f-display:'Fraunces',Georgia,serif;
       --f-body:'Inter',system-ui,sans-serif;
       --f-mono:'Geist Mono',monospace;
     }
     body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+    :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;}}
+
+    /* ── ICONS ── */
+    .ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 
     /* ── BANNER NAV ── */
-    .banner{position:sticky;top:0;z-index:200;height:54px;display:flex;align-items:center;gap:0;background:var(--green);color:#fff;padding:0 5%;box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+    .banner{position:sticky;top:0;z-index:200;height:54px;display:flex;align-items:center;gap:0;background:var(--ink);color:#fff;padding:0 5%;border-bottom:1px solid rgba(255,255,255,0.08);}
     .banner__logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:10px;}
-    .banner__logo-img{width:30px;height:30px;border-radius:6px;overflow:hidden;flex-shrink:0;}
+    .banner__logo-img{width:28px;height:28px;border-radius:6px;overflow:hidden;flex-shrink:0;}
     .banner__logo-img img{width:100%;height:100%;object-fit:contain;}
-    .banner__logo-text{font-family:var(--f-display);font-weight:900;font-size:1.1rem;letter-spacing:-0.02em;color:#fff;}
+    .banner__logo-text{font-family:var(--f-display);font-weight:900;font-size:1.08rem;letter-spacing:-0.02em;color:#fff;}
     .banner__logo-text span{color:var(--gold);font-style:italic;}
-    .banner__ticker{font-family:var(--f-mono);font-size:10.5px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:2px 10px;margin-left:12px;display:flex;align-items:center;gap:6px;}
+    .banner__ticker{font-family:var(--f-mono);font-size:10.5px;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.14);border-radius:4px;padding:2px 10px;margin-left:12px;display:flex;align-items:center;gap:6px;}
     .ticker-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 2s ease-in-out infinite;}
     @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
     .banner__spacer{flex:1;}
     .banner__nav{display:flex;align-items:center;gap:4px;}
-    .banner__nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 11px;border-radius:4px;transition:background 0.15s,color 0.15s;white-space:nowrap;}
-    .banner__nav a:hover{background:rgba(255,255,255,0.12);color:#fff;}
+    .banner__nav a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.83rem;font-weight:500;padding:6px 11px;border-radius:4px;transition:background 0.15s,color 0.15s;white-space:nowrap;}
+    .banner__nav a:hover{background:rgba(255,255,255,0.1);color:#fff;}
     .banner__cta{background:var(--gold)!important;color:var(--ink)!important;font-weight:700!important;border-radius:5px!important;}
-    .banner__cta:hover{background:#d4a000!important;}
-    .banner__user{font-size:0.83rem;color:#fff;font-weight:600;text-decoration:none;}
-    .banner__logout{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.78rem;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--f-body);}
-    .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;padding:8px;flex-shrink:0;}
+    .banner__cta:hover{background:#b48f28!important;}
+    .banner__user{font-size:0.83rem;color:#fff;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+    .banner__logout{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.75);font-size:0.78rem;padding:5px 10px;border-radius:4px;cursor:pointer;font-family:var(--f-body);}
+    .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:38px;height:38px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:6px;cursor:pointer;padding:8px;flex-shrink:0;}
     .hamburger span{display:block;width:17px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s ease;}
     .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
     .hamburger.open span:nth-child(2){opacity:0;}
     .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-    .mobile-menu{display:none;position:fixed;top:54px;left:0;right:0;bottom:0;background:rgba(247,250,248,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;padding:1.5rem 5%;overflow-y:auto;transform:translateX(100%);transition:transform 0.3s ease;}
+    .mobile-menu{display:none;position:fixed;top:54px;left:0;right:0;bottom:0;background:rgba(244,245,240,0.98);backdrop-filter:blur(16px);z-index:199;flex-direction:column;padding:1.5rem 5%;overflow-y:auto;transform:translateX(100%);transition:transform 0.3s ease;}
     .mobile-menu.open{transform:translateX(0);}
     .mobile-nav-links{list-style:none;display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1.5rem;}
     .mobile-nav-links li a{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1rem;border-radius:10px;font-size:0.95rem;font-weight:500;color:var(--ink);text-decoration:none;transition:background 0.2s;}
     .mobile-nav-links li a:hover{background:var(--green-lite);color:var(--green);}
+    .mobile-nav-links li a .ic{color:var(--green);}
     .mobile-auth-area{border-top:1px solid var(--border);padding-top:1.2rem;display:flex;flex-direction:column;gap:0.8rem;}
     .mobile-auth-area a,.mobile-auth-area button{display:block;text-align:center;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:600;text-decoration:none;}
     .mobile-cta{background:var(--green);color:#fff!important;font-family:var(--f-display);}
     .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);cursor:pointer;font-family:var(--f-body);font-size:0.95rem;}
     .mobile-user-name{font-size:0.85rem;color:var(--ink-soft);text-align:center;padding:0.5rem 0;}
 
+    /* ── BOTTOM NAV ── */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1px solid var(--border);display:none;align-items:flex-end;justify-content:space-around;padding:8px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -2px 16px rgba(18,32,26,0.06);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--ink-soft);font-family:var(--f-body);font-size:10px;font-weight:600;padding:4px 6px;flex:1;transition:color .15s;}
+    .bn-item .ic{width:21px;height:21px;stroke-width:1.8;}
+    .bn-item.active{color:var(--green);}
+    .bn-item.active .ic{stroke-width:2.3;}
+    .bn-fab{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:var(--green);margin-top:-20px;box-shadow:0 6px 16px rgba(19,74,44,0.35);border:3px solid var(--white);flex-shrink:0;text-decoration:none;transition:transform .15s,background .15s;}
+    .bn-fab:hover{background:var(--green-mid);transform:scale(1.05);}
+    .bn-fab .ic{width:22px;height:22px;stroke:#fff;stroke-width:2.2;}
+    @media(max-width:768px){.bottom-nav{display:flex;}body{padding-bottom:74px;}}
+
     /* ── HERO ── */
-    .hero{padding:72px 5% 60px;max-width:960px;margin:0 auto;animation:fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both;}
+    .hero{padding:64px 5% 56px;max-width:960px;margin:0 auto;position:relative;animation:fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both;}
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    .hero__top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
     .hero__eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:24px;background:var(--green-lite);border:1px solid var(--border);border-radius:20px;padding:4px 14px 4px 10px;}
-    .hero__title{font-family:var(--f-display);font-size:clamp(2.4rem,6.5vw,4.8rem);font-weight:900;line-height:1.03;letter-spacing:-0.035em;color:var(--ink);margin-bottom:22px;}
+    .civic-seal{color:var(--green);opacity:0.9;flex-shrink:0;display:none;}
+    .civic-seal svg{animation:seal-spin 48s linear infinite;}
+    @keyframes seal-spin{to{transform:rotate(360deg);}}
+    @media(min-width:640px){.civic-seal{display:block;}}
+    .hero__title{font-family:var(--f-display);font-size:clamp(2.3rem,6.5vw,4.6rem);font-weight:900;line-height:1.03;letter-spacing:-0.035em;color:var(--ink);margin-bottom:22px;}
     .hero__title em{font-style:italic;font-weight:400;color:var(--green);}
-    .hero__sub{font-size:1.05rem;color:var(--ink-soft);max-width:480px;line-height:1.75;margin-bottom:36px;}
+    .hero__sub{font-size:1.02rem;color:var(--ink-soft);max-width:480px;line-height:1.75;margin-bottom:36px;}
     .counters{display:flex;gap:0;margin-bottom:36px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;max-width:560px;background:var(--white);}
     .counter{flex:1;padding:16px 18px;border-right:1px solid var(--border);position:relative;}
     .counter:last-child{border-right:none;}
-    .counter__val{font-family:var(--f-display);font-size:1.9rem;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--green);margin-bottom:4px;}
+    .counter__val{font-family:var(--f-display);font-size:1.85rem;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--green);margin-bottom:4px;}
     .counter__val.gold{color:var(--gold);}
     .counter__label{font-size:0.72rem;color:var(--ink-soft);font-weight:500;line-height:1.3;}
     .counter__live{position:absolute;top:8px;right:8px;font-family:var(--f-mono);font-size:9px;color:#4ade80;background:var(--ink);border-radius:3px;padding:2px 5px;letter-spacing:0.04em;}
     .hero__actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:var(--radius);font-size:0.9rem;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:all 0.15s;letter-spacing:-0.01em;font-family:var(--f-body);}
     .btn--primary{background:var(--green);color:#fff;}
-    .btn--primary:hover{background:var(--green-mid);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,107,60,0.25);}
+    .btn--primary:hover{background:var(--green-mid);transform:translateY(-1px);box-shadow:0 6px 20px rgba(19,74,44,0.25);}
     .btn--ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
     .btn--ghost:hover{border-color:var(--green);color:var(--green);}
     hr.divider{border:none;border-top:1px solid var(--border);margin:0 5%;}
@@ -85,7 +107,7 @@
     .trust-bar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 5%;}
     .trust-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center;}
     .trust-item{display:flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;color:var(--ink-soft);}
-    .trust-item span{font-size:0.9rem;}
+    .trust-item .ic{color:var(--green);width:14px;height:14px;stroke-width:2;}
 
     /* ── CATEGORIES ── */
     .cat-strip{background:var(--bg-2);border-bottom:1px solid var(--border);padding:14px 5%;}
@@ -96,10 +118,10 @@
 
     /* ── STATUS BADGES ── */
     .status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em;}
-    .status-reported{background:rgba(229,62,62,0.1);color:#c53030;}
-    .status-discussion{background:rgba(245,166,35,0.15);color:#92610a;}
+    .status-reported{background:rgba(161,63,54,0.1);color:#a13f36;}
+    .status-discussion{background:rgba(156,122,31,0.15);color:#7a5f18;}
     .status-escalated{background:rgba(59,130,246,0.12);color:#1d4ed8;}
-    .status-resolved{background:rgba(26,107,60,0.1);color:var(--green);}
+    .status-resolved{background:rgba(19,74,44,0.1);color:var(--green);}
 
     /* ── TOP PROBLEMS RAIL ── */
     .sec{padding:56px 5%;max-width:1100px;margin:0 auto;}
@@ -112,18 +134,19 @@
     .rail-head a:hover{text-decoration:underline;}
     .problems-rail{display:flex;gap:14px;padding:4px 5% 20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
     .problem-card{flex:0 0 290px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;scroll-snap-align:start;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s,border-color 0.18s;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:10px;}
-    .problem-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(26,107,60,0.12);border-color:var(--green);}
+    .problem-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(19,74,44,0.12);border-color:var(--green);}
     .problem-card.top-card{border-color:var(--gold);background:var(--gold-lite);}
-    .p-rank-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px;width:fit-content;}
-    .rank-1{background:var(--gold);color:var(--ink);}
-    .rank-2{background:rgba(192,192,192,0.25);color:#666;}
-    .rank-3{background:rgba(205,127,50,0.2);color:#8B4513;}
+    .p-rank-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px;width:fit-content;}
+    .rank-1{background:var(--gold);color:#fff;}
+    .rank-2{background:rgba(120,120,120,0.18);color:#555;}
+    .rank-3{background:rgba(156,90,42,0.18);color:#7a4a24;}
     .rank-n{background:var(--green-lite);color:var(--green);}
-    .problem-card__tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;width:fit-content;background:var(--green-lite);color:var(--green);}
+    .problem-card__tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;width:fit-content;background:var(--green-lite);color:var(--green);}
     .problem-card__title{font-family:var(--f-display);font-size:1rem;font-weight:700;letter-spacing:-0.015em;line-height:1.3;}
-    .problem-card__loc{font-size:0.76rem;color:var(--ink-soft);}
+    .problem-card__loc{font-size:0.76rem;color:var(--ink-soft);display:flex;align-items:center;gap:4px;}
+    .problem-card__loc .ic{width:12px;height:12px;}
     .problem-card__footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap;gap:6px;}
-    .vote-pill{display:flex;align-items:center;gap:5px;font-size:0.8rem;font-weight:700;color:var(--green);}
+    .vote-pill{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:0.8rem;font-weight:700;color:var(--green);}
     .problem-card.top-card .vote-pill{color:var(--gold);}
     .problem-card__time{font-family:var(--f-mono);font-size:10px;color:var(--ink-soft);}
 
@@ -131,11 +154,11 @@
     .trending-list{display:flex;flex-direction:column;gap:10px;}
     .trend-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all 0.15s;text-decoration:none;color:var(--ink);}
     .trend-item:hover{border-color:var(--green);transform:translateX(4px);}
-    .trend-rank{font-family:var(--f-display);font-size:1.2rem;font-weight:900;color:rgba(26,107,60,0.15);width:28px;text-align:center;flex-shrink:0;}
+    .trend-rank{font-family:var(--f-display);font-size:1.2rem;font-weight:900;color:rgba(19,74,44,0.16);width:28px;text-align:center;flex-shrink:0;}
     .trend-body{flex:1;min-width:0;}
     .trend-title{font-weight:600;font-size:0.88rem;line-height:1.3;margin-bottom:3px;}
     .trend-meta{font-size:0.72rem;color:var(--ink-soft);}
-    .trend-votes{font-family:var(--f-display);font-size:0.92rem;font-weight:700;color:var(--green);flex-shrink:0;}
+    .trend-votes{font-family:var(--f-mono);font-size:0.88rem;font-weight:700;color:var(--green);flex-shrink:0;}
 
     /* ── MISSION ── */
     .mission{background:var(--ink);color:var(--bg);padding:72px 5%;}
@@ -144,13 +167,13 @@
     .mission__label::after{content:'';height:1px;width:28px;background:#4ade80;opacity:0.4;}
     .mission__pull{font-family:var(--f-display);font-size:clamp(1.7rem,4vw,2.9rem);font-weight:300;line-height:1.22;letter-spacing:-0.025em;margin-bottom:24px;}
     .mission__pull em{font-style:italic;color:var(--gold);}
-    .mission__body{font-size:0.95rem;color:rgba(247,250,248,0.65);line-height:1.8;max-width:520px;}
-    .mission__flag{font-size:2rem;margin-top:32px;display:block;}
+    .mission__body{font-size:0.95rem;color:rgba(244,245,240,0.62);line-height:1.8;max-width:520px;}
+    .mission__mark{margin-top:32px;color:rgba(74,222,128,0.5);}
 
     /* ── FOUNDER STORY ── */
     .founder{background:var(--green-lite);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:56px 5%;}
     .founder__inner{max-width:720px;margin:0 auto;display:flex;gap:2rem;align-items:flex-start;}
-    .founder__avatar{width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;border:3px solid rgba(26,107,60,0.2);}
+    .founder__avatar{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;border:3px solid rgba(19,74,44,0.15);}
     .founder__eyebrow{font-family:var(--f-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
     .founder__quote{font-family:var(--f-display);font-size:clamp(1.1rem,2.5vw,1.5rem);font-weight:400;font-style:italic;line-height:1.5;color:var(--ink);margin-bottom:14px;}
     .founder__name{font-size:0.83rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
@@ -162,7 +185,6 @@
     .feed-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);transition:border-color 0.15s;}
     .feed-item:hover{border-color:var(--green);}
     .feed-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px;}
-    .feed-dot.vote{background:var(--gold);}
     .feed-dot.comment{background:#3b82f6;}
     .feed-body{flex:1;}
     .feed-text{font-size:0.83rem;color:var(--ink);line-height:1.5;margin-bottom:2px;}
@@ -174,13 +196,14 @@
     .state-name{font-size:0.83rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
     .state-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
     .state-fill{height:100%;background:var(--green-mid);border-radius:2px;}
-    .state-count{font-family:var(--f-display);font-size:0.82rem;font-weight:700;color:var(--green);flex-shrink:0;}
+    .state-count{font-family:var(--f-mono);font-size:0.82rem;font-weight:700;color:var(--green);flex-shrink:0;}
 
     /* ── HOW IT WORKS ── */
-    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;}
-    .step{padding:22px;background:var(--white);border:1px solid var(--border);border-radius:10px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.15s,box-shadow 0.15s;}
-    .step:hover{border-color:var(--green);box-shadow:0 6px 20px rgba(26,107,60,0.08);}
-    .step__icon{font-size:1.6rem;line-height:1;}
+    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;counter-reset:step;}
+    .step{padding:22px;background:var(--white);border:1px solid var(--border);border-radius:10px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.15s,box-shadow 0.15s;position:relative;}
+    .step:hover{border-color:var(--green);box-shadow:0 6px 20px rgba(19,74,44,0.08);}
+    .step__num{font-family:var(--f-mono);font-size:11px;color:var(--gold);font-weight:700;letter-spacing:0.05em;}
+    .step__icon{width:26px;height:26px;color:var(--green);stroke-width:1.6;}
     .step__title{font-family:var(--f-display);font-size:1.05rem;font-weight:700;letter-spacing:-0.015em;}
     .step__body{font-size:0.83rem;color:var(--ink-soft);line-height:1.65;}
 
@@ -189,10 +212,10 @@
     .roadmap-inner{max-width:1100px;margin:0 auto;}
     .roadmap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:24px;}
     .roadmap-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:8px;}
-    .coming-badge{display:inline-block;font-family:var(--f-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;background:rgba(196,143,0,0.15);color:var(--gold);padding:2px 8px;border-radius:20px;width:fit-content;}
-    .roadmap-icon{font-size:1.4rem;}
+    .coming-badge{display:inline-block;font-family:var(--f-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;background:rgba(156,122,31,0.18);color:#d4b45a;padding:2px 8px;border-radius:20px;width:fit-content;}
+    .roadmap-icon{width:22px;height:22px;color:#d4b45a;stroke-width:1.6;}
     .roadmap-title{font-family:var(--f-display);font-size:0.95rem;font-weight:700;color:#fff;}
-    .roadmap-desc{font-size:0.78rem;color:rgba(247,250,248,0.45);line-height:1.6;}
+    .roadmap-desc{font-size:0.78rem;color:rgba(244,245,240,0.45);line-height:1.6;}
 
     /* ── CTA BAND ── */
     .cta-band{background:var(--green-lite);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:60px 5%;text-align:center;}
@@ -211,7 +234,6 @@
     .footer__link{font-size:0.8rem;color:var(--ink-soft);text-decoration:none;}
     .footer__link:hover{color:var(--green);}
     footer p{font-size:0.78rem;color:var(--ink-soft);}
-
 
     /* ── SHIMMER ── */
     .shimmer{background:linear-gradient(90deg,rgba(0,0,0,0.05) 25%,rgba(0,0,0,0.09) 50%,rgba(0,0,0,0.05) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:10px;height:200px;flex:0 0 290px;}
@@ -234,7 +256,7 @@
       .trust-inner{gap:1rem;}
     }
     @media(max-width:480px){
-      .hero{padding:52px 5% 44px;}
+      .hero{padding:48px 5% 40px;}
       .hero__title{font-size:2.2rem;}
       .hero__actions{flex-direction:column;align-items:stretch;}
       .btn{justify-content:center;}
@@ -262,10 +284,10 @@
   <span class="banner__spacer"></span>
   <nav class="banner__nav">
     <a href="feed.html">Problems</a>
-    <a href="search.html">🔍 Search</a>
-    <a href="trending.html">📈 Trending</a>
-    <a href="leaderboard.html">🏆 Leaderboard</a>
-    <a href="updates.html">📰 Updates</a>
+    <a href="search.html">Search</a>
+    <a href="trending.html">Trending</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="updates.html">Updates</a>
     <span id="nav-auth-area"><a href="auth.html" class="banner__cta">Get Started</a></span>
   </nav>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu">
@@ -276,28 +298,42 @@
 <!-- ── MOBILE DRAWER ── -->
 <div class="mobile-menu" id="mobile-menu">
   <ul class="mobile-nav-links">
-    <li><a href="feed.html">🗳️ Problems</a></li>
-    <li><a href="search.html">🔍 Search</a></li>
-    <li><a href="trending.html">📈 Trending</a></li>
-    <li><a href="leaderboard.html">🏆 Leaderboard</a></li>
-    <li><a href="updates.html">📰 Updates</a></li>
-    <li><a href="post-problem.html">✍️ Post a Problem</a></li>
+    <li><a href="feed.html"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg> Problems</a></li>
+    <li><a href="search.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search</a></li>
+    <li><a href="trending.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg> Trending</a></li>
+    <li><a href="leaderboard.html"><svg class="ic" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg> Leaderboard</a></li>
+    <li><a href="updates.html"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v13H8l-4 4V4Z"/></svg> Updates</a></li>
+    <li><a href="post-problem.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Post a Problem</a></li>
   </ul>
   <div class="mobile-auth-area" id="mobile-auth-area">
-    <a href="auth.html" class="mobile-cta">🚀 Get Started — Free</a>
+    <a href="auth.html" class="mobile-cta">Get Started — Free</a>
   </div>
 </div>
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero__eyebrow">
-    <span>🇳🇬</span> Nigeria's Independent Civic Platform
+  <div class="hero__top">
+    <div>
+      <div class="hero__eyebrow">
+        🇳🇬 Nigeria's Independent Civic Platform
+      </div>
+      <h1 class="hero__title">
+        Your problem,<br>
+        <em>seen.</em> Your voice,<br>
+        counted.
+      </h1>
+    </div>
+    <div class="civic-seal" aria-hidden="true">
+      <svg width="82" height="82" viewBox="0 0 120 120">
+        <defs><path id="seal-circle" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+        <circle cx="60" cy="60" r="45" fill="none" stroke="currentColor" stroke-width="1"/>
+        <circle cx="60" cy="60" r="37" fill="none" stroke="currentColor" stroke-width="1"/>
+        <text font-family="'Geist Mono',monospace" font-size="6.2" letter-spacing="2.2" fill="currentColor">
+          <textPath href="#seal-circle" startOffset="0%">NAIJAVOICE · CIVIC REGISTER · NAIJAVOICE · CIVIC REGISTER ·</textPath>
+        </text>
+      </svg>
+    </div>
   </div>
-  <h1 class="hero__title">
-    Your problem,<br>
-    <em>seen.</em> Your voice,<br>
-    counted.
-  </h1>
   <p class="hero__sub">
     NaijaVoice gives Nigerian citizens a place to post real community problems, vote on what matters most, and make high-priority issues impossible to ignore.
   </p>
@@ -317,8 +353,8 @@
     </div>
   </div>
   <div class="hero__actions">
-    <a class="btn btn--primary" href="post-problem.html" id="hero-post">✍️ Post a Problem</a>
-    <a class="btn btn--ghost" href="feed.html">🗳️ Browse Problems</a>
+    <a class="btn btn--primary" href="post-problem.html" id="hero-post">Post a Problem</a>
+    <a class="btn btn--ghost" href="feed.html">Browse Problems</a>
   </div>
 </section>
 
@@ -327,11 +363,11 @@
 <!-- ── TRUST BAR ── -->
 <div class="trust-bar">
   <div class="trust-inner">
-    <div class="trust-item"><span>🛡️</span> Independent Platform</div>
-    <div class="trust-item"><span>⚖️</span> Non-Partisan</div>
-    <div class="trust-item"><span>🆓</span> Free to Use</div>
-    <div class="trust-item"><span>👥</span> Community Driven</div>
-    <div class="trust-item"><span>🇳🇬</span> Built by Nigerians</div>
+    <div class="trust-item"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3Z"/></svg> Independent Platform</div>
+    <div class="trust-item"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v18M5 8l-3 6a3.5 3.5 0 0 0 6 0l-3-6ZM19 8l-3 6a3.5 3.5 0 0 0 6 0l-3-6ZM5 8h14M8 21h8"/></svg> Non-Partisan</div>
+    <div class="trust-item"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg> Free to Use</div>
+    <div class="trust-item"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 19c1.2-3.5 3.6-5 6.5-5s5.3 1.5 6.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 13.2c1.9.4 3.3 1.6 4 3.8"/></svg> Community Driven</div>
+    <div class="trust-item">🇳🇬 Built by Nigerians</div>
   </div>
 </div>
 
@@ -355,7 +391,7 @@
 <section class="sec sec--bleed reveal" id="problems">
   <div class="rail-head">
     <div>
-      <p class="sec__eyebrow">🔥 Most Voted</p>
+      <p class="sec__eyebrow">Most Voted</p>
       <h2 class="sec__title" style="margin-bottom:0">What Nigeria is talking about.</h2>
     </div>
     <a href="feed.html">See all problems →</a>
@@ -371,7 +407,7 @@
 
 <!-- ── TRENDING ── -->
 <section class="sec reveal">
-  <p class="sec__eyebrow">📈 Gaining Fast</p>
+  <p class="sec__eyebrow">Gaining Fast</p>
   <h2 class="sec__title">Trending This Week</h2>
   <div class="trending-list" id="trending-list">
     <div style="color:var(--ink-soft);font-size:0.88rem;">Loading...</div>
@@ -391,14 +427,18 @@
     <p class="mission__body">
       NaijaVoice was built on a simple belief: when enough Nigerians speak together on the same issue, that issue becomes impossible to ignore. High-voted problems gain public visibility. Community-supported issues become harder to dismiss. We are not waiting for permission to be heard.
     </p>
-    <span class="mission__flag">🇳🇬</span>
+    <div class="mission__mark">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12.5 10.7 15 16 9"/></svg>
+    </div>
   </div>
 </div>
 
 <!-- ── FOUNDER STORY ── -->
 <div class="founder reveal">
   <div class="founder__inner">
-    <div class="founder__avatar">🧑🏾</div>
+    <div class="founder__avatar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.5-4.2 4.5-6.2 7-6.2s5.5 2 7 6.2"/></svg>
+    </div>
     <div>
       <div class="founder__eyebrow">Founder's Note</div>
       <p class="founder__quote">"I built NaijaVoice because I got tired of watching real problems in Nigerian communities go unheard. Every road, every school, every water supply that fails — someone suffers. This platform exists so that suffering has a voice, and that voice has a number attached to it."</p>
@@ -412,14 +452,14 @@
 <section class="sec reveal">
   <div class="two-col">
     <div>
-      <p class="sec__eyebrow">⚡ Live Activity</p>
+      <p class="sec__eyebrow">Live Activity</p>
       <h2 class="sec__title" style="font-size:1.4rem;">Recent Activity</h2>
       <div class="feed" id="activity-list">
         <div style="color:var(--ink-soft);font-size:0.85rem;">Loading...</div>
       </div>
     </div>
     <div>
-      <p class="sec__eyebrow">📍 By State</p>
+      <p class="sec__eyebrow">By State</p>
       <h2 class="sec__title" style="font-size:1.4rem;">Problems Across Nigeria</h2>
       <div class="states-list" id="states-list">
         <div style="color:var(--ink-soft);font-size:0.85rem;">Loading...</div>
@@ -433,10 +473,10 @@
   <p class="sec__eyebrow">Simple Process</p>
   <h2 class="sec__title">How NaijaVoice Works</h2>
   <div class="steps">
-    <div class="step"><div class="step__icon">✍️</div><div class="step__title">Post a Problem</div><div class="step__body">Create a free account and describe a real issue affecting your community — with location, category and evidence.</div></div>
-    <div class="step"><div class="step__icon">🗳️</div><div class="step__title">Nigerians Vote</div><div class="step__body">Anyone can vote on problems that affect them too. Every vote strengthens the signal.</div></div>
-    <div class="step"><div class="step__icon">📈</div><div class="step__title">Problems Rise</div><div class="step__body">The more votes a problem gets, the higher it climbs — gaining public visibility and attention.</div></div>
-    <div class="step"><div class="step__icon">📣</div><div class="step__title">Issues Get Heard</div><div class="step__body">High-voted, community-supported problems become harder to ignore by officials, media and NGOs.</div></div>
+    <div class="step"><span class="step__num">CASE 01</span><svg class="step__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><div class="step__title">Post a Problem</div><div class="step__body">Create a free account and describe a real issue affecting your community — with location, category and evidence.</div></div>
+    <div class="step"><span class="step__num">CASE 02</span><svg class="step__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M5 8l-3 6a3.5 3.5 0 0 0 6 0l-3-6ZM19 8l-3 6a3.5 3.5 0 0 0 6 0l-3-6ZM5 8h14M8 21h8"/></svg><div class="step__title">Nigerians Vote</div><div class="step__body">Anyone can vote on problems that affect them too. Every vote strengthens the signal.</div></div>
+    <div class="step"><span class="step__num">CASE 03</span><svg class="step__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><div class="step__title">Problems Rise</div><div class="step__body">The more votes a problem gets, the higher it climbs — gaining public visibility and attention.</div></div>
+    <div class="step"><span class="step__num">CASE 04</span><svg class="step__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11v2a2 2 0 0 0 2 2h1l5 4V5L6 9H5a2 2 0 0 0-2 2Z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg><div class="step__title">Issues Get Heard</div><div class="step__body">High-voted, community-supported problems become harder to ignore by officials, media and NGOs.</div></div>
   </div>
 </section>
 
@@ -446,10 +486,10 @@
     <p class="sec__eyebrow" style="color:var(--gold);">What's Next</p>
     <h2 class="sec__title" style="color:#fff;">Coming to NaijaVoice</h2>
     <div class="roadmap-grid">
-      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><div class="roadmap-icon">🏛️</div><div class="roadmap-title">Government Response Tracking</div><div class="roadmap-desc">Track when officials acknowledge and respond to high-voted community problems.</div></div>
-      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><div class="roadmap-icon">👤</div><div class="roadmap-title">Representative Pages</div><div class="roadmap-desc">See which problems your local representative is being held accountable for.</div></div>
-      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><div class="roadmap-icon">📣</div><div class="roadmap-title">Community Campaigns</div><div class="roadmap-desc">Organise citizens around a single issue and amplify collective civic action.</div></div>
-      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><div class="roadmap-icon">📊</div><div class="roadmap-title">Civic Data Insights</div><div class="roadmap-desc">State-by-state breakdowns and trend analysis for journalists, NGOs and researchers.</div></div>
+      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><svg class="roadmap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6"/></svg><div class="roadmap-title">Government Response Tracking</div><div class="roadmap-desc">Track when officials acknowledge and respond to high-voted community problems.</div></div>
+      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><svg class="roadmap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.5-4.2 4.5-6.2 7-6.2s5.5 2 7 6.2"/></svg><div class="roadmap-title">Representative Pages</div><div class="roadmap-desc">See which problems your local representative is being held accountable for.</div></div>
+      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><svg class="roadmap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 5.5a6.5 6.5 0 1 1-4.6 11.1M11 5.5V2M11 5.5 8 8.5"/></svg><div class="roadmap-title">Community Campaigns</div><div class="roadmap-desc">Organise citizens around a single issue and amplify collective civic action.</div></div>
+      <div class="roadmap-item"><div class="coming-badge">Coming Soon</div><svg class="roadmap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V9M11 19V4M18 19v-6"/></svg><div class="roadmap-title">Civic Data Insights</div><div class="roadmap-desc">State-by-state breakdowns and trend analysis for journalists, NGOs and researchers.</div></div>
     </div>
   </div>
 </section>
@@ -459,7 +499,7 @@
   <h2 class="cta-band__title">Your community's problem<br>needs your voice.</h2>
   <p class="cta-band__sub">Join Nigerians making their voices heard. Post a problem. Vote. Make high-priority issues impossible to ignore.</p>
   <div class="cta-band__actions">
-    <a href="auth.html" class="btn btn--primary" id="cta-bottom">🚀 Get Started — It's Free</a>
+    <a href="auth.html" class="btn btn--primary" id="cta-bottom">Get Started — It's Free</a>
     <a href="feed.html" class="btn btn--ghost">Browse Problems</a>
   </div>
 </div>
@@ -478,9 +518,24 @@
   <p>© 2025 NaijaVoice. Built for Nigeria 🇳🇬</p>
 </footer>
 
+<!-- ── BOTTOM NAV (mobile) ── -->
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item active"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg><span>Home</span></a>
+  <a href="feed.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Feed</span></a>
+  <a href="post-problem.html" class="bn-fab" aria-label="Post a problem"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></a>
+  <a href="trending.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Trending</span></a>
+  <a href="profile.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.5-6 7-6s5.5 2 7 6"/></svg><span>Profile</span></a>
+</nav>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
 <script>
+// Inlined directly (was previously loaded from a separate supabase.js file which
+// could fail to load on GitHub Pages, leaving "sb" undefined everywhere on the page).
+const sb=supabase.createClient(
+  'https://zszcmrbbgchafoydqoqb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
+);
+
 function toggleMenu(){
   const menu=document.getElementById('mobile-menu');
   const btn=document.getElementById('hamburger');
@@ -512,10 +567,10 @@ function timeAgo(ts){
 }
 
 function getStatusBadge(status){
-  if(status==='resolved')return'<span class="status-badge status-resolved">🟢 Resolved</span>';
-  if(status==='inprogress')return'<span class="status-badge status-escalated">🔵 Escalated</span>';
-  if(status==='under_discussion')return'<span class="status-badge status-discussion">🟡 Under Discussion</span>';
-  return'<span class="status-badge status-reported">🔴 Reported</span>';
+  if(status==='resolved')return'<span class="status-badge status-resolved">Resolved</span>';
+  if(status==='inprogress')return'<span class="status-badge status-escalated">Escalated</span>';
+  if(status==='under_discussion')return'<span class="status-badge status-discussion">Under Discussion</span>';
+  return'<span class="status-badge status-reported">Reported</span>';
 }
 
 async function init(){
@@ -523,16 +578,16 @@ async function init(){
     // Auth
     const {data:{user}}=await sb.auth.getUser();
     if(user){
-      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).maybeSingle();
       const name=profile?.full_name?.split(' ')[0]||'User';
       document.getElementById('nav-auth-area').innerHTML=
-        `<a href="profile.html" class="banner__user">👤 ${name}</a>
+        `<a href="profile.html" class="banner__user">${name}</a>
          <button class="banner__logout" onclick="logout()">Logout</button>`;
       document.getElementById('mobile-auth-area').innerHTML=
-        `<div class="mobile-user-name">👤 ${name}</div>
-         <a href="profile.html" class="mobile-cta" style="background:rgba(26,107,60,0.1);color:var(--green);">My Profile</a>
+        `<div class="mobile-user-name">${name}</div>
+         <a href="profile.html" class="mobile-cta" style="background:rgba(19,74,44,0.1);color:var(--green);">My Profile</a>
          <button class="mobile-logout" onclick="logout()">Logout</button>`;
-      document.getElementById('cta-bottom').textContent='✍️ Post a Problem';
+      document.getElementById('cta-bottom').textContent='Post a Problem';
       document.getElementById('cta-bottom').href='post-problem.html';
     }
 
@@ -552,11 +607,10 @@ async function init(){
 
     // ── TOP PROBLEMS (8, with status badges) ──
     const top=all.slice(0,8);
-    const max=Math.max(...top.map(p=>p.votes||0),1);
     const rankBadge=(i)=>{
-      if(i===0)return'<div class="p-rank-badge rank-1">🥇 #1 Most Voted</div>';
-      if(i===1)return'<div class="p-rank-badge rank-2">🥈 #2</div>';
-      if(i===2)return'<div class="p-rank-badge rank-3">🥉 #3</div>';
+      if(i===0)return'<div class="p-rank-badge rank-1">#1 Most Voted</div>';
+      if(i===1)return'<div class="p-rank-badge rank-2">#2</div>';
+      if(i===2)return'<div class="p-rank-badge rank-3">#3</div>';
       return`<div class="p-rank-badge rank-n">#${i+1}</div>`;
     };
     document.getElementById('top-problems').innerHTML=top.length?top.map((p,i)=>`
@@ -564,9 +618,9 @@ async function init(){
         ${rankBadge(i)}
         <span class="problem-card__tag">${p.category_icon||'📋'} ${p.category||'General'}</span>
         <p class="problem-card__title">${p.title}</p>
-        <p class="problem-card__loc">📍 ${p.state||'Nigeria'}${p.lga?' · '+p.lga:''}</p>
+        <p class="problem-card__loc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.2"/></svg> ${p.state||'Nigeria'}${p.lga?' · '+p.lga:''}</p>
         <div class="problem-card__footer">
-          <span class="vote-pill">▲ ${(p.votes||0).toLocaleString()} votes</span>
+          <span class="vote-pill">▲ ${(p.votes||0).toLocaleString()}</span>
           ${getStatusBadge(p.status)}
           <span class="problem-card__time">${timeAgo(p.created_at)}</span>
         </div>
@@ -581,7 +635,7 @@ async function init(){
         <div class="trend-rank">${i+1}</div>
         <div class="trend-body">
           <div class="trend-title">${p.title}</div>
-          <div class="trend-meta">📍 ${p.state||'Nigeria'} · ${p.category||'General'} · ${timeAgo(p.created_at)}</div>
+          <div class="trend-meta">${p.state||'Nigeria'} · ${p.category||'General'} · ${timeAgo(p.created_at)}</div>
         </div>
         <div class="trend-votes">▲ ${(p.votes||0).toLocaleString()}</div>
       </a>`).join('')
