@@ -12,12 +12,12 @@
   <style>
     *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
     :root{
-      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
-      --gold:#c48f00;--gold-lite:#fdf6e0;
-      --ink:#0f1a14;--ink-soft:#4a6355;
-      --bg:#f7faf8;--white:#ffffff;
-      --border:rgba(26,107,60,0.14);--radius:8px;
-      --error:#c53030;
+      --green:#134a2c;--green-mid:#1c6b3f;--green-lite:#e9f1ec;
+      --gold:#9c7a1f;--gold-lite:#f6f0dd;
+      --ink:#12201a;--ink-soft:#54685d;
+      --bg:#f4f5f0;--white:#ffffff;
+      --border:rgba(18,32,26,0.13);--radius:8px;
+      --error:#a13f36;
       --f-display:'Fraunces',Georgia,serif;
       --f-body:'Inter',system-ui,sans-serif;
       --f-mono:'Geist Mono',monospace;
@@ -53,6 +53,18 @@
     .mobile-auth-area a,.mobile-auth-area button{display:block;text-align:center;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:600;text-decoration:none;}
     .mobile-cta{background:var(--green);color:#fff!important;}
     .mobile-logout{background:transparent;border:1.5px solid var(--border);color:var(--ink-soft);cursor:pointer;font-family:var(--f-body);font-size:0.95rem;}
+
+    /* ── BOTTOM NAV ── */
+    .ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1px solid var(--border);display:none;align-items:flex-end;justify-content:space-around;padding:8px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -2px 16px rgba(18,32,26,0.06);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--ink-soft);font-family:var(--f-body);font-size:10px;font-weight:600;padding:4px 6px;flex:1;transition:color .15s;}
+    .bn-item .ic{width:21px;height:21px;stroke-width:1.8;}
+    .bn-item.active{color:var(--green);}
+    .bn-item.active .ic{stroke-width:2.3;}
+    .bn-fab{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:var(--green);margin-top:-20px;box-shadow:0 6px 16px rgba(19,74,44,0.35);border:3px solid var(--white);flex-shrink:0;text-decoration:none;transition:transform .15s,background .15s;}
+    .bn-fab:hover{background:var(--green-mid);transform:scale(1.05);}
+    .bn-fab .ic{width:22px;height:22px;stroke:#fff;stroke-width:2.2;}
+    @media(max-width:768px){.bottom-nav{display:flex;}body{padding-bottom:74px;}}
 
     /* ── PAGE HEADER ── */
     .page-header{background:var(--ink);padding:3rem 5% 2.5rem;position:relative;overflow:hidden;}
@@ -176,9 +188,22 @@
 
 <div class="toast" id="toast"></div>
 
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg><span>Home</span></a>
+  <a href="feed.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Feed</span></a>
+  <a href="post-problem.html" class="bn-fab" aria-label="Post a problem"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></a>
+  <a href="trending.html" class="bn-item active"><svg class="ic" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Trending</span></a>
+  <a href="profile.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.5-6 7-6s5.5 2 7 6"/></svg><span>Profile</span></a>
+</nav>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
 <script>
+// Inlined directly (was previously loaded from a separate supabase.js file, which
+// could fail to load and leave "sb" undefined — the exact ReferenceError seen live).
+const sb=supabase.createClient(
+  'https://zszcmrbbgchafoydqoqb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzemNtcmJiZ2NoYWZveWRxb3FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NzEwMTMsImV4cCI6MjA5MDQ0NzAxM30.9II959A9wOzXrVi1TEU7mtyqY2v-NFubLC7m_yOIE1U'
+);
 let allProblems=[],currentRange=7;
 
 function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
@@ -203,7 +228,7 @@ async function init(){
   try{
     const {data:{user}}=await sb.auth.getUser();
     if(user){
-      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).single();
+      const {data:profile}=await sb.from('profiles').select('full_name').eq('id',user.id).maybeSingle();
       const name=profile?.full_name?.split(' ')[0]||'User';
       document.getElementById('nav-auth-area').innerHTML=
         '<a href="profile.html" class="banner__user">👤 '+name+'</a>'+
