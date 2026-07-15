@@ -12,13 +12,13 @@
   <style>
     *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
     :root{
-      --green:#1a6b3c;--green-mid:#218a4e;--green-lite:#e8f5ee;
-      --gold:#c48f00;--gold-lite:#fdf6e0;
-      --ink:#0f1a14;--ink-soft:#4a6355;
-      --bg:#f7faf8;--white:#ffffff;
-      --border:rgba(26,107,60,0.14);--radius:8px;
-      --error:#c53030;--error-lite:rgba(197,48,48,0.08);
-      --orange:#c05621;
+      --green:#134a2c;--green-mid:#1c6b3f;--green-lite:#e9f1ec;
+      --gold:#9c7a1f;--gold-lite:#f6f0dd;
+      --ink:#12201a;--ink-soft:#54685d;
+      --bg:#f4f5f0;--white:#ffffff;
+      --border:rgba(18,32,26,0.13);--radius:8px;
+      --error:#a13f36;--error-lite:rgba(161,63,54,0.08);
+      --orange:#a05a1f;
       --f-display:'Fraunces',Georgia,serif;
       --f-body:'Inter',system-ui,sans-serif;
       --f-mono:'Geist Mono',monospace;
@@ -200,6 +200,17 @@
       .btn-next,.btn-back,.btn-submit{width:100%;text-align:center;justify-content:center;}
       .cat-grid{grid-template-columns:repeat(3,1fr);}
     }
+    /* ── BOTTOM NAV ── */
+    .ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1px solid var(--border);display:none;align-items:flex-end;justify-content:space-around;padding:8px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -2px 16px rgba(18,32,26,0.06);}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--ink-soft);font-family:var(--f-body);font-size:10px;font-weight:600;padding:4px 6px;flex:1;transition:color .15s;}
+    .bn-item .ic{width:21px;height:21px;stroke-width:1.8;}
+    .bn-item.active{color:var(--green);}
+    .bn-item.active .ic{stroke-width:2.3;}
+    .bn-fab{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:var(--green);margin-top:-20px;box-shadow:0 6px 16px rgba(19,74,44,0.35);border:3px solid var(--white);flex-shrink:0;text-decoration:none;transition:transform .15s,background .15s;}
+    .bn-fab:hover{background:var(--green-mid);transform:scale(1.05);}
+    .bn-fab .ic{width:22px;height:22px;stroke:#fff;stroke-width:2.2;}
+    @media(max-width:768px){.bottom-nav{display:flex;}body{padding-bottom:74px;}}
   </style>
 </head>
 <body>
@@ -455,6 +466,14 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<nav class="bottom-nav">
+  <a href="index.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg><span>Home</span></a>
+  <a href="feed.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Feed</span></a>
+  <a href="post-problem.html" class="bn-fab active" aria-label="Post a problem"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></a>
+  <a href="trending.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>Trending</span></a>
+  <a href="profile.html" class="bn-item"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4.5-6 7-6s5.5 2 7 6"/></svg><span>Profile</span></a>
+</nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
